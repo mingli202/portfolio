@@ -17,10 +17,12 @@
     "@theatre/r3f": "^0.5.1",
     "@theatre/studio": "^0.5.1",
     "@tresjs/post-processing": "^2.4.0",
+    "clsx": "^2.1.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.8",
-    "three": "^0.177.0"
+    "three": "^0.176.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
