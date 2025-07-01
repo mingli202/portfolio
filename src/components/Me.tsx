@@ -5,7 +5,7 @@ export default function Me() {
     <section className="flex justify-between">
       <div className="flex flex-col justify-center gap-2">
         <h1 className="text-5xl font-bold tracking-tight">Ming Li</h1>
-        <p className="text-text-secondary text-xl">
+        <p className="text-text-secondary">
           Average Rust enthusiast and Neovim enjoyer.
         </p>
       </div>
