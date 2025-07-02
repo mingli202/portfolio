@@ -7,6 +7,9 @@ import {
   NextJs,
   TailwindCss,
   TypeScript,
+  React,
+  Python,
+  Rust,
 } from "../lib/icons";
 
 export default function Me() {
@@ -18,10 +21,13 @@ export default function Me() {
           Average Rust enthusiast and Neovim enjoyer.
         </p>
         <div className="flex items-center gap-2">
+          <Rust className="fill-text-secondary" />
+          <Python className="fill-text-secondary" />
           <TypeScript className="fill-text-secondary" />
-          <NextJs className="fill-text-secondary" />
-          <Angular className="fill-text-secondary" />
           <TailwindCss className="fill-text-secondary" />
+          <Angular className="fill-text-secondary" />
+          <NextJs className="fill-text-secondary" />
+          <React className="fill-text-secondary" />
         </div>
       </div>
       <div className="text-text-secondary flex flex-col items-end gap-1">
