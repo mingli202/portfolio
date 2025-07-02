@@ -16,7 +16,7 @@ export default function Me() {
   return (
     <section className="flex justify-between gap-4">
       <div className="flex flex-col gap-2">
-        <h1 className="text-5xl font-bold tracking-tight">Ming Li Liu</h1>
+        <h1 className="text-4xl font-bold tracking-tight">Ming Li Liu</h1>
         <p className="text-text-secondary">
           Average Rust enthusiast and Neovim enjoyer.
         </p>
