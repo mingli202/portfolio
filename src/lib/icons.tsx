@@ -1,5 +1,5 @@
 import type { JSX, SVGProps } from "react";
-import cn from "../cn";
+import cn from "./cn";
 
 type Props = SVGProps<SVGSVGElement> & { title?: string };
 
