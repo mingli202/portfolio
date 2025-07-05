@@ -1,16 +1,5 @@
 import cn from "../lib/cn";
-
-export type ExperienceListItem = {
-  title: string;
-  subtitle: string;
-  imageUrl: string;
-  description: string;
-  startDate: string;
-  endDate: string;
-  location: string;
-  skills: string[];
-  additionalInfo: string[];
-};
+import type { ExperienceListItem } from "../types";
 
 type Props = {
   items: ExperienceListItem[];
@@ -35,7 +24,7 @@ export default function ExperienceList({ items, className, ...props }: Props) {
             <div className="flex w-full justify-between">
               <p className="font-bold">{subtitle}</p>
               <p className="text-text-secondary">
-                {startDate} - {endDate}
+                {startDate} {endDate ? `- ${endDate}` : null}
               </p>
             </div>
             <p>{title}</p>
