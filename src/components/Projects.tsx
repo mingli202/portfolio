@@ -20,6 +20,7 @@ export default function Projects() {
           url: "https://github.com/mingli202/mathracer",
         },
       ],
+      videoUrl: "https://www.youtube.com/embed/xfg4ZZ54hCs?si=tOcLgCvo1jtXzXdq",
     },
 
     {
@@ -78,6 +79,24 @@ export default function Projects() {
           url: "https://github.com/mingli202/typing-rust",
         },
       ],
+      videoUrl: "https://www.youtube.com/embed/qujeessD6Mg?si=W12oQd-8J-NM3Bj2",
+    },
+
+    {
+      title: "Mnist Ai",
+      subtitle:
+        "Handwritten digit classification using MNIST dataset from scratch.",
+      description:
+        "Multi-layer neural network made from scratch using only Numpy and math.",
+      startDate: "Oct 2021",
+      skills: ["Python", "Numpy"],
+      links: [
+        {
+          type: Icon.Github,
+          url: "https://github.com/mingli202/mnist-ai",
+        },
+      ],
+      videoUrl: "https://www.youtube.com/embed/ey127qKYm4g?si=ztg1kMlOa-q2vrIo",
     },
 
     {
@@ -112,12 +131,26 @@ export default function Projects() {
   return (
     <div className="flex flex-col gap-4 p-4">
       {projects.map(
-        ({ title, subtitle, startDate, endDate, skills, links }, index) => (
+        (
+          { title, subtitle, startDate, endDate, skills, links, videoUrl },
+          index,
+        ) => (
           <div
             className="border-secondary flex flex-col gap-4 rounded-[2.25rem] border border-solid p-4"
             key={title + index}
           >
-            <div className="bg-secondary aspect-video w-full rounded-[calc(2.25rem-1rem)]"></div>
+            <div className="aspect-video w-full overflow-hidden rounded-[calc(2.25rem-1rem)]">
+              {videoUrl ? (
+                <iframe
+                  src={videoUrl}
+                  title="YouTube video player"
+                  className="h-full w-full border-none"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                ></iframe>
+              ) : null}
+            </div>
             <div className="flex w-full flex-col gap-3.5 px-3 pb-3">
               <div>
                 <div className="flex items-center gap-1">
