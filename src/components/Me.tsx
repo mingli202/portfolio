@@ -54,7 +54,7 @@ export default function Me() {
         </div>
       </div>
       <div className="flex flex-col items-center gap-4">
-        <p>Average Rust enthiusiast and Neovim enjoyer.</p>
+        <p>Average Rust enthusiast and Neovim enjoyer.</p>
         <div className="flex justify-center gap-4">
           <Rust className="fill-text-secondary" />
           <Python className="fill-text-secondary" />
