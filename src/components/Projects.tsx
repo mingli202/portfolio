@@ -4,8 +4,49 @@ import type { ProjectItem } from "../types";
 export default function Projects() {
   const projects: ProjectItem[] = [
     {
-      title: "John Abbott College schedule builder",
-      subtitle: "Webapp for planning JAC schedules",
+      title: "Mathracer",
+      subtitle: "Multiplayer math game website",
+      description:
+        "Exciting mental math competition to show off your math skills to your friends.",
+      startDate: "April 2025",
+      skills: ["NextJs", "TailwindCss", "TypeScript", "C#", ".NET"],
+      links: [
+        {
+          type: Icon.WebsiteLink,
+          url: "https://mathracer-phi.vercel.app/",
+        },
+        {
+          type: Icon.Github,
+          url: "https://github.com/mingli202/mathracer",
+        },
+      ],
+    },
+    {
+      title: "Mito Sushi Weekly Planner",
+      subtitle: "Scehdule planner based on store locations",
+      description:
+        "Webapp for planning Mito Sushi schedules based on store locations.",
+      startDate: "March 2025",
+      skills: [
+        "Python",
+        "FastApi",
+        "Pandas",
+        "Htmx",
+        "JavaScript",
+        "CSS",
+        "Maps",
+        "Docker",
+      ],
+      links: [
+        {
+          type: Icon.Github,
+          url: "https://github.com/mingli202/mathracer",
+        },
+      ],
+    },
+    {
+      title: "Dream Builder",
+      subtitle: "Webapp for planning John Abbott College schedules",
       description:
         "John Abbott didn't have one and many students including me found it tedious to plan it by hand, so I made one myself.",
       startDate: "July 2023",
@@ -63,7 +104,7 @@ export default function Projects() {
               <p className="text-text-secondary">
                 {startDate} {endDate ? `- ${endDate}` : null}
               </p>
-              <div className="mt-2 flex w-full flex-wrap gap-x-4 gap-y-2">
+              <div className="mt-2 flex w-full flex-wrap gap-2">
                 {skills.map((iconName, index) => (
                   <div
                     key={iconName + index}
@@ -73,7 +114,7 @@ export default function Projects() {
                       className:
                         "fill-primary h-[calc(2rem-0.375rem*2)] w-[calc(2rem-0.375rem*2)]",
                     })}
-                    <p className="text-primary text-base font-light">
+                    <p className="text-primary text-base leading-5.5 font-light">
                       {iconName}
                     </p>
                   </div>
