@@ -52,7 +52,6 @@ function App() {
       <ExperienceList items={schoolExperience} />
       <SectionBreakLine sectionName="Projects" />
       <Projects />
-      <SectionBreakLine sectionName="Contact" />
     </div>
   );
 }
