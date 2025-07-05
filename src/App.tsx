@@ -1,8 +1,8 @@
-import ExperienceList, {
-  type ExperienceListItem,
-} from "./components/ExperienceList";
+import ExperienceList from "./components/ExperienceList";
 import Me from "./components/Me";
+import Projects from "./components/Projects";
 import SectionBreakLine from "./components/SectionBreakLine";
+import type { ExperienceListItem } from "./types";
 
 function App() {
   const workExperience: ExperienceListItem[] = [
@@ -14,15 +14,7 @@ function App() {
       startDate: "May 2025",
       endDate: "Aug 2025",
       location: "Montreal, Canada",
-      skills: [
-        "TypeScript",
-        "Angular",
-        "Scss",
-        "C#",
-        "ASP.NET",
-        "SQL Server",
-        "Azure",
-      ],
+      skills: [],
       additionalInfo: [
         "I was responsible for developing and maintaining the company's website and backend services.",
         "I worked on various projects, including the development of a new website design and the implementation of new features for the existing website.",
@@ -41,7 +33,7 @@ function App() {
       startDate: "Aug 2024",
       endDate: "May 2028",
       location: "Montreal, Canada",
-      skills: ["Java", "Python", "OOP"],
+      skills: [],
       additionalInfo: [
         "I studied computer science at McGill University and gained a strong foundation in programming and computer science concepts.",
         "I was able to apply my knowledge of programming and computer science to various projects, including the development of a new website design and the implementation of new features for the existing website.",
@@ -52,13 +44,14 @@ function App() {
   ];
 
   return (
-    <div className="flex w-[min(85%,45rem)] flex-col overflow-hidden text-xl">
+    <div className="flex w-[min(85%,45rem)] flex-col overflow-hidden text-xl font-normal">
       <Me />
       <SectionBreakLine sectionName="Work" />
       <ExperienceList items={workExperience} />
       <SectionBreakLine sectionName="Education" />
       <ExperienceList items={schoolExperience} />
       <SectionBreakLine sectionName="Projects" />
+      <Projects />
       <SectionBreakLine sectionName="Contact" />
     </div>
   );
