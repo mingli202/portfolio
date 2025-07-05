@@ -194,11 +194,11 @@ const Cargo = icon(
           Here, we define a symbol with the id "a" which is reused multiple times in the SVG.
         */}
       <defs>
-        <symbol id="a" viewBox="0 0 45.72 26.28">
+        <symbol id="a-cargo" viewBox="0 0 45.72 26.28">
           <rect width="45.72" height="26.28" style={{ fill: "none" }}></rect>
           <polygon
             points="0 16.309 22.926 16.309 22.926 26.28 45.72 13.139 22.926 0 22.926 9.97 0 9.97 0 16.309"
-            style={{ fill: "#211c32" }}
+            className="fill-background"
           ></polygon>
         </symbol>
       </defs>
@@ -206,74 +206,72 @@ const Cargo = icon(
       {/* The following paths create the main structure and details of the cargo icon. */}
       <path
         d="M14.261,29.519l-.007-.457L27.18,23.551l2.038.288-.012.385L16.264,30.558Z"
-        style={{ fill: "#4a3c80" }}
+        className="fill-secondary"
       ></path>
       <path
         d="M14.268,29.067,27.18,23.19l2.05.663L16.264,30.117Z"
-        style={{ fill: "#211c32" }}
+        className="fill-background"
       ></path>
       <path
         d="M14.258,27.63l2.01,1.086v1.416l-2.01-1.086Z"
-        style={{ fill: "#4a3c80" }}
+        className="fill-secondary"
       ></path>
       <path
         d="M29.139,22.465l-1.521.766v1.416l1.521-.766Z"
-        style={{ fill: "#4a3c80" }}
+        className="fill-secondary"
       ></path>
       <path
         d="M20.178,24.751l2.01,1.086v1.416l-2.01-1.086V24.751Z"
-        style={{ fill: "#211c32" }}
+        className="fill-background"
       ></path>
       <path
         d="M23.708,25.072l-1.521.766v1.416l1.521-.766V25.072Z"
-        style={{ fill: "#4a3c80" }}
+        className="fill-secondary"
       ></path>
       <path
         d="M8.722,26.749l-.007-.4L21.64,20.835l2.038.288-.012.385-12.942,6.28Z"
-        style={{ fill: "#211c32" }}
+        className="fill-background"
       ></path>
       <path
         d="M8.719,24.914,10.728,26v1.416l-2.01-1.086V24.914Z"
-        style={{ fill: "#4a3c80" }}
+        className="fill-secondary"
       ></path>
       <path
         d="M12.249,25.234,10.728,26v1.416l1.521-.766V25.234Z"
-        style={{ fill: "#211c32" }}
+        className="fill-background"
       ></path>
       <path
         d="M3.454,24.088l-.007-.349,12.926-5.511,2.038.288L18.4,18.9,5.456,25.127Z"
-        style={{ fill: "#211c32" }}
+        className="fill-background"
       ></path>
       <path
         d="M3.451,22.308l2.01,1.086V24.81l-2.01-1.086Z"
-        style={{ fill: "#4a3c80" }}
+        className="fill-secondary"
       ></path>
       <path
         d="M6.981,22.628l-1.521.766V24.81l1.521-.766Z"
-        style={{ fill: "#211c32" }}
+        className="fill-background"
       ></path>
       <path
         d="M3.345,22.622l-.007-.282s2.539-.09,1.689.115C6.08,21.792,16.182,17.9,16.182,17.9l12.961,4.44.062.279-12.942,6.09Z"
-        style={{ fill: "#4a3c80" }}
+        className="fill-secondary"
       ></path>
       <path
         d="M3.3,22.36l12.966-4.519L29.229,22.36,16.264,28.379Z"
-        style={{ fill: "#9e85fb" }}
+        className="fill-primary"
       ></path>
       <path
         d="M16.372,6.64l-6.2-2.481v8.123l6.2,2.522Z"
+        className="fill-primary stroke-background"
         style={{
-          fill: "#9e85fb",
-          stroke: "#211c32",
           strokeMiterlimit: 10,
           strokeWidth: "0.05430921534373718px",
         }}
       ></path>
       <path
         d="M16.331,6.674l6.115-2.435L16.3,1.708,10.159,4.175Z"
+        className="fill-primary stroke-background"
         style={{
-          fill: "#9e85fb",
-          stroke: "#211c32",
           strokeMiterlimit: 10,
           strokeWidth: "0.054070758972961416px",
         }}
@@ -282,49 +280,44 @@ const Cargo = icon(
         width="45.72"
         height="26.28"
         transform="matrix(0, -0.029, 0.022, 0.013, 10.56, 6.25)"
-        xlinkHref="#a"
+        xlinkHref="#a-cargo"
       ></use>
       <path
         d="M22.509,17.109l6.2-2.481v7.311l-6.2,2.878Z"
+        className="fill-primary stroke-background"
         style={{
-          fill: "#9e85fb",
-          stroke: "#211c32",
           strokeMiterlimit: 10,
           strokeWidth: "0.05430921534373718px",
         }}
       ></path>
       <path
         d="M22.5,9.134l6.2-2.415v7.906l-6.2,2.509Z"
+        className="fill-primary stroke-background"
         style={{
-          fill: "#9e85fb",
-          stroke: "#211c32",
           strokeMiterlimit: 10,
           strokeWidth: "0.05430921534373718px",
         }}
       ></path>
       <path
         d="M22.433,9.119,16.4,6.557l6.062-2.274,6.2,2.4Z"
+        className="fill-primary stroke-background"
         style={{
-          fill: "#9e85fb",
-          stroke: "#211c32",
           strokeMiterlimit: 10,
           strokeWidth: "0.05430921534373718px",
         }}
       ></path>
       <path
         d="M10.072,17.092,3.872,14.7v7.375l6.2,2.847Z"
+        className="fill-primary stroke-background"
         style={{
-          fill: "#9e85fb",
-          stroke: "#211c32",
           strokeMiterlimit: 10,
           strokeWidth: "0.05430921534373718px",
         }}
       ></path>
       <path
         d="M10.056,17.144l6.2-2.417-6.2-2.465-6.2,2.4Z"
+        className="fill-primary stroke-background"
         style={{
-          fill: "#9e85fb",
-          stroke: "#211c32",
           strokeMiterlimit: 10,
           strokeWidth: "0.05430921534373718px",
         }}
@@ -334,54 +327,49 @@ const Cargo = icon(
         y1="15.883"
         x2="13.148"
         y2="13.416"
+        className="stroke-background"
         style={{
           fill: "none",
-          stroke: "#211c32",
           strokeMiterlimit: 10,
           strokeWidth: "0.05430921534373718px",
         }}
       ></line>
       <path
         d="M16.3,19.658l-6.2-2.464v7.715l6.2,2.957Z"
+        className="fill-primary stroke-background"
         style={{
-          fill: "#9e85fb",
-          stroke: "#211c32",
           strokeMiterlimit: 10,
           strokeWidth: "0.05430921534373718px",
         }}
       ></path>
       <path
         d="M16.25,19.729l6.255-2.481v7.661L16.25,27.866Z"
+        className="fill-primary stroke-background"
         style={{
-          fill: "#9e85fb",
-          stroke: "#211c32",
           strokeMiterlimit: 10,
           strokeWidth: "0.05430921534373718px",
         }}
       ></path>
       <path
         d="M16.264,11.547l6.2-2.446v8.16l-6.2,2.485Z"
+        className="fill-primary stroke-background"
         style={{
-          fill: "#9e85fb",
-          stroke: "#211c32",
           strokeMiterlimit: 10,
           strokeWidth: "0.05430921534373718px",
         }}
       ></path>
       <path
         d="M16.264,11.528l-6.2-2.481V17.17l6.2,2.522Z"
+        className="fill-primary stroke-background"
         style={{
-          fill: "#9e85fb",
-          stroke: "#211c32",
           strokeMiterlimit: 10,
           strokeWidth: "0.05430921534373718px",
         }}
       ></path>
       <path
         d="M16.277,11.508l6.169-2.435-6.2-2.531-6.2,2.467Z"
+        className="fill-primary stroke-background"
         style={{
-          fill: "#9e85fb",
-          stroke: "#211c32",
           strokeMiterlimit: 10,
           strokeWidth: "0.05430921534373718px",
         }}
@@ -391,9 +379,9 @@ const Cargo = icon(
         y1="10.149"
         x2="19.016"
         y2="7.682"
+        className="stroke-background"
         style={{
           fill: "none",
-          stroke: "#211c32",
           strokeMiterlimit: 10,
           strokeWidth: "0.05430921534373718px",
         }}
@@ -403,9 +391,9 @@ const Cargo = icon(
         y1="5.37"
         x2="19.233"
         y2="2.903"
+        className="stroke-background"
         style={{
           fill: "none",
-          stroke: "#211c32",
           strokeMiterlimit: 10,
           strokeWidth: "0.05430921534373718px",
         }}
@@ -415,18 +403,18 @@ const Cargo = icon(
         y1="5.286"
         x2="26.127"
         y2="7.733"
+        className="stroke-background"
         style={{
           fill: "none",
-          stroke: "#211c32",
+
           strokeMiterlimit: 10,
           strokeWidth: "0.05430921534373718px",
         }}
       ></line>
       <polygon
         points="18.301 7.395 12.061 9.879 13.543 10.472 19.739 8.006 18.301 7.395"
+        className="fill-primary stroke-background"
         style={{
-          fill: "#9e85fb",
-          stroke: "#211c32",
           strokeMiterlimit: 10,
           strokeWidth: "0.04741218643894885px",
           opacity: 0.3,
@@ -434,9 +422,8 @@ const Cargo = icon(
       ></polygon>
       <polygon
         points="18.573 2.616 12.333 5.1 13.815 5.693 20.01 3.227 18.573 2.616"
+        className="fill-primary stroke-background"
         style={{
-          fill: "#9e85fb",
-          stroke: "#211c32",
           strokeMiterlimit: 10,
           strokeWidth: "0.04741218643894885px",
           opacity: 0.3,
@@ -444,9 +431,8 @@ const Cargo = icon(
       ></polygon>
       <polygon
         points="6.266 15.628 7.747 16.22 10.089 15.288 10.063 14.116 6.266 15.628"
+        className="fill-primary stroke-background"
         style={{
-          fill: "#9e85fb",
-          stroke: "#211c32",
           strokeMiterlimit: 10,
           strokeWidth: "0.04741218643894885px",
           opacity: 0.3,
@@ -454,9 +440,8 @@ const Cargo = icon(
       ></polygon>
       <polygon
         points="20.495 5.029 19.156 5.554 25.383 7.967 26.725 7.443 20.495 5.029"
+        className="fill-primary stroke-background"
         style={{
-          fill: "#9e85fb",
-          stroke: "#211c32",
           strokeMiterlimit: 10,
           strokeWidth: "0.041861926921599964px",
           opacity: 0.3,
@@ -464,17 +449,16 @@ const Cargo = icon(
       ></polygon>
       <polygon
         points="6.7 17.509 6.751 17.465 6.647 17.424 6.7 17.509"
-        style={{ fill: "none" }}
+        className="fill-none"
       ></polygon>
       <polygon
         points="7.09 17.679 7.155 17.622 7.026 17.571 7.09 17.679"
-        style={{ fill: "none" }}
+        className="fill-none"
       ></polygon>
       <polygon
         points="7.719 16.195 6.266 15.63 6.266 17.275 6.467 17.139 6.647 17.424 6.751 17.465 6.889 17.343 7.026 17.571 7.155 17.622 7.344 17.456 7.582 17.788 7.719 17.841 7.719 16.195"
+        className="fill-primary stroke-background"
         style={{
-          fill: "#9e85fb",
-          stroke: "#211c32",
           strokeMiterlimit: 10,
           strokeWidth: "0.06661495224335688px",
           opacity: 0.3,
@@ -482,17 +466,16 @@ const Cargo = icon(
       ></polygon>
       <polygon
         points="12.783 6.973 12.833 6.929 12.729 6.888 12.783 6.973"
-        style={{ fill: "none" }}
+        className="fill-none"
       ></polygon>
       <polygon
         points="13.173 7.143 13.238 7.086 13.108 7.035 13.173 7.143"
-        style={{ fill: "none" }}
+        className="fill-none"
       ></polygon>
       <polygon
         points="13.802 5.659 12.348 5.094 12.348 6.739 12.55 6.603 12.729 6.888 12.833 6.929 12.971 6.807 13.108 7.035 13.238 7.086 13.426 6.92 13.665 7.252 13.802 7.305 13.802 5.659"
+        className="fill-primary stroke-background"
         style={{
-          fill: "#9e85fb",
-          stroke: "#211c32",
           strokeMiterlimit: 10,
           strokeWidth: "0.06661495224335688px",
           opacity: 0.3,
@@ -500,17 +483,16 @@ const Cargo = icon(
       ></polygon>
       <polygon
         points="12.544 11.783 12.594 11.739 12.49 11.699 12.544 11.783"
-        style={{ fill: "none" }}
+        className="fill-none"
       ></polygon>
       <polygon
         points="12.933 11.953 12.998 11.896 12.869 11.846 12.933 11.953"
-        style={{ fill: "none" }}
+        className="fill-none"
       ></polygon>
       <polygon
         points="13.562 10.47 12.109 9.905 12.109 11.55 12.31 11.414 12.49 11.699 12.594 11.739 12.732 11.618 12.869 11.846 12.998 11.896 13.187 11.73 13.425 12.062 13.562 12.115 13.562 10.47"
+        className="fill-primary stroke-background"
         style={{
-          fill: "#9e85fb",
-          stroke: "#211c32",
           strokeMiterlimit: 10,
           strokeWidth: "0.06661495224335688px",
           opacity: 0.3,
@@ -518,17 +500,16 @@ const Cargo = icon(
       ></polygon>
       <polygon
         points="13.139 16.719 13.089 16.764 13.193 16.803 13.139 16.719"
-        style={{ fill: "none" }}
+        className="fill-none"
       ></polygon>
       <polygon
         points="12.747 16.554 12.682 16.612 12.813 16.661 12.747 16.554"
-        style={{ fill: "none" }}
+        className="fill-none"
       ></polygon>
       <polygon
         points="12.139 18.046 13.6 18.591 13.577 16.946 13.377 17.085 13.193 16.803 13.089 16.764 12.953 16.887 12.813 16.661 12.682 16.612 12.496 16.781 12.253 16.452 12.116 16.401 12.139 18.046"
+        className="fill-primary stroke-background"
         style={{
-          fill: "#9e85fb",
-          stroke: "#211c32",
           strokeMiterlimit: 10,
           strokeWidth: "0.06661495224335688px",
           opacity: 0.3,
@@ -536,17 +517,16 @@ const Cargo = icon(
       ></polygon>
       <polygon
         points="7.328 21.878 7.278 21.923 7.382 21.962 7.328 21.878"
-        style={{ fill: "none" }}
+        className="fill-none"
       ></polygon>
       <polygon
         points="6.936 21.714 6.871 21.772 7.001 21.82 6.936 21.714"
-        style={{ fill: "none" }}
+        className="fill-none"
       ></polygon>
       <polygon
         points="6.327 23.206 7.719 23.845 7.766 22.105 7.566 22.244 7.382 21.962 7.278 21.923 7.141 22.046 7.001 21.82 6.871 21.772 6.685 21.94 6.442 21.612 6.304 21.56 6.327 23.206"
+        className="fill-primary stroke-background"
         style={{
-          fill: "#9e85fb",
-          stroke: "#211c32",
           strokeMiterlimit: 10,
           strokeWidth: "0.06661495224335688px",
           opacity: 0.3,
@@ -554,17 +534,16 @@ const Cargo = icon(
       ></polygon>
       <polygon
         points="25.761 14.093 25.812 14.138 25.708 14.178 25.761 14.093"
-        style={{ fill: "none" }}
+        className="fill-none"
       ></polygon>
       <polygon
         points="26.151 13.923 26.216 13.98 26.087 14.031 26.151 13.923"
-        style={{ fill: "none" }}
+        className="fill-none"
       ></polygon>
       <polygon
         points="26.78 15.407 25.327 15.972 25.327 14.327 25.528 14.463 25.708 14.178 25.812 14.138 25.95 14.259 26.087 14.031 26.216 13.98 26.405 14.146 26.643 13.814 26.78 13.761 26.78 15.407"
+        className="fill-primary stroke-background"
         style={{
-          fill: "#9e85fb",
-          stroke: "#211c32",
           strokeMiterlimit: 10,
           strokeWidth: "0.06661495224335688px",
           opacity: 0.3,
@@ -572,17 +551,16 @@ const Cargo = icon(
       ></polygon>
       <polygon
         points="26.356 9.321 26.307 9.276 26.411 9.237 26.356 9.321"
-        style={{ fill: "none" }}
+        className="fill-none"
       ></polygon>
       <polygon
         points="25.964 9.485 25.9 9.427 26.03 9.379 25.964 9.485"
-        style={{ fill: "none" }}
+        className="fill-none"
       ></polygon>
       <polygon
         points="25.356 7.993 26.817 7.448 26.794 9.093 26.595 8.955 26.411 9.237 26.307 9.276 26.17 9.152 26.03 9.379 25.9 9.427 25.714 9.259 25.471 9.587 25.333 9.639 25.356 7.993"
+        className="fill-primary stroke-background"
         style={{
-          fill: "#9e85fb",
-          stroke: "#211c32",
           strokeMiterlimit: 10,
           strokeWidth: "0.06661495224335688px",
           opacity: 0.3,
@@ -590,17 +568,16 @@ const Cargo = icon(
       ></polygon>
       <polygon
         points="19.428 24.558 19.478 24.602 19.375 24.642 19.428 24.558"
-        style={{ fill: "none" }}
+        className="fill-none"
       ></polygon>
       <polygon
         points="19.818 24.388 19.883 24.445 19.753 24.495 19.818 24.388"
-        style={{ fill: "none" }}
+        className="fill-none"
       ></polygon>
       <polygon
         points="20.447 25.871 18.993 26.545 18.993 24.791 19.195 24.927 19.375 24.642 19.478 24.602 19.617 24.723 19.753 24.495 19.883 24.445 20.072 24.611 20.31 24.279 20.447 24.226 20.447 25.871"
+        className="fill-primary stroke-background"
         style={{
-          fill: "#9e85fb",
-          stroke: "#211c32",
           strokeMiterlimit: 10,
           strokeWidth: "0.06661495224335688px",
           opacity: 0.3,
@@ -608,17 +585,16 @@ const Cargo = icon(
       ></polygon>
       <polygon
         points="20.023 19.948 19.973 19.903 20.078 19.864 20.023 19.948"
-        style={{ fill: "none" }}
+        className="fill-none"
       ></polygon>
       <polygon
         points="19.631 20.113 19.567 20.055 19.697 20.006 19.631 20.113"
-        style={{ fill: "none" }}
+        className="fill-none"
       ></polygon>
       <polygon
         points="19.023 18.62 20.484 18.076 20.461 19.721 20.262 19.582 20.078 19.864 19.973 19.903 19.837 19.78 19.697 20.006 19.567 20.055 19.38 19.886 19.138 20.215 19 20.266 19.023 18.62"
+        className="fill-primary stroke-background"
         style={{
-          fill: "#9e85fb",
-          stroke: "#211c32",
           strokeMiterlimit: 10,
           strokeWidth: "0.06661495224335688px",
           opacity: 0.3,
@@ -644,54 +620,84 @@ const Cargo = icon(
         width="45.72"
         height="26.28"
         transform="matrix(0, -0.029, 0.022, 0.013, 4.314, 16.786)"
-        xlinkHref="#a"
+        xlinkHref="#a-cargo"
       ></use>
       <use
         width="45.72"
         height="26.28"
         transform="matrix(0, -0.029, 0.022, 0.013, 8.876, 18.632)"
-        xlinkHref="#a"
+        xlinkHref="#a-cargo"
       ></use>
       <use
         width="45.72"
         height="26.28"
         transform="matrix(0, -0.029, 0.022, 0.013, 10.451, 11.138)"
-        xlinkHref="#a"
+        xlinkHref="#a-cargo"
       ></use>
       <use
         width="45.72"
         height="26.28"
         transform="matrix(0, -0.029, 0.022, 0.013, 15.013, 12.984)"
-        xlinkHref="#a"
+        xlinkHref="#a-cargo"
       ></use>
       <use
         width="45.72"
         height="26.28"
         transform="matrix(0, -0.029, 0.02, -0.012, 16.773, 21.54)"
-        xlinkHref="#a"
+        xlinkHref="#a-cargo"
       ></use>
       <use
         width="45.72"
         height="26.28"
         transform="matrix(0, -0.029, 0.02, -0.012, 21.389, 19.694)"
-        xlinkHref="#a"
+        xlinkHref="#a-cargo"
       ></use>
       <use
         width="45.72"
         height="26.28"
         transform="matrix(0, -0.029, 0.02, -0.012, 23.072, 11.167)"
-        xlinkHref="#a"
+        xlinkHref="#a-cargo"
       ></use>
       <use
         width="45.72"
         height="26.28"
         transform="matrix(0, -0.029, 0.02, -0.012, 27.689, 9.321)"
-        xlinkHref="#a"
+        xlinkHref="#a-cargo"
       ></use>
     </g>{" "}
   </>,
 
   { viewBox: "0 0 32 32", title: "Cargo" },
+);
+
+const Supabase = icon(
+  <path d="M58.061.007a5.45 5.45 0 0 0-4.563 2.126L4.137 64.283c-5.823 7.332-.597 18.148 8.763 18.148h50.98l.549 39.864c0 3.63 2.588 5.704 5.704 5.704 1.556 0 3.111-.524 4.148-2.08l49.314-62.201c6.223-7.26 1.037-18.148-8.307-18.148H63.74l-.264-40.045c-.047-3.288-2.66-5.403-5.409-5.518zm10.527 50.748h46.706c2.593 0 4.148 1.042 5.186 3.635 1.037 2.074.518 4.667-.52 6.222l-49.297 62.191h-.529s-.519 0-.519-.518L68.584 50.75z"></path>,
+  { viewBox: "0 0 128 128", title: "Supebase" },
+);
+
+const Auth0 = icon(
+  <>
+    <path d="M358.1 378.8L319.6 260L420.5 186.9H295.7l-38.6-118.7l-.01-.03h124.8l38.6 118.7v-.003l0.03-.02c22.4 68.8-.7 147 -62.4 192zm-201.9 0l-.036 .03L257.13 452.2L358.09 378.84L257.17 305.51ZM93.85 186.85c-23.57 72.57 3.79 149.46 62.36 192l0.01-.036L194.77 260.17L93.89 186.87H218.6L257.15 68.2L257.2 68.2H132.4Z"></path>
+  </>,
+  { viewBox: "0 0 512 512", title: "Auth0" },
+);
+
+const Zod = icon(
+  <>
+    <defs>
+      <path
+        d="M200.420694,0 L53.6308282,0 L0,53.3549074 L121.760272,199.97871 L131.473707,189.079838 L252,53.8556526 L200.420694,0 Z M195.058122,12.5620609 L234.89802,54.1622312 L122.097509,180.72046 L16.9997871,54.1622312 L58.8145625,12.5620609 L195.058122,12.5620609 Z"
+        id="path-1-zod"
+      />
+    </defs>
+    <g transform="translate(2.000000, 1.510645)" fill-rule="nonzero">
+      <polygon points="149.426831 150.874561 96.0134271 150.874561 71.8889656 121.341138 140.252621 121.33896 140.255033 117.149462 179.332589 117.149462" />
+      <polygon points="223.55992 42.3226943 76.1782017 127.413686 56.9521852 103.361957 171.050895 37.4849931 168.955265 33.853745 199.34598 16.3076536" />
+      <polygon points="144.596212 12.5642823 33.9304463 76.4571406 16.7194669 54.9715457 90.8141008 12.1929865" />
+      <use className="fill-primary" href="#path-1-zod" />
+    </g>
+  </>,
+  { viewBox: "0 0 256 203", title: "Zod" },
 );
 
 export const Icon = {
@@ -721,6 +727,9 @@ export const Icon = {
   CSS,
   Maps: GoogleMaps,
   Cargo,
+  Supabase,
+  Auth0,
+  Zod,
 } as const;
 
 export type Icon = RecordValues<typeof Icon>;
