@@ -82,3 +82,53 @@ export const Python = icon(
   <path d="M49.33 62h29.159C86.606 62 93 55.132 93 46.981V19.183c0-7.912-6.632-13.856-14.555-15.176-5.014-.835-10.195-1.215-15.187-1.191-4.99.023-9.612.448-13.805 1.191C37.098 6.188 35 10.758 35 19.183V30h29v4H23.776c-8.484 0-15.914 5.108-18.237 14.811-2.681 11.12-2.8 17.919 0 29.53C7.614 86.983 12.569 93 21.054 93H31V79.952C31 70.315 39.428 62 49.33 62zm-1.838-39.11c-3.026 0-5.478-2.479-5.478-5.545 0-3.079 2.451-5.581 5.478-5.581 3.015 0 5.479 2.502 5.479 5.581-.001 3.066-2.465 5.545-5.479 5.545zm74.789 25.921C120.183 40.363 116.178 34 107.682 34H97v12.981C97 57.031 88.206 65 78.489 65H49.33C41.342 65 35 72.326 35 80.326v27.8c0 7.91 6.745 12.564 14.462 14.834 9.242 2.717 17.994 3.208 29.051 0C85.862 120.831 93 116.549 93 108.126V97H64v-4h43.682c8.484 0 11.647-5.776 14.599-14.66 3.047-9.145 2.916-17.799 0-29.529zm-41.955 55.606c3.027 0 5.479 2.479 5.479 5.547 0 3.076-2.451 5.579-5.479 5.579-3.015 0-5.478-2.502-5.478-5.579 0-3.068 2.463-5.547 5.478-5.547z"></path>,
   { viewBox: "0 0 128 128", title: "Python" },
 );
+
+export const ArrowAngularTopRight = icon(
+  <path d="M18.9203 6.0505C18.7834 5.86991 18.5665 5.75324 18.3223 5.75315L9.32695 5.75C8.91265 5.74985 8.57667 6.08545 8.57653 6.49958C8.57638 6.9137 8.91212 7.24954 9.32643 7.24968L16.5172 7.2522L5.79779 17.9716C5.5049 18.2645 5.5049 18.7394 5.79779 19.0323C6.09069 19.3252 6.56556 19.3252 6.85845 19.0323L17.5725 8.31828L17.5748 15.4945C17.5749 15.9086 17.9109 16.2442 18.3252 16.2441C18.7395 16.244 19.0752 15.9081 19.0751 15.494L19.0722 6.56074C19.0853 6.38214 19.0346 6.19976 18.9203 6.0505Z" />,
+);
+
+export function Icon({ icon, ...props }: { icon: Icons } & Props) {
+  switch (icon) {
+    case Icons.Email:
+      return <Envelope {...props} />;
+    case Icons.Linkedin:
+      return <Linkedin {...props} />;
+    case Icons.Github:
+      return <Github {...props} />;
+    case Icons.Location:
+      return <MapMarker {...props} />;
+    case Icons.TypeScript:
+      return <TypeScript {...props} />;
+    case Icons.NextJs:
+      return <NextJs {...props} />;
+    case Icons.TailwindCss:
+      return <TailwindCss {...props} />;
+    case Icons.Angular:
+      return <Angular {...props} />;
+    case Icons.Rust:
+      return <Rust {...props} />;
+    case Icons.Python:
+      return <Python {...props} />;
+    case Icons.WebsiteLink:
+      return <ArrowAngularTopRight {...props} />;
+  }
+}
+
+export const Icons = {
+  Email: "Envelope",
+  Linkedin: "Linkedin",
+  Github: "Github",
+  Location: "MapMarker",
+  TypeScript: "TypeScript",
+  NextJs: "NextJs",
+  TailwindCss: "TailwindCss",
+  Angular: "Angular",
+  Rust: "Rust",
+  Python: "Python",
+  WebsiteLink: "ArrowAngularTopRight",
+} as const;
+
+export type Icons = RecordValues<typeof Icons>;
+
+export type RecordValues<T extends Record<string | number | symbol, unknown>> =
+  T[keyof T];

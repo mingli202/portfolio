@@ -1,13 +1,14 @@
+import type { Icon, IconName } from "./lib/icons";
+
 export type ProjectItem = {
   title: string;
   subtitle: string;
-  imageUrl: string;
+  videoUrl?: string;
   description: string;
   startDate: string;
-  endDate: string;
-  location: string;
-  skills: string[];
-  additionalInfo: string[];
+  endDate?: string;
+  skills: Skill[];
+  links: Link[];
 };
 
 export type ExperienceListItem = {
@@ -16,8 +17,18 @@ export type ExperienceListItem = {
   imageUrl: string;
   description: string;
   startDate: string;
-  endDate: string;
+  endDate?: string;
   location: string;
-  skills: string[];
+  skills: Skill[];
   additionalInfo: string[];
+};
+
+export type Skill = {
+  name: string;
+  imageUrl?: string;
+};
+
+export type Link = {
+  type: Icon;
+  url: string;
 };
