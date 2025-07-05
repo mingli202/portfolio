@@ -1,4 +1,4 @@
-import type { Icon, IconName } from "./lib/icons";
+import { Icon } from "./lib/icons";
 
 export type ProjectItem = {
   title: string;
