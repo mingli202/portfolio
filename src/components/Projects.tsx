@@ -7,25 +7,40 @@ export default function Projects() {
       title: "Mathracer",
       subtitle: "Multiplayer math game website",
       description:
-        "Exciting mental math competition to show off your math skills to your friends.",
+        "Made to compete with my friends and show that I'm better at math (most normal Asian behavior).",
       startDate: "April 2025",
-      skills: ["NextJs", "TailwindCss", "TypeScript", "C#", ".NET"],
+      skills: ["NextJs", "TailwindCss", "TypeScript", "C#", ".NET", "Azure"],
       links: [
-        {
-          type: Icon.WebsiteLink,
-          url: "https://mathracer-phi.vercel.app/",
-        },
+        // {
+        //   type: Icon.WebsiteLink,
+        //   url: "https://mathracer-phi.vercel.app/",
+        // },
         {
           type: Icon.Github,
           url: "https://github.com/mingli202/mathracer",
         },
       ],
     },
+
+    {
+      title: "League of Studies",
+      subtitle: "Competitive studying platform.",
+      description: "JacHacks Hackathon project.",
+      startDate: "April 2025",
+      skills: ["NextJs", "TailwindCss", "Supabase", "Auth0", "Zod"],
+      links: [
+        {
+          type: Icon.Github,
+          url: "https://github.com/mingli202/LeagueOfStudies",
+        },
+      ],
+    },
+
     {
       title: "Mito Sushi Weekly Planner",
-      subtitle: "Scehdule planner based on store locations",
+      subtitle: "Schedule planner based on store locations",
       description:
-        "Webapp for planning Mito Sushi schedules based on store locations.",
+        "Webapp for planning Mito Sushi schedules based on store locations because my mom wanted one.",
       startDate: "March 2025",
       skills: [
         "Python",
@@ -44,6 +59,27 @@ export default function Projects() {
         },
       ],
     },
+
+    {
+      title: "Typing Rust",
+      subtitle: "Monkeytype, but in Rust and it's a cli tool.",
+      description:
+        "Needed a project to learn Rust, thus I made my favorite website in my favorite language and suffered a bit.",
+      startDate: "Nov 2024",
+      endDate: "May 2025",
+      skills: ["Rust"],
+      links: [
+        {
+          type: Icon.Cargo,
+          url: "https://crates.io/crates/typing_test",
+        },
+        {
+          type: Icon.Github,
+          url: "https://github.com/mingli202/typing-rust",
+        },
+      ],
+    },
+
     {
       title: "Dream Builder",
       subtitle: "Webapp for planning John Abbott College schedules",
