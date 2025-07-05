@@ -1,4 +1,7 @@
-import { Icon } from "./lib/icons";
+import { Icon, type IconName } from "./lib/icons";
+
+export type RecordValues<T extends Record<string | number | symbol, unknown>> =
+  T[keyof T];
 
 export type ProjectItem = {
   title: string;
@@ -7,7 +10,7 @@ export type ProjectItem = {
   description: string;
   startDate: string;
   endDate?: string;
-  skills: Skill[];
+  skills: IconName[];
   links: Link[];
 };
 
@@ -25,7 +28,7 @@ export type ExperienceListItem = {
 
 export type Skill = {
   name: string;
-  imageUrl?: string;
+  icon: Icon;
 };
 
 export type Link = {
