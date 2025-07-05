@@ -97,6 +97,10 @@ export const Firebase = icon(
   { viewBox: "0 0 128 128" },
 );
 
+export const Vercel = icon(<path d="M64.002 8.576 128 119.424H0Zm0 0"></path>, {
+  viewBox: "0 0 128 128",
+});
+
 export const Icon = {
   Email: Envelope,
   Linkedin,
@@ -112,6 +116,7 @@ export const Icon = {
   WebsiteLink: ArrowAngularTopRight,
   Docker,
   Firebase,
+  Vercel,
 } as const;
 
 export type Icon = RecordValues<typeof Icon>;
