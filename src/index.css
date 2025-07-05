@@ -9,3 +9,7 @@
   --color-accent: #5c34d1;
   --font-nunito: "Nunito", sans-serif;
 }
+
+@utility wtf {
+  outline: 1px solid red;
+}
