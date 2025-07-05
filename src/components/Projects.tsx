@@ -41,7 +41,7 @@ export default function Projects() {
             key={title + index}
           >
             <div className="bg-secondary aspect-video w-full rounded-[calc(2.25rem-1rem)]"></div>
-            <div className="flex w-full flex-col gap-4 px-3 pb-3">
+            <div className="flex w-full flex-col gap-3.5 px-3 pb-3">
               <div>
                 <div className="flex items-center gap-1">
                   <h2 className="font-bold">{title}</h2>
@@ -63,7 +63,7 @@ export default function Projects() {
               <p className="text-text-secondary">
                 {startDate} {endDate ? `- ${endDate}` : null}
               </p>
-              <div className="flex w-full flex-wrap gap-x-4 gap-y-2">
+              <div className="mt-2 flex w-full flex-wrap gap-x-4 gap-y-2">
                 {skills.map((iconName, index) => (
                   <div
                     key={iconName + index}
