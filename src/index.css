@@ -8,6 +8,8 @@
   --color-secondary: #4a3c80;
   --color-accent: #5c34d1;
   --font-nunito: "Nunito", sans-serif;
+  --font-weight-bold: 600;
+  --font-weight-normal: 300;
 }
 
 @utility wtf {
