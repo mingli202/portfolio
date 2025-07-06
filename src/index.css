@@ -1,15 +1,21 @@
 @import "tailwindcss";
 
 @theme {
-  --color-backtground: #211c32;
+  --color-background: #211c32;
   --color-text: #cdcad6;
+  --color-text-secondary: #cdcad699;
   --color-primary: #9e85fb;
   --color-secondary: #4a3c80;
   --color-accent: #5c34d1;
+  --font-nunito: "Nunito", sans-serif;
+  --font-weight-bold: 600;
+  --font-weight-normal: 300;
 }
 
-body {
-  background-color: var(--color-backtground);
-  color: var(--color-text);
-  font-family: "Nunito", sans-serif;
+@utility wtf {
+  outline: 1px solid red;
 }
+
+/* * { */
+/*   outline: 1px solid red; */
+/* } */
