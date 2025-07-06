@@ -5,16 +5,12 @@ export default function Projects() {
   const projects: ProjectItem[] = [
     {
       title: "Mathracer",
-      subtitle: "Multiplayer math game website",
+      subtitle: "Multiplayer math game website.",
       description:
         "Made to compete with my friends and show that I'm better at math (most normal Asian behavior).",
       startDate: "April 2025",
       skills: ["NextJs", "TailwindCss", "TypeScript", "C#", ".NET", "Azure"],
       links: [
-        // {
-        //   type: Icon.WebsiteLink,
-        //   url: "https://mathracer-phi.vercel.app/",
-        // },
         {
           type: Icon.Github,
           url: "https://github.com/mingli202/mathracer",
@@ -25,7 +21,7 @@ export default function Projects() {
 
     {
       title: "League of Studies",
-      subtitle: "Competitive studying platform.",
+      subtitle: "Competitive studying platform, hackathon project.",
       description: "JacHacks Hackathon project.",
       startDate: "April 2025",
       skills: ["NextJs", "TailwindCss", "Supabase", "Auth0", "Zod"],
@@ -39,7 +35,7 @@ export default function Projects() {
 
     {
       title: "Mito Sushi Weekly Planner",
-      subtitle: "Schedule planner based on store locations",
+      subtitle: "Schedule planner based on store locations.",
       description:
         "Webapp for planning Mito Sushi schedules based on store locations because my mom wanted one.",
       startDate: "March 2025",
@@ -56,7 +52,7 @@ export default function Projects() {
       links: [
         {
           type: Icon.Github,
-          url: "https://github.com/mingli202/mathracer",
+          url: "https://github.com/mingli202/mito-weekly-planner",
         },
       ],
     },
@@ -88,7 +84,7 @@ export default function Projects() {
         "Handwritten digit classification using MNIST dataset from scratch.",
       description:
         "Multi-layer neural network made from scratch using only Numpy and math.",
-      startDate: "Oct 2021",
+      startDate: "Oct 2024",
       skills: ["Python", "Numpy"],
       links: [
         {
@@ -97,6 +93,20 @@ export default function Projects() {
         },
       ],
       videoUrl: "https://www.youtube.com/embed/ey127qKYm4g?si=ztg1kMlOa-q2vrIo",
+    },
+
+    {
+      title: "CTetris",
+      subtitle: "Tetris in the terminal using C and Ncurses",
+      description: "Ncurses go brrrrr",
+      startDate: "July 2024",
+      skills: ["C"],
+      links: [
+        {
+          type: Icon.Github,
+          url: "https://github.com/mingli202/ctetris",
+        },
+      ],
     },
 
     {
@@ -125,6 +135,7 @@ export default function Projects() {
           url: "https://github.com/mingli202/next-schedule-maker",
         },
       ],
+      videoUrl: "https://www.youtube.com/embed/xLdIWgsmnRc?si=_zaNGwVsEl_pA43q",
     },
   ];
 
@@ -149,7 +160,11 @@ export default function Projects() {
                   referrerPolicy="strict-origin-when-cross-origin"
                   allowFullScreen
                 ></iframe>
-              ) : null}
+              ) : (
+                <div className="bg-secondary flex h-full w-full items-center justify-center">
+                  Rip demo :(
+                </div>
+              )}
             </div>
             <div className="flex w-full flex-col gap-3.5 px-3 pb-3">
               <div>
