@@ -107,7 +107,7 @@ export default function Projects() {
           url: "https://github.com/mingli202/ctetris",
         },
       ],
-      videoUrl: "https://www.youtube.com/embed/W3kLgcy0-1E?si=CAtGvwJIcZjMmZ7D",
+      videoUrl: "https://www.youtube.com/embed/S92Dl8k9gFw?si=-9L5IHC9xd2j_SAZ",
     },
 
     {
