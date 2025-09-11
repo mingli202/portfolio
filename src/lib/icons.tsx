@@ -14,7 +14,11 @@ function icon(
         <svg
           viewBox="0 0 24 24"
           xmlns="http://www.w3.org/2000/svg"
-          className={cn("fill-text h-7 w-7", initialClassName, className)}
+          className={cn(
+            "fill-text h-5 w-5 md:h-7 md:w-7",
+            initialClassName,
+            className,
+          )}
           {...initialProps}
           {...props}
         >

@@ -14,8 +14,8 @@ import {
 
 export default function Me() {
   return (
-    <section className="flex w-full flex-col items-center gap-12 py-24">
-      <div className="flex gap-4">
+    <section className="flex w-full flex-col items-center gap-12 py-12 md:py-24">
+      <div className="flex items-center gap-4 max-md:flex-col">
         <div className="h-32 w-32 shrink-0 overflow-hidden rounded-full">
           <img
             src="me.jpg"
@@ -25,7 +25,7 @@ export default function Me() {
         </div>
         <div className="flex basis-full flex-col justify-center gap-1">
           <div className="flex items-center gap-2">
-            <h1 className="mr-1 text-4xl font-bold tracking-tight">
+            <h1 className="mr-1 text-2xl font-bold tracking-tight md:text-4xl">
               Ming Li Liu
             </h1>
             <a
@@ -33,14 +33,14 @@ export default function Me() {
               target="_blank"
               rel="noreferrer"
             >
-              <Github className="fill-text-secondary h-9 w-9" />
+              <Github className="fill-text-secondary h-6 w-6 md:h-9 md:w-9" />
             </a>
             <a
               href="https://www.linkedin.com/in/ming-li-liu"
               target="_blank"
               rel="noreferrer"
             >
-              <Linkedin className="fill-text-secondary h-9 w-9" />
+              <Linkedin className="fill-text-secondary h-6 w-6 md:h-9 md:w-9" />
             </a>
           </div>
           <div className="text-text-secondary flex items-center gap-2">
