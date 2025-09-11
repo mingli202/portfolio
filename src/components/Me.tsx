@@ -14,7 +14,7 @@ import {
 
 export default function Me() {
   return (
-    <section className="flex w-full flex-col items-center gap-12 py-12 md:py-24">
+    <section className="flex w-full flex-col items-center gap-10 py-12 md:gap-12 md:py-24">
       <div className="flex items-center gap-4 max-md:flex-col">
         <div className="h-32 w-32 shrink-0 overflow-hidden rounded-full">
           <img
@@ -55,7 +55,7 @@ export default function Me() {
       </div>
       <div className="flex flex-col items-center gap-4">
         <p>Average Rust enthusiast and Neovim enjoyer.</p>
-        <div className="flex justify-center gap-4">
+        <div className="flex flex-wrap justify-center gap-4">
           <Rust className="fill-text-secondary" />
           <Python className="fill-text-secondary" />
           <TypeScript className="fill-text-secondary" />
