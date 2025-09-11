@@ -44,7 +44,7 @@ function App() {
   ];
 
   return (
-    <div className="flex w-[min(85%,45rem)] flex-col overflow-hidden text-xl font-normal">
+    <div className="flex w-[min(90%,45rem)] flex-col overflow-hidden text-base font-normal md:text-xl">
       <Me />
       <SectionBreakLine sectionName="Work" />
       <ExperienceList items={workExperience} />
