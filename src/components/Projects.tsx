@@ -107,7 +107,7 @@ export default function Projects() {
           url: "https://github.com/mingli202/ctetris",
         },
       ],
-      videoUrl: "https://www.youtube.com/embed/T_V7t7m_B74?si=6BQB-ZrstC7h0u8j",
+      videoUrl: "https://www.youtube.com/embed/S92Dl8k9gFw?si=-9L5IHC9xd2j_SAZ",
     },
 
     {
@@ -141,17 +141,17 @@ export default function Projects() {
   ];
 
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div className="flex flex-col gap-3 p-3 md:gap-4 md:p-4">
       {projects.map(
         (
           { title, subtitle, startDate, endDate, skills, links, videoUrl },
           index,
         ) => (
           <div
-            className="border-secondary flex flex-col gap-4 rounded-[2.25rem] border border-solid p-4"
+            className="border-secondary flex flex-col gap-3 rounded-[calc(1rem+0.75rem)] border border-solid p-3 md:gap-4 md:rounded-[2rem] md:p-4"
             key={title + index}
           >
-            <div className="aspect-video w-full overflow-hidden rounded-[calc(2.25rem-1rem)]">
+            <div className="aspect-video w-full overflow-hidden rounded-2xl">
               {videoUrl ? (
                 <iframe
                   src={videoUrl}
@@ -167,7 +167,7 @@ export default function Projects() {
                 </div>
               )}
             </div>
-            <div className="flex w-full flex-col gap-3.5 px-3 pb-3">
+            <div className="flex w-full flex-col gap-2 px-2 pb-2 md:gap-3.5 md:px-3 md:pb-3">
               <div>
                 <div className="flex items-center gap-1">
                   <h2 className="font-bold">{title}</h2>
@@ -197,9 +197,9 @@ export default function Projects() {
                   >
                     {Icon[iconName]({
                       className:
-                        "fill-primary h-[calc(2rem-0.375rem*2)] w-[calc(2rem-0.375rem*2)]",
+                        "fill-primary h-[calc(2rem-0.375rem*2)] w-[calc(2rem-0.375rem*2)] md:h-[calc(2rem-0.375rem*2)] md:w-[calc(2rem-0.375rem*2)]",
                     })}
-                    <p className="text-primary text-base leading-5.5 font-light">
+                    <p className="text-primary text-sm leading-5.5 font-light md:text-base">
                       {iconName}
                     </p>
                   </div>

@@ -4,7 +4,7 @@ type Props = {
 
 export default function SectionBreakLine({ sectionName }: Props) {
   return (
-    <div className="flex items-center gap-4 py-4">
+    <div className="flex items-center gap-4 py-2 md:py-4">
       <div className="bg-primary h-0.5 w-full rounded-full" />
       <h2 className="text-primary">{sectionName}</h2>
       <div className="bg-primary h-0.5 w-full rounded-full" />
