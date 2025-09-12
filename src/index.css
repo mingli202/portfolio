@@ -1,15 +1,27 @@
 @import "tailwindcss";
 
-@theme {
-  --color-background: #211c32;
-  --color-text: #cdcad6;
-  --color-text-secondary: #cdcad699;
-  --color-primary: #9e85fb;
-  --color-secondary: #4a3c80;
-  --color-accent: #5c34d1;
+:root {
+  --background-color: #211c32;
+  --text-color: #cdcad6;
+  --text-color-secondary: #cdcad699;
+  --primary-color: #9e85fb;
+  --secondary-color: #4a3c80;
+  --accent-color: #5c34d1;
   --font-nunito: "Nunito", sans-serif;
   --font-weight-bold: 600;
   --font-weight-normal: 300;
+}
+
+@theme {
+  --color-background: var(--background-color);
+  --color-text: var(--text-color);
+  --color-text-secondary: var(--text-color-secondary);
+  --color-primary: var(--primary-color);
+  --color-secondary: var(--secondary-color);
+  --color-accent: var(--accent-color);
+  --font-nunito: var(--font-nunito);
+  --font-weight-bold: var(--font-weight-bold);
+  --font-weight-normal: var(--font-weight-normal);
 }
 
 @utility wtf {
