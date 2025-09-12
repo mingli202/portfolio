@@ -12,11 +12,15 @@ export default function Projects() {
       skills: ["NextJs", "TailwindCss", "TypeScript", "C#", ".NET", "Azure"],
       links: [
         {
+          type: Icon.WebsiteLink,
+          url: "https://mathracer-five.vercel.app/",
+        },
+        {
           type: Icon.Github,
           url: "https://github.com/mingli202/mathracer",
         },
       ],
-      videoUrl: "https://www.youtube.com/embed/xfg4ZZ54hCs?si=tOcLgCvo1jtXzXdq",
+      videoUrl: "https://www.youtube.com/embed/qrN3RTZXTqg?si=UNkx6PChP8d7_TIp",
     },
 
     {
@@ -26,6 +30,7 @@ export default function Projects() {
       startDate: "April 2025",
       skills: ["NextJs", "TailwindCss", "Supabase", "Auth0", "Zod"],
       links: [
+        { type: Icon.WebsiteLink, url: "https://www.ihatestudying.study" },
         {
           type: Icon.Github,
           url: "https://github.com/mingli202/LeagueOfStudies",
