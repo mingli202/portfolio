@@ -9,7 +9,15 @@ export default function Projects() {
       description:
         "Made to compete with my friends and show that I'm better at math (most normal Asian behavior).",
       startDate: "April 2025",
-      skills: ["NextJs", "TailwindCss", "TypeScript", "C#", ".NET", "Azure"],
+      skills: [
+        "NextJs",
+        "TailwindCss",
+        "TypeScript",
+        "C#",
+        ".NET",
+        "GCP",
+        "Docker",
+      ],
       links: [
         {
           type: Icon.WebsiteLink,
@@ -21,21 +29,6 @@ export default function Projects() {
         },
       ],
       videoUrl: "https://www.youtube.com/embed/qrN3RTZXTqg?si=UNkx6PChP8d7_TIp",
-    },
-
-    {
-      title: "League of Studies",
-      subtitle: "Competitive studying platform, hackathon project.",
-      description: "JacHacks Hackathon project.",
-      startDate: "April 2025",
-      skills: ["NextJs", "TailwindCss", "Supabase", "Auth0", "Zod"],
-      links: [
-        { type: Icon.WebsiteLink, url: "https://www.ihatestudying.study" },
-        {
-          type: Icon.Github,
-          url: "https://github.com/mingli202/LeagueOfStudies",
-        },
-      ],
     },
 
     {
@@ -51,15 +44,21 @@ export default function Projects() {
         "Htmx",
         "JavaScript",
         "CSS",
+        "GCP",
         "Maps",
         "Docker",
       ],
       links: [
         {
+          type: Icon.WebsiteLink,
+          url: "https://mito-weekly-planner-ypdwumdcaa-uc.a.run.app",
+        },
+        {
           type: Icon.Github,
           url: "https://github.com/mingli202/mito-weekly-planner",
         },
       ],
+      videoUrl: "https://www.youtube.com/embed/ooK7YwW7N4s?si=oWzTOi_xMouWbfSh",
     },
 
     {
