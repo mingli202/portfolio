@@ -17,6 +17,8 @@
     "@theatre/r3f": "^0.5.1",
     "@theatre/studio": "^0.5.1",
     "@tresjs/post-processing": "^2.4.0",
+    "@vercel/analytics": "^1.5.0",
+    "@vercel/speed-insights": "^1.2.0",
     "clsx": "^2.1.1",
     "ogl": "^1.0.11",
     "react": "^19.1.0",
