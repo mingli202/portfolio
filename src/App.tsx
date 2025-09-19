@@ -2,6 +2,7 @@ import ExperienceList from "./components/ExperienceList";
 import Me from "./components/Me";
 import Projects from "./components/Projects";
 import SectionBreakLine from "./components/SectionBreakLine";
+import { projects } from "./data/projects";
 import type { ExperienceListItem } from "./types";
 
 function App() {
@@ -46,11 +47,13 @@ function App() {
   return (
     <div className="flex w-[min(90%,45rem)] flex-col overflow-hidden text-base font-normal md:text-xl">
       <Me />
-      <SectionBreakLine sectionName="Work" />
+      <SectionBreakLine sectionName={`Work (${workExperience.length})`} />
       <ExperienceList items={workExperience} />
-      <SectionBreakLine sectionName="Education" />
+      <SectionBreakLine
+        sectionName={`Education (${schoolExperience.length})`}
+      />
       <ExperienceList items={schoolExperience} />
-      <SectionBreakLine sectionName="Projects" />
+      <SectionBreakLine sectionName={`Projects (${projects.length})`} />
       <Projects />
     </div>
   );
