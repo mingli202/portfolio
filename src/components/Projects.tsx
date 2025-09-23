@@ -3,7 +3,7 @@ import { projects } from "../data/projects";
 
 export default function Projects() {
   return (
-    <div className="flex flex-col gap-3 p-3 md:gap-4 md:p-4">
+    <div className="flex flex-col gap-3 p-2 md:gap-4 md:p-4">
       {projects.map(
         (
           { title, subtitle, startDate, endDate, skills, links, videoUrl },
