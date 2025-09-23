@@ -28,6 +28,7 @@
   outline: 1px solid red;
 }
 
-/* * { */
-/*   outline: 1px solid red; */
-/* } */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--text-color-secondary) var(--background-color);
+}
