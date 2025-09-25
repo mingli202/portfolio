@@ -31,9 +31,9 @@ export default function Projects() {
             </div>
             <div className="flex w-full flex-col gap-2 px-2 pb-2 md:gap-3.5 md:px-3 md:pb-3">
               <div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-2">
                   <h2 className="font-bold">{title}</h2>
-                  <div className="flex gap-1">
+                  <div className="flex gap-2">
                     {links.map(({ type, url }) => (
                       <a
                         key={url + title}
@@ -41,7 +41,9 @@ export default function Projects() {
                         target="_blank"
                         rel="noreferrer"
                       >
-                        {type({ className: "fill-primary" })}
+                        {type({
+                          className: "fill-text-secondary md:h-6 md:w-6",
+                        })}
                       </a>
                     ))}
                   </div>
