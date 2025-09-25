@@ -1,5 +1,5 @@
-import { Icon } from "../lib/icons";
 import { projects } from "../data/projects";
+import { SkillIcon, SkillIconList } from "../lib/SkillIcon";
 
 export default function Projects() {
   return (
@@ -51,22 +51,7 @@ export default function Projects() {
               <p className="text-text-secondary">
                 {startDate} {endDate ? `- ${endDate}` : null}
               </p>
-              <div className="mt-2 flex w-full flex-wrap gap-2">
-                {skills.map((iconName, index) => (
-                  <div
-                    key={iconName + index}
-                    className="bg-secondary flex h-8 gap-1.5 rounded-lg p-1.5"
-                  >
-                    {Icon[iconName]({
-                      className:
-                        "fill-primary h-[calc(2rem-0.375rem*2)] w-[calc(2rem-0.375rem*2)] md:h-[calc(2rem-0.375rem*2)] md:w-[calc(2rem-0.375rem*2)]",
-                    })}
-                    <p className="text-primary text-sm leading-5.5 font-light md:text-base">
-                      {iconName}
-                    </p>
-                  </div>
-                ))}
-              </div>
+              <SkillIconList skills={skills} />
             </div>
           </div>
         ),
