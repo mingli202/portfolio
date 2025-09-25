@@ -127,7 +127,6 @@ export const projects: ProjectItem[] = [
       "Docker",
       "Firebase",
       "Python",
-      "Vercel",
     ],
     links: [
       {

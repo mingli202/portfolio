@@ -1,9 +1,16 @@
-import { useMemo, useRef, useState, type JSX, type SVGProps } from "react";
+import {
+  createContext,
+  use,
+  useRef,
+  useState,
+  type JSX,
+  type RefObject,
+  type SVGProps,
+} from "react";
 import cn from "./cn";
 import type { RecordValues } from "../types";
 import {
   motion,
-  useAnimate,
   useAnimationFrame,
   useSpring,
   type SVGMotionProps,
@@ -41,44 +48,8 @@ function icon(
 }
 
 function Svg({ className, ...props }: Props) {
-  const [count, setCount] = useState(0);
-
-  const ref = useRef<HTMLDivElement>(null!);
-  const angle = useRef(Math.random() * 360);
-
-  const velocity = 1;
-
-  const startTime = useRef<number>(null);
-
-  useAnimationFrame((time) => {
-    if (count < 1) return;
-    if (!startTime.current) startTime.current = time;
-
-    const t = time - startTime.current;
-
-    const dx = velocity * Math.cos(angle.current) * t;
-    const dy = velocity * Math.sin(angle.current) * t;
-
-    ref.current.style.transform = `translate(${dx}px, ${dy}px)`;
-
-    const { x, y } = ref.current.getBoundingClientRect();
-
-    if (x < 0 || y < 0 || x > window.innerWidth || y > window.innerHeight) {
-      ref.current.style.transform = "";
-      setCount(0);
-      startTime.current = null;
-      angle.current = Math.random() * 360;
-    }
-  });
-
   return (
-    <motion.div
-      title={props.title}
-      onPointerEnter={() => {
-        setCount((c) => c + 1);
-      }}
-      ref={ref}
-    >
+    <motion.div title={props.title}>
       <motion.svg
         viewBox="0 0 24 24"
         xmlns="http://www.w3.org/2000/svg"
