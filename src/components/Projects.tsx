@@ -1,5 +1,5 @@
 import { projects } from "../data/projects";
-import { SkillIcon, SkillIconList } from "../lib/SkillIcon";
+import { SkillIconList } from "../lib/SkillIcon";
 
 export default function Projects() {
   return (

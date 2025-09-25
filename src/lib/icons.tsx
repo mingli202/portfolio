@@ -1,7 +1,7 @@
 import type { JSX, ReactNode, SVGProps } from "react";
 import cn from "./cn";
 import type { RecordValues } from "../types";
-import { easeOut, motion, useSpring, type SVGMotionProps } from "motion/react";
+import { motion, useSpring, type SVGMotionProps } from "motion/react";
 
 type Props = SVGProps<SVGSVGElement> & {
   title?: string;
