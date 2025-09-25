@@ -38,6 +38,9 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      motion:
+        specifier: ^12.23.21
+        version: 12.23.21(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       ogl:
         specifier: ^1.0.11
         version: 1.0.11
@@ -1222,6 +1225,20 @@ packages:
   flatted@3.3.3:
     resolution: {integrity: sha512-GX+ysw4PBCz0PzosHDepZGANEuFCMLrnRTiEy9McGjmkCQYwRq4A/X786G/fjM/+OjsWSU1ZrY5qyARZmO/uwg==}
 
+  framer-motion@12.23.21:
+    resolution: {integrity: sha512-UWDtzzPdRA3UpSNGril5HjUtPF1Uo/BCt5VKG/YQ8tVpSkAZ22+q8o+hYO0C1uDAZuotQjcfzsTsDtQxD46E/Q==}
+    peerDependencies:
+      '@emotion/is-prop-valid': '*'
+      react: ^18.0.0 || ^19.0.0
+      react-dom: ^18.0.0 || ^19.0.0
+    peerDependenciesMeta:
+      '@emotion/is-prop-valid':
+        optional: true
+      react:
+        optional: true
+      react-dom:
+        optional: true
+
   fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
@@ -1455,6 +1472,26 @@ packages:
     resolution: {integrity: sha512-+NsyUUAZDmo6YVHzL/stxSu3t9YS1iljliy3BSDrXJ/dkn1KYdmtZODGGjLcc9XLgVVpH4KshHB8XmZgMhaBXg==}
     engines: {node: '>=10'}
     hasBin: true
+
+  motion-dom@12.23.21:
+    resolution: {integrity: sha512-5xDXx/AbhrfgsQmSE7YESMn4Dpo6x5/DTZ4Iyy4xqDvVHWvFVoV+V2Ri2S/ksx+D40wrZ7gPYiMWshkdoqNgNQ==}
+
+  motion-utils@12.23.6:
+    resolution: {integrity: sha512-eAWoPgr4eFEOFfg2WjIsMoqJTW6Z8MTUCgn/GZ3VRpClWBdnbjryiA3ZSNLyxCTmCQx4RmYX6jX1iWHbenUPNQ==}
+
+  motion@12.23.21:
+    resolution: {integrity: sha512-FzgbQNeZXHWXXEKmpfenYvF5wdc5i7lT/Kwr3xV4dmGVsU7Y30QcgCZsWHAlE/4McAWhNGbOAhgdiabXZ1EjnA==}
+    peerDependencies:
+      '@emotion/is-prop-valid': '*'
+      react: ^18.0.0 || ^19.0.0
+      react-dom: ^18.0.0 || ^19.0.0
+    peerDependenciesMeta:
+      '@emotion/is-prop-valid':
+        optional: true
+      react:
+        optional: true
+      react-dom:
+        optional: true
 
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
@@ -1750,6 +1787,9 @@ packages:
 
   ts-pattern@5.8.0:
     resolution: {integrity: sha512-kIjN2qmWiHnhgr5DAkAafF9fwb0T5OhMVSWrm8XEdTFnX6+wfXwYOFjeF86UZ54vduqiR7BfqScFmXSzSaH8oA==}
+
+  tslib@2.8.1:
+    resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
 
   tunnel-rat@0.1.2:
     resolution: {integrity: sha512-lR5VHmkPhzdhrM092lI2nACsLO4QubF0/yoOhzX7c+wIpbN1GjHNzCc91QlpxBi+cnx8vVJ+Ur6vL5cEoQPFpQ==}
@@ -2979,6 +3019,15 @@ snapshots:
 
   flatted@3.3.3: {}
 
+  framer-motion@12.23.21(react-dom@19.1.1(react@19.1.1))(react@19.1.1):
+    dependencies:
+      motion-dom: 12.23.21
+      motion-utils: 12.23.6
+      tslib: 2.8.1
+    optionalDependencies:
+      react: 19.1.1
+      react-dom: 19.1.1(react@19.1.1)
+
   fsevents@2.3.3:
     optional: true
 
@@ -3163,6 +3212,20 @@ snapshots:
       minipass: 7.1.2
 
   mkdirp@3.0.1: {}
+
+  motion-dom@12.23.21:
+    dependencies:
+      motion-utils: 12.23.6
+
+  motion-utils@12.23.6: {}
+
+  motion@12.23.21(react-dom@19.1.1(react@19.1.1))(react@19.1.1):
+    dependencies:
+      framer-motion: 12.23.21(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      tslib: 2.8.1
+    optionalDependencies:
+      react: 19.1.1
+      react-dom: 19.1.1(react@19.1.1)
 
   ms@2.1.3: {}
 
@@ -3384,6 +3447,8 @@ snapshots:
       typescript: 5.8.3
 
   ts-pattern@5.8.0: {}
+
+  tslib@2.8.1: {}
 
   tunnel-rat@0.1.2(@types/react@19.1.13)(react@19.1.1):
     dependencies:

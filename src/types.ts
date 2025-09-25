@@ -18,11 +18,10 @@ export type ExperienceListItem = {
   title: string;
   subtitle: string;
   imageUrl: string;
-  description: string;
   startDate: string;
   endDate?: string;
   location: string;
-  skills: Skill[];
+  skills: IconName[];
   additionalInfo: string[];
 };
 

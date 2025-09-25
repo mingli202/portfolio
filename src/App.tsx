@@ -6,7 +6,7 @@ import { projects, schoolExperience, workExperience } from "./data";
 
 function App() {
   return (
-    <div className="flex w-[min(90%,45rem)] flex-col overflow-hidden text-base font-normal md:text-xl">
+    <div className="flex w-[min(90%,45rem)] flex-col text-base font-normal md:text-xl">
       <Me />
       <SectionBreakLine sectionName={`Work (${workExperience.length})`} />
       <ExperienceList items={workExperience} />
