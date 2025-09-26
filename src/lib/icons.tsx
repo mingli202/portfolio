@@ -5,6 +5,7 @@ import {
   motion,
   useSpring,
   type SVGMotionProps,
+  type Transition,
   type Variant,
   type Variants,
 } from "motion/react";
@@ -20,18 +21,36 @@ type HoverVariants = {
   whileHover: Variant;
 };
 
-function colorVariantBuilder(initialFillColor: string, hoverFillColor: string) {
+const hoverTransition: Transition = {
+  type: "tween",
+  ease: "easeOut",
+  duration: 0.1,
+};
+
+function hoverVariantBuilder(
+  initial: Variant,
+  whileHover: Variant,
+): HoverVariants {
   return {
-    initial: { fill: initialFillColor },
-    whileHover: { fill: hoverFillColor },
+    initial: {
+      ...initial,
+      transition: hoverTransition,
+    },
+    whileHover: {
+      ...whileHover,
+      transition: hoverTransition,
+    },
   };
 }
 
-function variantBuilder(initial: Variant, whileHover: Variant): HoverVariants {
-  return {
-    initial,
-    whileHover,
-  };
+function hoverFillColorVariantBuilder(
+  initialFillColor: string,
+  hoverFillColor: string,
+) {
+  return hoverVariantBuilder(
+    { fill: initialFillColor },
+    { fill: hoverFillColor },
+  );
 }
 
 function Svg({ className, ...props }: SvgProps) {
@@ -52,11 +71,7 @@ function Svg({ className, ...props }: SvgProps) {
         variants={svgVariants}
         initial="initial"
         whileHover="whileHover"
-        transition={{
-          type: "tween",
-          ease: "easeOut",
-          duration: 1,
-        }}
+        transition={hoverTransition}
         {...props}
       >
         {props.children}
@@ -418,79 +433,124 @@ export function Docker(props: SvgProps) {
       <motion.path
         fill-rule="evenodd"
         clip-rule="evenodd"
-        variants={colorVariantBuilder("var(--primary-color)", "#3A4D54")}
+        variants={hoverFillColorVariantBuilder(
+          "var(--primary-color)",
+          "#3A4D54",
+        )}
         d="M73.8 50.8h11.3v11.5h5.7c2.6 0 5.3-.5 7.8-1.3 1.2-.4 2.6-1 3.8-1.7-1.6-2.1-2.4-4.7-2.6-7.3-.3-3.5.4-8.1 2.8-10.8l1.2-1.4 1.4 1.1c3.6 2.9 6.5 6.8 7.1 11.4 4.3-1.3 9.3-1 13.1 1.2l1.5.9-.8 1.6c-3.2 6.2-9.9 8.2-16.4 7.8-9.8 24.3-31 35.8-56.8 35.8-13.3 0-25.5-5-32.5-16.8l-.1-.2-1-2.1c-2.4-5.2-3.1-10.9-2.6-16.6l.2-1.7h9.6V50.8h11.3V39.6h22.5V28.3h13.5v22.5z"
       />
       <motion.path
-        variants={colorVariantBuilder("var(--primary-color)", "#00AADA")}
+        variants={hoverFillColorVariantBuilder(
+          "var(--primary-color)",
+          "#00AADA",
+        )}
         d="M110.4 55.1c.8-5.9-3.6-10.5-6.4-12.7-3.1 3.6-3.6 13.2 1.3 17.2-2.8 2.4-8.5 4.7-14.5 4.7H18.6c-.6 6.2.5 11.9 3 16.8l.8 1.5c.5.9 1.1 1.7 1.7 2.6 3 .2 5.7.3 8.2.2 4.9-.1 8.9-.7 12-1.7.5-.2.9.1 1.1.5.2.5-.1.9-.5 1.1-.4.1-.8.3-1.3.4-2.4.7-5 1.1-8.3 1.3h-.6c-1.3.1-2.7.1-4.2.1-1.6 0-3.1 0-4.9-.1 6 6.8 15.4 10.8 27.2 10.8 25 0 46.2-11.1 55.5-35.9 6.7.7 13.1-1 16-6.7-4.5-2.7-10.5-1.8-13.9-.1z"
       />
       <motion.path
-        variants={colorVariantBuilder("var(--primary-color)", "#28B8EB")}
+        variants={hoverFillColorVariantBuilder(
+          "var(--primary-color)",
+          "#28B8EB",
+        )}
         d="M110.4 55.1c.8-5.9-3.6-10.5-6.4-12.7-3.1 3.6-3.6 13.2 1.3 17.2-2.8 2.4-8.5 4.7-14.5 4.7h-68c-.3 9.5 3.2 16.7 9.5 21 4.9-.1 8.9-.7 12-1.7.5-.2.9.1 1.1.5.2.5-.1.9-.5 1.1-.4.1-.8.3-1.3.4-2.4.7-5.2 1.2-8.5 1.4l-.1-.1c8.5 4.4 20.8 4.3 35-1.1 15.8-6.1 30.6-17.7 40.9-30.9-.2.1-.4.1-.5.2z"
       />
       <motion.path
-        variants={colorVariantBuilder("var(--primary-color)", "#028BB8")}
+        variants={hoverFillColorVariantBuilder(
+          "var(--primary-color)",
+          "#028BB8",
+        )}
         d="M18.7 71.8c.4 3.3 1.4 6.4 2.9 9.3l.8 1.5c.5.9 1.1 1.7 1.7 2.6 3 .2 5.7.3 8.2.2 4.9-.1 8.9-.7 12-1.7.5-.2.9.1 1.1.5.2.5-.1.9-.5 1.1-.4.1-.8.3-1.3.4-2.4.7-5.2 1.2-8.5 1.4h-.4c-1.3.1-2.7.1-4.1.1-1.6 0-3.2 0-4.9-.1 6 6.8 15.5 10.8 27.3 10.8 21.4 0 40-8.1 50.8-26H18.7v-.1z"
       />
       <motion.path
-        variants={colorVariantBuilder("var(--primary-color)", "#019BC6")}
+        variants={hoverFillColorVariantBuilder(
+          "var(--primary-color)",
+          "#019BC6",
+        )}
         d="M23.5 71.8c1.3 5.8 4.3 10.4 8.8 13.5 4.9-.1 8.9-.7 12-1.7.5-.2.9.1 1.1.5.2.5-.1.9-.5 1.1-.4.1-.8.3-1.3.4-2.4.7-5.2 1.2-8.6 1.4 8.5 4.4 20.8 4.3 34.9-1.1 8.5-3.3 16.8-8.2 24.2-14.1H23.5z"
       />
       <motion.path
         fill-rule="evenodd"
         clip-rule="evenodd"
-        variants={colorVariantBuilder("var(--secondary-color)", "#00ACD3")}
+        variants={hoverFillColorVariantBuilder(
+          "var(--secondary-color)",
+          "#00ACD3",
+        )}
         d="M28.4 52.7h9.8v9.8h-9.8v-9.8zm.8.8h.8v8.1h-.8v-8.1zm1.4 0h.8v8.1h-.8v-8.1zm1.5 0h.8v8.1h-.8v-8.1zm1.5 0h.8v8.1h-.8v-8.1zm1.5 0h.8v8.1h-.8v-8.1zm1.5 0h.8v8.1h-.8v-8.1zm3-12h9.8v9.8h-9.8v-9.8zm.9.8h.8v8.1h-.8v-8.1zm1.4 0h.8v8.1h-.8v-8.1zm1.5 0h.8v8.1h-.8v-8.1zm1.5 0h.8v8.1h-.8v-8.1zm1.4 0h.8v8.1h-.8v-8.1zm1.5 0h.8v8.1h-.8v-8.1z"
       />
       <motion.path
         fill-rule="evenodd"
         clip-rule="evenodd"
-        variants={colorVariantBuilder("var(--secondary-color)", "#23C2EE")}
+        variants={hoverFillColorVariantBuilder(
+          "var(--secondary-color)",
+          "#23C2EE",
+        )}
         d="M39.6 52.7h9.8v9.8h-9.8v-9.8zm.9.8h.8v8.1h-.8v-8.1zm1.4 0h.8v8.1h-.8v-8.1zm1.5 0h.8v8.1h-.8v-8.1zm1.5 0h.8v8.1h-.8v-8.1zm1.4 0h.8v8.1h-.8v-8.1zm1.5 0h.8v8.1h-.8v-8.1z"
       />
       <motion.path
         fill-rule="evenodd"
         clip-rule="evenodd"
-        variants={colorVariantBuilder("var(--secondary-color)", "#00ACD3")}
+        variants={hoverFillColorVariantBuilder(
+          "var(--secondary-color)",
+          "#00ACD3",
+        )}
         d="M50.9 52.7h9.8v9.8h-9.8v-9.8zm.8.8h.8v8.1h-.8v-8.1zm1.5 0h.8v8.1h-.8v-8.1zm1.5 0h.8v8.1h-.8v-8.1zm1.4 0h.8v8.1h-.8v-8.1zm1.5 0h.8v8.1h-.8v-8.1zm1.5 0h.8v8.1h-.8v-8.1z"
       />
       <motion.path
         fill-rule="evenodd"
         clip-rule="evenodd"
-        variants={colorVariantBuilder("var(--secondary-color)", "#23C2EE")}
+        variants={hoverFillColorVariantBuilder(
+          "var(--secondary-color)",
+          "#23C2EE",
+        )}
         d="M50.9 41.5h9.8v9.8h-9.8v-9.8zm.8.8h.8v8.1h-.8v-8.1zm1.5 0h.8v8.1h-.8v-8.1zm1.5 0h.8v8.1h-.8v-8.1zm1.4 0h.8v8.1h-.8v-8.1zm1.5 0h.8v8.1h-.8v-8.1zm1.5 0h.8v8.1h-.8v-8.1zm3.1 10.4H72v9.8h-9.8v-9.8zm.8.8h.8v8.1H63v-8.1zm1.5 0h.8v8.1h-.8v-8.1zm1.4 0h.8v8.1h-.8v-8.1zm1.5 0h.8v8.1h-.8v-8.1zm1.5 0h.8v8.1h-.8v-8.1zm1.5 0h.8v8.1h-.8v-8.1z"
       />
       <motion.path
         fill-rule="evenodd"
         clip-rule="evenodd"
-        variants={colorVariantBuilder("var(--secondary-color)", "#00ACD3")}
+        variants={hoverFillColorVariantBuilder(
+          "var(--secondary-color)",
+          "#00ACD3",
+        )}
         d="M62.2 41.5H72v9.8h-9.8v-9.8zm.8.8h.8v8.1H63v-8.1zm1.5 0h.8v8.1h-.8v-8.1zm1.4 0h.8v8.1h-.8v-8.1zm1.5 0h.8v8.1h-.8v-8.1zm1.5 0h.8v8.1h-.8v-8.1zm1.5 0h.8v8.1h-.8v-8.1z"
       />
       <motion.path
         fill-rule="evenodd"
         clip-rule="evenodd"
-        variants={colorVariantBuilder("var(--secondary-color)", "#23C2EE")}
+        variants={hoverFillColorVariantBuilder(
+          "var(--secondary-color)",
+          "#23C2EE",
+        )}
         d="M62.2 30.2H72V40h-9.8v-9.8zm.8.8h.8v8.1H63V31zm1.5 0h.8v8.1h-.8V31zm1.4 0h.8v8.1h-.8V31zm1.5 0h.8v8.1h-.8V31zm1.5 0h.8v8.1h-.8V31zm1.5 0h.8v8.1h-.8V31z"
       />
       <motion.path
         fill-rule="evenodd"
         clip-rule="evenodd"
-        variants={colorVariantBuilder("var(--secondary-color)", "#00ACD3")}
+        variants={hoverFillColorVariantBuilder(
+          "var(--secondary-color)",
+          "#00ACD3",
+        )}
         d="M73.5 52.7h9.8v9.8h-9.8v-9.8zm.8.8h.8v8.1h-.8v-8.1zm1.4 0h.8v8.1h-.8v-8.1zm1.5 0h.8v8.1h-.8v-8.1zm1.5 0h.8v8.1h-.8v-8.1zm1.5 0h.8v8.1h-.8v-8.1zm1.5 0h.8v8.1h-.8v-8.1z"
       />
       <motion.path
         fill-rule="evenodd"
         clip-rule="evenodd"
-        variants={colorVariantBuilder("var(--secondary-color)", "#D4EEF1")}
+        variants={hoverFillColorVariantBuilder(
+          "var(--secondary-color)",
+          "#D4EEF1",
+        )}
         d="M48.8 78.3c1.5 0 2.7 1.2 2.7 2.7 0 1.5-1.2 2.7-2.7 2.7-1.5 0-2.7-1.2-2.7-2.7 0-1.5 1.2-2.7 2.7-2.7"
       />
       <motion.path
-        variants={colorVariantBuilder("var(--secondary-color)", "#BFDBE0")}
+        variants={hoverFillColorVariantBuilder(
+          "var(--secondary-color)",
+          "#BFDBE0",
+        )}
         d="M56 97.8c-6.7-3.2-10.3-7.5-12.4-12.2-2.5.7-5.5 1.2-8.9 1.4-1.3.1-2.7.1-4.1.1-1.7 0-3.4 0-5.2-.1 6 6 13.6 10.7 27.5 10.8H56z"
       />
       <motion.path
-        variants={colorVariantBuilder("var(--secondary-color)", "#D4EEF1")}
+        variants={hoverFillColorVariantBuilder(
+          "var(--secondary-color)",
+          "#D4EEF1",
+        )}
         d="M46.1 89.9c-.9-1.3-1.8-2.8-2.5-4.3-2.5.7-5.5 1.2-8.9 1.4 2.3 1.2 5.7 2.4 11.4 2.9z"
       />
     </Svg>
@@ -501,36 +561,36 @@ export function Firebase(props: SvgProps) {
   return (
     <Svg viewBox="0 0 128 128" title="Firebase" {...props}>
       <motion.path
-        variants={variantBuilder(
+        variants={hoverVariantBuilder(
           { fill: "var(--primary-color)" },
           { fill: "#ffa000" },
         )}
         d="M17.474 103.276 33.229 2.462a2.91 2.91 0 0 1 5.44-.924l16.294 30.39 6.494-12.366a2.91 2.91 0 0 1 5.15 0l43.97 83.714H17.474Z"
       />
       <motion.path
-        variants={variantBuilder(
+        variants={hoverVariantBuilder(
           { fill: "var(--primary-color)" },
           { fill: "#f57c00" },
         )}
         d="M71.903 64.005 54.955 31.913l-37.481 71.363Z"
       />
       <motion.path
-        variants={variantBuilder(
+        variants={hoverVariantBuilder(
           { fill: "var(--primary-color)" },
           { fill: "#ffca28" },
         )}
         d="M110.577 103.276 98.51 28.604a2.913 2.913 0 0 0-1.984-2.286 2.906 2.906 0 0 0-2.94.714l-76.112 76.243 42.115 23.618a8.728 8.728 0 0 0 8.51 0l42.478-23.618Z"
       />
       <motion.path
-        variants={variantBuilder(
+        variants={hoverVariantBuilder(
           { fill: "var(--primary-color)" },
           { fill: "#fff" },
         )}
-        fill-opacity=".2"
+        fillOpacity=".2"
         d="M98.51 28.604a2.913 2.913 0 0 0-1.984-2.286 2.906 2.906 0 0 0-2.94.713L78.479 42.178 66.6 19.562a2.91 2.91 0 0 0-5.15 0l-6.494 12.365L38.662 1.538A2.91 2.91 0 0 0 35.605.044a2.907 2.907 0 0 0-2.384 2.425L17.474 103.276h-.051l.05.058.415.204 75.676-75.764a2.91 2.91 0 0 1 4.932 1.571l11.965 74.003.116-.073L98.51 28.603Zm-80.898 74.534L33.228 3.182A2.91 2.91 0 0 1 35.613.756a2.911 2.911 0 0 1 3.057 1.495l16.292 30.39 6.495-12.366a2.91 2.91 0 0 1 5.15 0L78.245 42.41 17.61 103.138Z"
       />
       <motion.path
-        variants={variantBuilder(
+        variants={hoverVariantBuilder(
           { fill: "var(--primary-color)" },
           { fill: "#a52714" },
         )}
@@ -544,18 +604,27 @@ export function Firebase(props: SvgProps) {
 export function CSharp(props: SvgProps) {
   return (
     <Svg viewBox="0 0 128 128" title="C#" {...props}>
-      <path
-        fill="#9B4F96"
+      <motion.path
+        variants={hoverVariantBuilder(
+          { fill: "var(--primary-color)" },
+          { fill: "#9B4F96" },
+        )}
         d="M115.4 30.7L67.1 2.9c-.8-.5-1.9-.7-3.1-.7-1.2 0-2.3.3-3.1.7l-48 27.9c-1.7 1-2.9 3.5-2.9 5.4v55.7c0 1.1.2 2.4 1 3.5l106.8-62c-.6-1.2-1.5-2.1-2.4-2.7z"
-      ></path>
-      <path
-        fill="#68217A"
+      />
+      <motion.path
+        variants={hoverVariantBuilder(
+          { fill: "var(--primary-color)" },
+          { fill: "#68217A" },
+        )}
         d="M10.7 95.3c.5.8 1.2 1.5 1.9 1.9l48.2 27.9c.8.5 1.9.7 3.1.7 1.2 0 2.3-.3 3.1-.7l48-27.9c1.7-1 2.9-3.5 2.9-5.4V36.1c0-.9-.1-1.9-.6-2.8l-106.6 62z"
-      ></path>
-      <path
-        fill="#fff"
+      />
+      <motion.path
+        variants={hoverVariantBuilder(
+          { fill: "var(--secondary-color)" },
+          { fill: "#fff" },
+        )}
         d="M85.3 76.1C81.1 83.5 73.1 88.5 64 88.5c-13.5 0-24.5-11-24.5-24.5s11-24.5 24.5-24.5c9.1 0 17.1 5 21.3 12.5l13-7.5c-6.8-11.9-19.6-20-34.3-20-21.8 0-39.5 17.7-39.5 39.5s17.7 39.5 39.5 39.5c14.6 0 27.4-8 34.2-19.8l-12.9-7.6zM97 66.2l.9-4.3h-4.2v-4.7h5.1L100 51h4.9l-1.2 6.1h3.8l1.2-6.1h4.8l-1.2 6.1h2.4v4.7h-3.3l-.9 4.3h4.2v4.7h-5.1l-1.2 6h-4.9l1.2-6h-3.8l-1.2 6h-4.8l1.2-6h-2.4v-4.7H97zm4.8 0h3.8l.9-4.3h-3.8l-.9 4.3z"
-      ></path>
+      />
     </Svg>
   );
 }
@@ -563,7 +632,118 @@ export function CSharp(props: SvgProps) {
 export function Azure(props: SvgProps) {
   return (
     <Svg viewBox="0 0 128 128" title="Azure" {...props}>
-      <path d="M43.983 4.653a5.911 5.911 0 015.6 4.022l35.91 106.396a5.911 5.911 0 01-5.603 7.802h41.38a5.917 5.917 0 004.8-2.465 5.909 5.909 0 00.798-5.34L90.961 8.672a5.91 5.91 0 00-5.602-4.022zm-1.336.478a5.92 5.92 0 00-5.61 4.029L1.132 115.55a5.91 5.91 0 005.6 7.8h28.893c1.239 0 2.446-.41 3.452-1.113a5.923 5.923 0 002.157-2.916l7.019-20.71-13.411-12.857c-.246-.273-1.353-2.274-.369-4.002 1.108-1.659 2.955-1.659 2.955-1.659h17.285l9.074-26.145L48.274 8.321c-.042-.205-.914-1.365-2.281-2.28-1.37-.915-3.345-.909-3.345-.909zm-4.88 75.74a2.724 2.724 0 00-1.86 4.718l37.83 35.31c1.101 1.03 2.502 1.631 4.007 1.631 0 0 1.282.068 2.055-.033 1.817-.273 3.525-1.768 4.09-2.39 1.457-1.939.794-4.95.794-4.95l-11.45-34.28z"></path>
+      <defs>
+        <linearGradient
+          id="azure-original-a"
+          x1="60.919"
+          y1="9.602"
+          x2="18.667"
+          y2="134.423"
+          gradientUnits="userSpaceOnUse"
+        >
+          <motion.stop
+            variants={hoverVariantBuilder(
+              { stopColor: "var(--primary-color)" },
+              { stopColor: "#114A8B" },
+            )}
+          />
+          <motion.stop
+            offset="1"
+            variants={hoverVariantBuilder(
+              { stopColor: "var(--primary-color)" },
+              { stopColor: "#0669BC" },
+            )}
+          />
+        </linearGradient>
+        <linearGradient
+          id="azure-original-b"
+          x1="74.117"
+          y1="67.772"
+          x2="64.344"
+          y2="71.076"
+          gradientUnits="userSpaceOnUse"
+        >
+          <motion.stop
+            variants={hoverVariantBuilder(
+              { stopOpacity: "0" },
+              { stopOpacity: ".3" },
+            )}
+          />
+          <motion.stop
+            offset=".071"
+            variants={hoverVariantBuilder(
+              { stopOpacity: "0" },
+              { stopOpacity: ".2" },
+            )}
+          />
+          <motion.stop
+            offset=".321"
+            variants={hoverVariantBuilder(
+              { stopOpacity: "0" },
+              { stopOpacity: ".1" },
+            )}
+          />
+          <motion.stop
+            offset=".623"
+            variants={hoverVariantBuilder(
+              { stopOpacity: "0" },
+              { stopOpacity: ".05" },
+            )}
+          />
+          <motion.stop
+            offset="1"
+            variants={hoverVariantBuilder(
+              { stopOpacity: "0" },
+              { stopOpacity: "0" },
+            )}
+          />
+        </linearGradient>
+        <linearGradient
+          id="azure-original-c"
+          x1="68.742"
+          y1="5.961"
+          x2="115.122"
+          y2="129.525"
+          gradientUnits="userSpaceOnUse"
+        >
+          <motion.stop
+            variants={hoverVariantBuilder(
+              { stopColor: "var(--primary-color)" },
+              { stopColor: "#3CCBF4" },
+            )}
+          />
+
+          <motion.stop
+            offset="1"
+            variants={hoverVariantBuilder(
+              { stopColor: "var(--primary-color)" },
+              { stopColor: "#2892DF" },
+            )}
+          />
+        </linearGradient>
+      </defs>
+      <motion.path
+        d="M46.09.002h40.685L44.541 125.137a6.485 6.485 0 01-6.146 4.413H6.733a6.482 6.482 0 01-5.262-2.699 6.474 6.474 0 01-.876-5.848L39.944 4.414A6.488 6.488 0 0146.09 0z"
+        transform="translate(.587 4.468) scale(.91904)"
+        fill="url(#azure-original-a)"
+      />
+      <motion.path
+        d="M97.28 81.607H37.987a2.743 2.743 0 00-1.874 4.751l38.1 35.562a5.991 5.991 0 004.087 1.61h33.574z"
+        variants={hoverVariantBuilder(
+          { fill: "var(--primary-color)" },
+          { fill: "#0078d4" },
+        )}
+      />
+      <motion.path
+        d="M46.09.002A6.434 6.434 0 0039.93 4.5L.644 120.897a6.469 6.469 0 006.106 8.653h32.48a6.942 6.942 0 005.328-4.531l7.834-23.089 27.985 26.101a6.618 6.618 0 004.165 1.519h36.396l-15.963-45.616-46.533.011L86.922.002z"
+        transform="translate(.587 4.468) scale(.91904)"
+        fill="url(#azure-original-b)"
+      />
+      <motion.path
+        d="M98.055 4.408A6.476 6.476 0 0091.917.002H46.575a6.478 6.478 0 016.137 4.406l39.35 116.594a6.476 6.476 0 01-6.137 8.55h45.344a6.48 6.48 0 006.136-8.55z"
+        transform="translate(.587 4.468) scale(.91904)"
+        fill="url(#azure-original-c)"
+      />
     </Svg>
   );
 }
