@@ -8,14 +8,13 @@ export function SkillIcon(props: SkillIconProps) {
   const { iconName } = props;
 
   return (
-    <div className="bg-secondary flex h-8 gap-1.5 rounded-lg p-1.5">
+    <div className="bg-secondary flex items-center gap-1.5 rounded-lg px-1 py-0.5 md:px-2 md:py-1">
       {Icon[iconName]({
-        className:
-          "h-[calc(2rem-0.375rem*2)] w-[calc(2rem-0.375rem*2)] md:h-[calc(2rem-0.375rem*2)] md:w-[calc(2rem-0.375rem*2)]",
+        className: "md:h-5 md:w-5 h-4 w-4",
         foregroundFill: "var(--primary-color)",
         backgroundFill: "var(--secondary-color)",
       })}
-      <p className="text-primary text-sm leading-5.5 font-light md:text-base">
+      <p className="text-primary translate-y-[0.5px] text-sm font-light md:translate-y-[1px] md:text-base">
         {iconName}
       </p>
     </div>
@@ -24,7 +23,7 @@ export function SkillIcon(props: SkillIconProps) {
 
 export function SkillIconList(props: { skills: IconName[] }) {
   return (
-    <div className="mt-2 flex w-full flex-wrap gap-2">
+    <div className="mt-2 flex w-full flex-wrap gap-1 md:gap-2">
       {props.skills.map((iconName, index) => (
         <SkillIcon key={iconName + index} iconName={iconName} />
       ))}

@@ -33,7 +33,7 @@ function ListItem(item: ExperienceListItem) {
           width={64}
           height={64}
         />
-        <div className="flex min-h-13 w-full flex-col justify-center gap-2">
+        <div className="flex min-h-13 w-full flex-col justify-center gap-1 md:gap-2">
           <div className="flex w-full flex-wrap justify-between gap-x-4">
             <p className="font-bold">{subtitle}</p>
             <p className="text-text-secondary">

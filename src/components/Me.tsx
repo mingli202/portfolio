@@ -2,7 +2,6 @@ import { Icon } from "../lib/icons";
 
 export default function Me() {
   const {
-    Angular,
     Email,
     Github,
     Linkedin,
@@ -46,9 +45,9 @@ export default function Me() {
           <p>ming.l.liu@mail.mcgill.ca</p>
         </div>
       </div>
-      <div className="flex flex-col items-center gap-4">
+      <div className="flex flex-col items-center gap-2 md:gap-4">
         <p>U2 McGill Software Engineering Student</p>
-        <div className="flex flex-wrap justify-center gap-4">
+        <div className="flex flex-wrap justify-center gap-2 md:gap-4">
           <TypeScript className="fill-text-secondary" />
           <TailwindCss className="fill-text-secondary" />
           <NextJs className="fill-text-secondary" />
