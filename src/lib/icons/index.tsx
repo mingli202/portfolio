@@ -80,7 +80,12 @@ export function hoverFillColorVariantBuilder(
   );
 }
 
-export function Svg({ className, ...props }: SvgProps) {
+export function Svg({
+  className,
+  foregroundFill: _foregroundFill,
+  backgroundFill: _backgroundFill,
+  ...props
+}: SvgProps) {
   const svgVariants: HoverVariants = {
     initial: {},
     whileHover: {},
