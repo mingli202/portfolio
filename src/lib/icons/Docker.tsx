@@ -1,17 +1,11 @@
-import { type Variants, motion } from "motion/react";
+import { motion } from "motion/react";
 import { type SvgProps, Svg, hoverFillColorVariantBuilder } from ".";
 
 export function Docker(props: SvgProps) {
-  const svgVariants: Variants = {
-    initial: {},
-    whileHover: {},
-  };
-
   return (
     <Svg
       title="Docker"
       viewBox="0 0 128 128"
-      variants={svgVariants}
       initial="initial"
       whileHover="whileHover"
       {...props}
