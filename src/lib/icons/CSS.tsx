@@ -1,9 +1,51 @@
-import { Svg, type SvgProps } from ".";
+import { motion } from "motion/react";
+import { hoverVariantBuilder, Svg, type SvgProps } from ".";
 
 export function CSS(props: SvgProps) {
   return (
     <Svg viewBox="0 0 128 128" title="CSS" {...props}>
-      <path d="M8.76 1l10.055 112.883 45.118 12.58 45.244-12.626L119.24 1H8.76zm89.591 25.862l-3.347 37.605.01.203-.014.467v-.004l-2.378 26.294-.262 2.336L64 101.607v.001l-.022.019-28.311-7.888L33.75 72h13.883l.985 11.054 15.386 4.17-.004.008v-.002l15.443-4.229L81.075 65H48.792l-.277-3.043-.631-7.129L47.553 51h34.749l1.264-14H30.64l-.277-3.041-.63-7.131L29.401 23h69.281l-.331 3.862z"></path>
+      <motion.path
+        variants={hoverVariantBuilder(
+          { fill: "var(--primary-color)" },
+          { fill: "#1572B6" },
+        )}
+        d="M18.814 114.123L8.76 1.352h110.48l-10.064 112.754-45.243 12.543-45.119-12.526z"
+      ></motion.path>
+      <motion.path
+        variants={hoverVariantBuilder(
+          { fill: "var(--primary-color)" },
+          { fill: "#33A9DC" },
+        )}
+        d="M64.001 117.062l36.559-10.136 8.601-96.354h-45.16v106.49z"
+      ></motion.path>
+      <motion.path
+        variants={hoverVariantBuilder(
+          { fill: "var(--secondary-color)" },
+          { fill: "#ffffff" },
+        )}
+        d="M64.001 51.429h18.302l1.264-14.163H64.001V23.435h34.682l-.332 3.711-3.4 38.114h-30.95V51.429z"
+      ></motion.path>
+      <motion.path
+        variants={hoverVariantBuilder(
+          { fill: "var(--secondary-color)" },
+          { fill: "#EBEBEB" },
+        )}
+        d="M64.083 87.349l-.061.018-15.403-4.159-.985-11.031H33.752l1.937 21.717 28.331 7.863.063-.018v-14.39z"
+      ></motion.path>
+      <motion.path
+        variants={hoverVariantBuilder(
+          { fill: "var(--secondary-color)" },
+          { fill: "#ffffff" },
+        )}
+        d="M81.127 64.675l-1.666 18.522-15.426 4.164v14.39l28.354-7.858.208-2.337 2.406-26.881H81.127z"
+      ></motion.path>
+      <motion.path
+        variants={hoverVariantBuilder(
+          { fill: "var(--secondary-color)" },
+          { fill: "#EBEBEB" },
+        )}
+        d="M64.048 23.435v13.831H30.64l-.277-3.108-.63-7.012-.331-3.711h34.646zm-.047 27.996v13.831H48.792l-.277-3.108-.631-7.012-.33-3.711h16.447z"
+      ></motion.path>
     </Svg>
   );
 }
