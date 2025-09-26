@@ -1,13 +1,44 @@
-import { type SvgProps, Svg } from ".";
+import { motion } from "motion/react";
+import { type SvgProps, hoverFillColorVariantBuilder, Svg } from ".";
 
 export function Pandas(props: SvgProps) {
   return (
     <Svg viewBox="0 0 128 128" title="Pandas" {...props}>
-      <path d="M48.697 15.176h12.25v25.437h-12.25zm0 52.251h12.25v25.436h-12.25z" />
-      <path d="M48.697 48.037h12.25v12.001h-12.25z" />
-      <path d="M29.017 36.087h12.25v84.552h-12.25zM67.97 88.414h12.25v25.436H67.97zm0-52.297h12.25v25.437H67.97z" />
-      <path d="M67.97 68.983h12.25v12.001H67.97z" />
-      <path d="M87.238 8.55h12.25v84.552h-12.25z" />
+      <motion.path
+        variants={hoverFillColorVariantBuilder(
+          "var(--primary-color)",
+          "#130754",
+        )}
+        d="M46.236 7.567h13.99v29.047h-13.99Zm0 59.668h13.99V96.28h-13.99Z"
+      ></motion.path>
+      <motion.path
+        variants={hoverFillColorVariantBuilder(
+          "var(--primary-color)",
+          "#ffca00",
+        )}
+        d="M46.236 45.092h13.99v13.705h-13.99Z"
+      ></motion.path>
+      <motion.path
+        variants={hoverFillColorVariantBuilder(
+          "var(--primary-color)",
+          "#130754",
+        )}
+        d="M23.763 31.446h13.989V128h-13.99ZM68.245 91.2h13.99v29.046h-13.99Zm0-59.72h13.99v29.047h-13.99Z"
+      ></motion.path>
+      <motion.path
+        variants={hoverFillColorVariantBuilder(
+          "var(--primary-color)",
+          "#e70488",
+        )}
+        d="M68.245 69.011h13.99v13.705h-13.99Z"
+      ></motion.path>
+      <motion.path
+        variants={hoverFillColorVariantBuilder(
+          "var(--primary-color)",
+          "#130754",
+        )}
+        d="M90.248 0h13.99v96.554h-13.99Z"
+      ></motion.path>
     </Svg>
   );
 }
