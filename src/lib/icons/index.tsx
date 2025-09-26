@@ -19,7 +19,6 @@ import { React } from "./React";
 import { Rust } from "./Rust";
 import { Python } from "./Python";
 import { ArrowAngularTopRight } from "./ArrowAngularTopRight";
-import { Auth0 } from "./Auth0";
 import { Azure } from "./Azure";
 import { C } from "./C";
 import { Cargo } from "./Cargo";
@@ -35,8 +34,6 @@ import { JavaScript } from "./JavaScript";
 import { Numpy } from "./Numpy";
 import { Pandas } from "./Pandas";
 import { PowerShell } from "./PowerShell";
-import { Supabase } from "./Supebase";
-import { Zod } from "./Zod";
 import { CSS } from "./CSS";
 
 export type SvgProps = SVGProps<SVGSVGElement> & {
@@ -53,7 +50,7 @@ export type HoverVariants = {
 const hoverTransition: Transition = {
   type: "tween",
   ease: "easeOut",
-  duration: 1,
+  duration: 0.1,
 };
 
 export function hoverVariantBuilder(
@@ -122,9 +119,10 @@ export const Icon = {
   TailwindCss,
   Angular,
   React,
-  Rust, // TODO: animation and the rest below
+  Rust,
   Python,
   WebsiteLink: ArrowAngularTopRight,
+  // TODO: animation and the rest below
   Docker,
   Firebase,
   "C#": CSharp,
@@ -138,9 +136,6 @@ export const Icon = {
   CSS,
   Maps: GoogleMaps,
   Cargo,
-  Supabase,
-  Auth0,
-  Zod,
   C,
   GCP,
   PowerShell,
