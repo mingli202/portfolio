@@ -46,7 +46,7 @@ export function NextJs(props: SvgProps) {
               { stopColor: props.backgroundFill ?? "var(--background-color)" },
               { stopColor: "#ffffff" },
             )}
-            stop-opacity="0"
+            stopOpacity="0"
           ></motion.stop>
         </linearGradient>
         <linearGradient
@@ -70,7 +70,7 @@ export function NextJs(props: SvgProps) {
               { stopColor: props.backgroundFill ?? "var(--background-color)" },
               { stopColor: "#ffffff" },
             )}
-            stop-opacity="0"
+            stopOpacity="0"
           ></motion.stop>
         </linearGradient>
       </defs>
