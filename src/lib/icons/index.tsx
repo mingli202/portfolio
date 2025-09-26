@@ -37,6 +37,7 @@ import { Pandas } from "./Pandas";
 import { PowerShell } from "./PowerShell";
 import { Supabase } from "./Supebase";
 import { Zod } from "./Zod";
+import { CSS } from "./CSS";
 
 export type SvgProps = SVGProps<SVGSVGElement> & {
   title?: string;

@@ -1,18 +1,20 @@
-import {
-  Angular,
-  Envelope,
-  Github,
-  Linkedin,
-  MapMarker,
-  NextJs,
-  TailwindCss,
-  TypeScript,
-  React,
-  Python,
-  Rust,
-} from "../lib/icons";
+import { Icon } from "../lib/icons";
 
 export default function Me() {
+  const {
+    Angular,
+    Email,
+    Github,
+    Linkedin,
+    Location,
+    NextJs,
+    TailwindCss,
+    TypeScript,
+    React,
+    Python,
+    Rust,
+  } = Icon;
+
   return (
     <section className="flex w-full flex-col items-center gap-10 py-12 md:gap-12 md:py-24">
       <div className="flex flex-col items-center justify-center gap-1">
@@ -36,11 +38,11 @@ export default function Me() {
           </a>
         </div>
         <div className="text-text-secondary flex items-center gap-2">
-          <MapMarker className="fill-text-secondary" />
+          <Location className="fill-text-secondary" />
           <p>Montreal, Canada | (514) 586-1268</p>
         </div>
         <div className="text-text-secondary flex items-center gap-2">
-          <Envelope className="fill-text-secondary" />
+          <Email className="fill-text-secondary" />
           <p>ming.l.liu@mail.mcgill.ca</p>
         </div>
       </div>
