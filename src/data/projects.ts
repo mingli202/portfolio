@@ -34,7 +34,7 @@ export const projects: ProjectItem[] = [
     title: "Mito Sushi Weekly Planner",
     subtitle: "Schedule planner based on store locations.",
     description:
-      "Webapp for planning Mito Sushi schedules based on store locations because my mom wanted one.",
+      "Webapp for planning Mito Sushi schedules based on store locations because my mom needed one.",
     startDate: "March 2025",
     skills: [
       "Python",

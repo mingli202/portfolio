@@ -49,13 +49,12 @@ export default function Me() {
       <div className="flex flex-col items-center gap-4">
         <p>U2 McGill Software Engineering Student</p>
         <div className="flex flex-wrap justify-center gap-4">
-          <Rust className="fill-text-secondary" />
-          <Python className="fill-text-secondary" />
           <TypeScript className="fill-text-secondary" />
           <TailwindCss className="fill-text-secondary" />
-          <Angular className="fill-text-secondary" />
           <NextJs className="fill-text-secondary" />
           <React className="fill-text-secondary" />
+          <Rust className="fill-text-secondary" />
+          <Python className="fill-text-secondary" />
         </div>
       </div>
     </section>
