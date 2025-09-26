@@ -6,7 +6,16 @@ export default function Projects() {
     <div className="flex flex-col gap-3 p-2 md:gap-4 md:p-4">
       {projects.map(
         (
-          { title, subtitle, startDate, endDate, skills, links, videoUrl },
+          {
+            title,
+            subtitle,
+            startDate,
+            endDate,
+            skills,
+            links,
+            videoUrl,
+            description,
+          },
           index,
         ) => (
           <div
@@ -50,6 +59,7 @@ export default function Projects() {
                 </div>
                 <p className="font-light">{subtitle}</p>
               </div>
+              <p className="text-text-secondary font-light">{description}</p>
               <p className="text-text-secondary">
                 {startDate} {endDate ? `- ${endDate}` : null}
               </p>

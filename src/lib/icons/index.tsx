@@ -35,6 +35,7 @@ import { Numpy } from "./Numpy";
 import { Pandas } from "./Pandas";
 import { PowerShell } from "./PowerShell";
 import { CSS } from "./CSS";
+import { Bash } from "./Bash";
 
 export type SvgProps = SVGProps<SVGSVGElement> & {
   title?: string;
@@ -139,6 +140,7 @@ export const Icon = {
   C,
   GCP,
   PowerShell,
+  Bash,
 } as const;
 
 export type Icon = RecordValues<typeof Icon>;
