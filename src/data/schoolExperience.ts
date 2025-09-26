@@ -7,7 +7,7 @@ export const schoolExperience: ExperienceListItem[] = [
     startDate: "Aug 2024",
     endDate: "May 2028",
     location: "Montreal, Canada",
-    skills: ["Python", "Bash"],
+    skills: ["Java", "Python", "Bash"],
     additionalInfo: [],
     imageUrl: "mcgill_logo.jpg",
   },

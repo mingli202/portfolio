@@ -36,6 +36,7 @@ import { Pandas } from "./Pandas";
 import { PowerShell } from "./PowerShell";
 import { CSS } from "./CSS";
 import { Bash } from "./Bash";
+import { Java } from "./Java";
 
 export type SvgProps = SVGProps<SVGSVGElement> & {
   title?: string;
@@ -146,6 +147,7 @@ export const Icon = {
   GCP,
   PowerShell,
   Bash,
+  Java,
 } as const;
 
 export type Icon = RecordValues<typeof Icon>;
