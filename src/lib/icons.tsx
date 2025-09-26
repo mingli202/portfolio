@@ -5,6 +5,7 @@ import {
   motion,
   useSpring,
   type SVGMotionProps,
+  type Variant,
   type Variants,
 } from "motion/react";
 
@@ -14,7 +15,31 @@ type SvgProps = SVGProps<SVGSVGElement> & {
   foregroundFill?: string;
 } & SVGMotionProps<SVGSVGElement>;
 
+type HoverVariants = {
+  initial: Variant;
+  whileHover: Variant;
+};
+
+function colorVariantBuilder(initialFillColor: string, hoverFillColor: string) {
+  return {
+    initial: { fill: initialFillColor },
+    whileHover: { fill: hoverFillColor },
+  };
+}
+
+function variantBuilder(initial: Variant, whileHover: Variant): HoverVariants {
+  return {
+    initial,
+    whileHover,
+  };
+}
+
 function Svg({ className, ...props }: SvgProps) {
+  const svgVariants: HoverVariants = {
+    initial: {},
+    whileHover: {},
+  };
+
   return (
     <motion.div title={props.title}>
       <motion.svg
@@ -24,6 +49,14 @@ function Svg({ className, ...props }: SvgProps) {
           "fill-text group h-5 w-5 transition md:h-7 md:w-7",
           className,
         )}
+        variants={svgVariants}
+        initial="initial"
+        whileHover="whileHover"
+        transition={{
+          type: "tween",
+          ease: "easeOut",
+          duration: 1,
+        }}
         {...props}
       >
         {props.children}
@@ -90,24 +123,18 @@ export function Github(props: SvgProps) {
 }
 
 export function MapMarker(props: SvgProps) {
+  const pathVariants: HoverVariants = {
+    initial: { rotateY: 0, fill: "var(--text-secondary-color)" },
+    whileHover: { rotateY: 360, fill: "var(--primary-color)" },
+  };
+
   return (
-    <Svg
-      title="Location"
-      viewBox="0 0 24 26"
-      {...props}
-      initial={{ rotateY: 0 }}
-      whileHover={{ rotateY: 180 }}
-      transition={{
-        type: "tween",
-        ease: "easeOut",
-        duration: 0.1,
-      }}
-    >
-      <path
+    <Svg title="Location" viewBox="0 0 24 26" {...props}>
+      <motion.path
         d="M5.03125 10.392C5.03125 6.26528 8.3766 2.91992 12.5033 2.91992C16.63 2.91992 19.9754 6.26528 19.9754 10.392C19.9754 13.194 18.9108 15.7454 17.6454 17.7938C16.3778 19.8458 14.8791 21.441 13.9389 22.3454C13.139 23.1148 11.9045 23.1163 11.1026 22.3493C10.1581 21.4458 8.65084 19.8507 7.37569 17.7982C6.1028 15.7493 5.03125 13.1963 5.03125 10.392ZM9.50391 10.3906C9.50391 12.0475 10.8471 13.3906 12.5039 13.3906C14.1608 13.3906 15.5039 12.0475 15.5039 10.3906C15.5039 8.73377 14.1608 7.39062 12.5039 7.39062C10.8471 7.39062 9.50391 8.73377 9.50391 10.3906Z"
-        className="group-hover:fill-primary origin-center scale-105"
+        className="origin-center scale-105"
+        variants={pathVariants}
       />
-      ,
     </Svg>
   );
 }
@@ -374,16 +401,6 @@ export function ArrowAngularTopRight(props: SvgProps) {
 }
 
 export function Docker(props: SvgProps) {
-  function colorVariantBuilder(
-    initialFillColor: string,
-    hoverFillColor: string,
-  ) {
-    return {
-      initial: { fill: initialFillColor },
-      whileHover: { fill: hoverFillColor },
-    };
-  }
-
   const svgVariants: Variants = {
     initial: {},
     whileHover: {},
@@ -483,7 +500,43 @@ export function Docker(props: SvgProps) {
 export function Firebase(props: SvgProps) {
   return (
     <Svg viewBox="0 0 128 128" title="Firebase" {...props}>
-      <path d="M34.872 0a1.94 1.94 0 0 0-.307.028A1.933 1.933 0 0 0 32.97 1.64L17.911 98l9.911-18.867 25.066-47.724L36.6 1.028l-.002-.002A1.935 1.935 0 0 0 34.872 0Zm28.387 18.294c-.722 0-1.38.396-1.716 1.035l-7.459 14.203-.008-.014-34.1 64.922 10.75-10.767 34.46-34.52 11.503-11.524-11.712-22.3a1.938 1.938 0 0 0-1.718-1.035zm32.175 8.301a1.907 1.907 0 0 0-.52.054 1.938 1.938 0 0 0-.913.514L79.18 42.006 66.623 54.589l-48.994 49.078 41.613 23.337h.002a7.846 7.846 0 0 0 7.653 0l42.532-23.647-12.145-75.153v.008a1.937 1.937 0 0 0-1.324-1.524 1.957 1.957 0 0 0-.526-.093Zm14.938 77.4-.6.049.249.146z"></path>
+      <motion.path
+        variants={variantBuilder(
+          { fill: "var(--primary-color)" },
+          { fill: "#ffa000" },
+        )}
+        d="M17.474 103.276 33.229 2.462a2.91 2.91 0 0 1 5.44-.924l16.294 30.39 6.494-12.366a2.91 2.91 0 0 1 5.15 0l43.97 83.714H17.474Z"
+      />
+      <motion.path
+        variants={variantBuilder(
+          { fill: "var(--primary-color)" },
+          { fill: "#f57c00" },
+        )}
+        d="M71.903 64.005 54.955 31.913l-37.481 71.363Z"
+      />
+      <motion.path
+        variants={variantBuilder(
+          { fill: "var(--primary-color)" },
+          { fill: "#ffca28" },
+        )}
+        d="M110.577 103.276 98.51 28.604a2.913 2.913 0 0 0-1.984-2.286 2.906 2.906 0 0 0-2.94.714l-76.112 76.243 42.115 23.618a8.728 8.728 0 0 0 8.51 0l42.478-23.618Z"
+      />
+      <motion.path
+        variants={variantBuilder(
+          { fill: "var(--primary-color)" },
+          { fill: "#fff" },
+        )}
+        fill-opacity=".2"
+        d="M98.51 28.604a2.913 2.913 0 0 0-1.984-2.286 2.906 2.906 0 0 0-2.94.713L78.479 42.178 66.6 19.562a2.91 2.91 0 0 0-5.15 0l-6.494 12.365L38.662 1.538A2.91 2.91 0 0 0 35.605.044a2.907 2.907 0 0 0-2.384 2.425L17.474 103.276h-.051l.05.058.415.204 75.676-75.764a2.91 2.91 0 0 1 4.932 1.571l11.965 74.003.116-.073L98.51 28.603Zm-80.898 74.534L33.228 3.182A2.91 2.91 0 0 1 35.613.756a2.911 2.911 0 0 1 3.057 1.495l16.292 30.39 6.495-12.366a2.91 2.91 0 0 1 5.15 0L78.245 42.41 17.61 103.138Z"
+      />
+      <motion.path
+        variants={variantBuilder(
+          { fill: "var(--primary-color)" },
+          { fill: "#a52714" },
+        )}
+        d="M68.099 126.18a8.728 8.728 0 0 1-8.51 0l-42.015-23.55-.102.647 42.115 23.61a8.728 8.728 0 0 0 8.51 0l42.48-23.61-.11-.67-42.37 23.575z"
+        opacity=".2"
+      />
     </Svg>
   );
 }
@@ -491,7 +544,18 @@ export function Firebase(props: SvgProps) {
 export function CSharp(props: SvgProps) {
   return (
     <Svg viewBox="0 0 128 128" title="C#" {...props}>
-      <path d="M117.5 33.5l.3-.2c-.6-1.1-1.5-2.1-2.4-2.6L67.1 2.9c-.8-.5-1.9-.7-3.1-.7-1.2 0-2.3.3-3.1.7l-48 27.9c-1.7 1-2.9 3.5-2.9 5.4v55.7c0 1.1.2 2.3.9 3.4l-.2.1c.5.8 1.2 1.5 1.9 1.9l48.2 27.9c.8.5 1.9.7 3.1.7 1.2 0 2.3-.3 3.1-.7l48-27.9c1.7-1 2.9-3.5 2.9-5.4V36.1c.1-.8 0-1.7-.4-2.6zm-53.5 70c-21.8 0-39.5-17.7-39.5-39.5S42.2 24.5 64 24.5c14.7 0 27.5 8.1 34.3 20l-13 7.5C81.1 44.5 73.1 39.5 64 39.5c-13.5 0-24.5 11-24.5 24.5s11 24.5 24.5 24.5c9.1 0 17.1-5 21.3-12.4l12.9 7.6c-6.8 11.8-19.6 19.8-34.2 19.8zM115 62h-3.2l-.9 4h4.1v5h-5l-1.2 6h-4.9l1.2-6h-3.8l-1.2 6h-4.8l1.2-6H94v-5h3.5l.9-4H94v-5h5.3l1.2-6h4.9l-1.2 6h3.8l1.2-6h4.8l-1.2 6h2.2v5zm-12.7 4h3.8l.9-4h-3.8z"></path>
+      <path
+        fill="#9B4F96"
+        d="M115.4 30.7L67.1 2.9c-.8-.5-1.9-.7-3.1-.7-1.2 0-2.3.3-3.1.7l-48 27.9c-1.7 1-2.9 3.5-2.9 5.4v55.7c0 1.1.2 2.4 1 3.5l106.8-62c-.6-1.2-1.5-2.1-2.4-2.7z"
+      ></path>
+      <path
+        fill="#68217A"
+        d="M10.7 95.3c.5.8 1.2 1.5 1.9 1.9l48.2 27.9c.8.5 1.9.7 3.1.7 1.2 0 2.3-.3 3.1-.7l48-27.9c1.7-1 2.9-3.5 2.9-5.4V36.1c0-.9-.1-1.9-.6-2.8l-106.6 62z"
+      ></path>
+      <path
+        fill="#fff"
+        d="M85.3 76.1C81.1 83.5 73.1 88.5 64 88.5c-13.5 0-24.5-11-24.5-24.5s11-24.5 24.5-24.5c9.1 0 17.1 5 21.3 12.5l13-7.5c-6.8-11.9-19.6-20-34.3-20-21.8 0-39.5 17.7-39.5 39.5s17.7 39.5 39.5 39.5c14.6 0 27.4-8 34.2-19.8l-12.9-7.6zM97 66.2l.9-4.3h-4.2v-4.7h5.1L100 51h4.9l-1.2 6.1h3.8l1.2-6.1h4.8l-1.2 6.1h2.4v4.7h-3.3l-.9 4.3h4.2v4.7h-5.1l-1.2 6h-4.9l1.2-6h-3.8l-1.2 6h-4.8l1.2-6h-2.4v-4.7H97zm4.8 0h3.8l.9-4.3h-3.8l-.9 4.3z"
+      ></path>
     </Svg>
   );
 }
