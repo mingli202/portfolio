@@ -25,7 +25,7 @@ export default function Me() {
             target="_blank"
             rel="noreferrer"
           >
-            <Github className="fill-text-secondary h-6 w-6 md:h-9 md:w-9" />
+            <Github className="h-6 w-6 md:h-9 md:w-9" />
           </a>
           <a
             href="https://www.linkedin.com/in/ming-li-liu"

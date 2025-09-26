@@ -11,9 +11,9 @@ export function SkillIcon(props: SkillIconProps) {
     <div className="bg-secondary flex h-8 gap-1.5 rounded-lg p-1.5">
       {Icon[iconName]({
         className:
-          "fill-primary h-[calc(2rem-0.375rem*2)] w-[calc(2rem-0.375rem*2)] md:h-[calc(2rem-0.375rem*2)] md:w-[calc(2rem-0.375rem*2)] group",
-        foregroundFill: "fill-primary",
-        backgroundFill: "fill-secondary",
+          "h-[calc(2rem-0.375rem*2)] w-[calc(2rem-0.375rem*2)] md:h-[calc(2rem-0.375rem*2)] md:w-[calc(2rem-0.375rem*2)]",
+        foregroundFill: "var(--primary-color)",
+        backgroundFill: "var(--secondary-color)",
       })}
       <p className="text-primary text-sm leading-5.5 font-light md:text-base">
         {iconName}

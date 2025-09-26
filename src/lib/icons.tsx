@@ -1,9 +1,8 @@
-import { type SVGProps } from "react";
+import { useRef, type SVGProps } from "react";
 import cn from "./cn";
 import type { RecordValues } from "../types";
 import {
   motion,
-  useSpring,
   type SVGMotionProps,
   type Transition,
   type Variant,
@@ -65,7 +64,7 @@ function Svg({ className, ...props }: SvgProps) {
         viewBox="0 0 24 24"
         xmlns="http://www.w3.org/2000/svg"
         className={cn(
-          "fill-text group h-5 w-5 transition md:h-7 md:w-7",
+          "fill-text-secondary group h-5 w-5 md:h-7 md:w-7",
           className,
         )}
         variants={svgVariants}
@@ -80,28 +79,25 @@ function Svg({ className, ...props }: SvgProps) {
   );
 }
 
-export function Envelope(props: SvgProps) {
-  const y = useSpring(0);
+// vim command to substitute tags to motion tags:
+// '<,'>s/<\(\/\?\)\(\w\+\)\(>\?\)/<\1motion.\2\3/g
 
+export function Envelope(props: SvgProps) {
   return (
-    <Svg
-      title="Email"
-      {...props}
-      onPointerOver={() => {
-        y.set(-1);
-      }}
-      onPointerOut={() => {
-        y.set(0);
-      }}
-    >
+    <Svg title="Email" {...props}>
       <motion.path
         d="M3.73592 4.5C2.77726 4.5 2.00014 5.27724 2.00031 6.2359L2.00031 6.26829C2.01064 6.81904 2.28199 7.33272 2.732 7.65165L2.74287 7.65929L10.7131 13.2171C11.3897 13.689 12.2609 13.7479 12.9861 13.3941C13.0897 13.3435 13.1904 13.2845 13.287 13.2171L21.2569 7.65949C21.7225 7.33485 21.9999 6.8031 21.9998 6.23554C21.9997 5.27702 21.2229 4.5 20.2644 4.5H3.73592Z"
-        className="group-hover:fill-primary"
-        style={{ translateY: y }}
+        variants={hoverVariantBuilder(
+          { translateY: 0, fill: "var(--text-secondary-color)" },
+          { translateY: -1, fill: "var(--primary-color)" },
+        )}
       />
-      <path
+      <motion.path
         d="M22.0001 8.96994L14.145 14.4475C12.8562 15.3462 11.1438 15.3462 9.85507 14.4475L2.00023 8.97012L2 17.25C2 18.4926 3.00736 19.5 4.25 19.5H19.75C20.9926 19.5 22 18.4926 22 17.25L22.0001 8.96994Z"
-        className="group-hover:fill-primary"
+        variants={{
+          initial: { fill: "var(--text-secondary-color)" },
+          whileHover: { fill: "var(--primary-color)" },
+        }}
       />
     </Svg>
   );
@@ -110,14 +106,20 @@ export function Envelope(props: SvgProps) {
 export function Linkedin(props: SvgProps) {
   return (
     <Svg title="Linkedin" viewBox="0 0 128 128" {...props}>
-      <path
+      <motion.path
         d="M116 3H12a8.91 8.91 0 00-9 8.8v104.42a8.91 8.91 0 009 8.78h104a8.93 8.93 0 009-8.81V11.77A8.93 8.93 0 00116 3z"
-        className="fill-text-secondary group-hover:fill-[#0076b2]"
-      ></path>
-      <path
+        variants={hoverVariantBuilder(
+          { fill: "var(--text-color-secondary" },
+          { fill: "#0076b2" },
+        )}
+      ></motion.path>
+      <motion.path
         d="M21.06 48.73h18.11V107H21.06zm9.06-29a10.5 10.5 0 11-10.5 10.49 10.5 10.5 0 0110.5-10.49M50.53 48.73h17.36v8h.24c2.42-4.58 8.32-9.41 17.13-9.41C103.6 47.28 107 59.35 107 75v32H88.89V78.65c0-6.75-.12-15.44-9.41-15.44s-10.87 7.36-10.87 15V107H50.53z"
-        className="fill-background group-hover:fill-[#fff]"
-      ></path>
+        variants={{
+          initial: { fill: "var(--background-color)" },
+          whileHover: { fill: "#fff" },
+        }}
+      ></motion.path>
     </Svg>
   );
 }
@@ -125,23 +127,33 @@ export function Linkedin(props: SvgProps) {
 export function Github(props: SvgProps) {
   return (
     <Svg title="Github" {...props} viewBox="0 0 128 128">
-      <g className="-translate-y-[3px] group-hover:fill-[#fff]">
-        <path
+      <motion.g className="-translate-y-[3px]">
+        <motion.path
           fill-rule="evenodd"
           clip-rule="evenodd"
           d="M64 5.103c-33.347 0-60.388 27.035-60.388 60.388 0 26.682 17.303 49.317 41.297 57.303 3.017.56 4.125-1.31 4.125-2.905 0-1.44-.056-6.197-.082-11.243-16.8 3.653-20.345-7.125-20.345-7.125-2.747-6.98-6.705-8.836-6.705-8.836-5.48-3.748.413-3.67.413-3.67 6.063.425 9.257 6.223 9.257 6.223 5.386 9.23 14.127 6.562 17.573 5.02.542-3.903 2.107-6.568 3.834-8.076-13.413-1.525-27.514-6.704-27.514-29.843 0-6.593 2.36-11.98 6.223-16.21-.628-1.52-2.695-7.662.584-15.98 0 0 5.07-1.623 16.61 6.19C53.7 35 58.867 34.327 64 34.304c5.13.023 10.3.694 15.127 2.033 11.526-7.813 16.59-6.19 16.59-6.19 3.287 8.317 1.22 14.46.593 15.98 3.872 4.23 6.215 9.617 6.215 16.21 0 23.194-14.127 28.3-27.574 29.796 2.167 1.874 4.097 5.55 4.097 11.183 0 8.08-.07 14.583-.07 16.572 0 1.607 1.088 3.49 4.148 2.897 23.98-7.994 41.263-30.622 41.263-57.294C124.388 32.14 97.35 5.104 64 5.104z"
-        ></path>
-        <path d="M26.484 91.806c-.133.3-.605.39-1.035.185-.44-.196-.685-.605-.543-.906.13-.31.603-.395 1.04-.188.44.197.69.61.537.91zm2.446 2.729c-.287.267-.85.143-1.232-.28-.396-.42-.47-.983-.177-1.254.298-.266.844-.14 1.24.28.394.426.472.984.17 1.255zM31.312 98.012c-.37.258-.976.017-1.35-.52-.37-.538-.37-1.183.01-1.44.373-.258.97-.025 1.35.507.368.545.368 1.19-.01 1.452zm3.261 3.361c-.33.365-1.036.267-1.552-.23-.527-.487-.674-1.18-.343-1.544.336-.366 1.045-.264 1.564.23.527.486.686 1.18.333 1.543zm4.5 1.951c-.147.473-.825.688-1.51.486-.683-.207-1.13-.76-.99-1.238.14-.477.823-.7 1.512-.485.683.206 1.13.756.988 1.237zm4.943.361c.017.498-.563.91-1.28.92-.723.017-1.308-.387-1.315-.877 0-.503.568-.91 1.29-.924.717-.013 1.306.387 1.306.88zm4.598-.782c.086.485-.413.984-1.126 1.117-.7.13-1.35-.172-1.44-.653-.086-.498.422-.997 1.122-1.126.714-.123 1.354.17 1.444.663zm0 0"></path>
-      </g>
+          variants={hoverVariantBuilder(
+            { fill: props.foregroundFill ?? "var(--text-color-secondary)" },
+            { fill: "#fff" },
+          )}
+        ></motion.path>
+        <motion.path
+          d="M26.484 91.806c-.133.3-.605.39-1.035.185-.44-.196-.685-.605-.543-.906.13-.31.603-.395 1.04-.188.44.197.69.61.537.91zm2.446 2.729c-.287.267-.85.143-1.232-.28-.396-.42-.47-.983-.177-1.254.298-.266.844-.14 1.24.28.394.426.472.984.17 1.255zM31.312 98.012c-.37.258-.976.017-1.35-.52-.37-.538-.37-1.183.01-1.44.373-.258.97-.025 1.35.507.368.545.368 1.19-.01 1.452zm3.261 3.361c-.33.365-1.036.267-1.552-.23-.527-.487-.674-1.18-.343-1.544.336-.366 1.045-.264 1.564.23.527.486.686 1.18.333 1.543zm4.5 1.951c-.147.473-.825.688-1.51.486-.683-.207-1.13-.76-.99-1.238.14-.477.823-.7 1.512-.485.683.206 1.13.756.988 1.237zm4.943.361c.017.498-.563.91-1.28.92-.723.017-1.308-.387-1.315-.877 0-.503.568-.91 1.29-.924.717-.013 1.306.387 1.306.88zm4.598-.782c.086.485-.413.984-1.126 1.117-.7.13-1.35-.172-1.44-.653-.086-.498.422-.997 1.122-1.126.714-.123 1.354.17 1.444.663zm0 0"
+          variants={hoverVariantBuilder(
+            { fill: props.backgroundFill ?? "var(--text-color-secondary)" },
+            { fill: "#fff" },
+          )}
+        ></motion.path>
+      </motion.g>
     </Svg>
   );
 }
 
 export function MapMarker(props: SvgProps) {
-  const pathVariants: HoverVariants = {
-    initial: { rotateY: 0, fill: "var(--text-secondary-color)" },
-    whileHover: { rotateY: 360, fill: "var(--primary-color)" },
-  };
+  const pathVariants: HoverVariants = hoverVariantBuilder(
+    { rotateY: 0, fill: "var(--text-color-secondary)" },
+    { rotateY: 360, fill: "var(--primary-color)" },
+  );
 
   return (
     <Svg title="Location" viewBox="0 0 24 26" {...props}>
@@ -157,49 +169,50 @@ export function MapMarker(props: SvgProps) {
 export function TypeScript(props: SvgProps) {
   return (
     <Svg viewBox="0 0 128 128" title="TypeScript" {...props}>
-      <path
+      <motion.path
         d="M22.67 47h99.67v73.67H22.67z"
-        className={cn(
-          "fill-background group-hover:fill-[#fff]",
-          props.backgroundFill,
+        variants={hoverVariantBuilder(
+          { fill: props.backgroundFill ?? "var(--background-color)" },
+          { fill: "#fff" },
         )}
-      ></path>
-      <path
+      ></motion.path>
+      <motion.path
         data-name="original"
         d="M1.5 63.91v62.5h125v-125H1.5zm100.73-5a15.56 15.56 0 017.82 4.5 20.58 20.58 0 013 4c0 .16-5.4 3.81-8.69 5.85-.12.08-.6-.44-1.13-1.23a7.09 7.09 0 00-5.87-3.53c-3.79-.26-6.23 1.73-6.21 5a4.58 4.58 0 00.54 2.34c.83 1.73 2.38 2.76 7.24 4.86 8.95 3.85 12.78 6.39 15.16 10 2.66 4 3.25 10.46 1.45 15.24-2 5.2-6.9 8.73-13.83 9.9a38.32 38.32 0 01-9.52-.1 23 23 0 01-12.72-6.63c-1.15-1.27-3.39-4.58-3.25-4.82a9.34 9.34 0 011.15-.73L82 101l3.59-2.08.75 1.11a16.78 16.78 0 004.74 4.54c4 2.1 9.46 1.81 12.16-.62a5.43 5.43 0 00.69-6.92c-1-1.39-3-2.56-8.59-5-6.45-2.78-9.23-4.5-11.77-7.24a16.48 16.48 0 01-3.43-6.25 25 25 0 01-.22-8c1.33-6.23 6-10.58 12.82-11.87a31.66 31.66 0 019.49.26zm-29.34 5.24v5.12H56.66v46.23H45.15V69.26H28.88v-5a49.19 49.19 0 01.12-5.17C29.08 59 39 59 51 59h21.83z"
-        className={cn("group-hover:fill-[#007acc]", props.foregroundFill)}
-      ></path>
+        variants={hoverVariantBuilder(
+          { fill: props.foregroundFill ?? "var(--text-color-secondary)" },
+          { fill: "#007acc" },
+        )}
+      ></motion.path>
     </Svg>
   );
 }
 
 export function NextJs(props: SvgProps) {
+  const random = useRef(Math.random());
+
   return (
     <Svg viewBox="0 0 128 128" title="Next.js" {...props}>
-      <circle
+      <motion.circle
         cx="64"
         cy="64"
         r="64"
-        className={cn("group-hover:fill-[#000]", props.foregroundFill)}
-      ></circle>
-      <path
-        d="M106.317 112.014 49.167 38.4H38.4v51.179h8.614v-40.24l52.54 67.884a64.216 64.216 0 0 0 6.763-5.209z"
-        className={cn(
-          "fill-background group-hover:fill-[url(#nextjs-gradient-a)]",
-          props.backgroundFill,
+        variants={hoverVariantBuilder(
+          { fill: props.foregroundFill ?? "var(--text-secondary-color)" },
+          { fill: "#000000" },
         )}
+      ></motion.circle>
+      <path
+        fill={`url(#nextjs-gradient-a-${random.current})`}
+        d="M106.317 112.014 49.167 38.4H38.4v51.179h8.614v-40.24l52.54 67.884a64.216 64.216 0 0 0 6.763-5.209z"
       ></path>
       <path
-        className={cn(
-          "fill-background group-hover:fill-[url(#nextjs-gradient-b)]",
-          props.backgroundFill,
-        )}
+        fill={`url(#nextjs-gradient-b-${random.current})`}
         d="M81.778 38.4h8.533v51.2h-8.533z"
       ></path>
-
       <defs>
         <linearGradient
-          id="nextjs-gradient-a"
+          id={`nextjs-gradient-a-${random.current}`}
           x1="109"
           x2="144.5"
           y1="116.5"
@@ -207,11 +220,23 @@ export function NextJs(props: SvgProps) {
           gradientTransform="scale(.71111)"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#fff"></stop>
-          <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+          <motion.stop
+            variants={hoverVariantBuilder(
+              { stopColor: props.backgroundFill ?? "var(--background-color)" },
+              { stopColor: "#ffffff" },
+            )}
+          ></motion.stop>
+          <motion.stop
+            offset="1"
+            variants={hoverVariantBuilder(
+              { stopColor: props.backgroundFill ?? "var(--background-color)" },
+              { stopColor: "#ffffff" },
+            )}
+            stop-opacity="0"
+          ></motion.stop>
         </linearGradient>
         <linearGradient
-          id="nextjs-gradient-b"
+          id={`nextjs-gradient-b-${random.current}`}
           x1="121"
           x2="120.799"
           y1="54"
@@ -219,8 +244,20 @@ export function NextJs(props: SvgProps) {
           gradientTransform="scale(.71111)"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#fff"></stop>
-          <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+          <motion.stop
+            variants={hoverVariantBuilder(
+              { stopColor: props.backgroundFill ?? "var(--background-color)" },
+              { stopColor: "#ffffff" },
+            )}
+          ></motion.stop>
+          <motion.stop
+            offset="1"
+            variants={hoverVariantBuilder(
+              { stopColor: props.backgroundFill ?? "var(--background-color)" },
+              { stopColor: "#ffffff" },
+            )}
+            stop-opacity="0"
+          ></motion.stop>
         </linearGradient>
       </defs>
     </Svg>
@@ -230,10 +267,13 @@ export function NextJs(props: SvgProps) {
 export function TailwindCss(props: SvgProps) {
   return (
     <Svg viewBox="0 0 128 128" title="Tailwind CSS" {...props}>
-      <path
+      <motion.path
         d="M64.004 25.602c-17.067 0-27.73 8.53-32 25.597 6.398-8.531 13.867-11.73 22.398-9.597 4.871 1.214 8.352 4.746 12.207 8.66C72.883 56.629 80.145 64 96.004 64c17.066 0 27.73-8.531 32-25.602-6.399 8.536-13.867 11.735-22.399 9.602-4.87-1.215-8.347-4.746-12.207-8.66-6.27-6.367-13.53-13.738-29.394-13.738zM32.004 64c-17.066 0-27.73 8.531-32 25.602C6.402 81.066 13.87 77.867 22.402 80c4.871 1.215 8.352 4.746 12.207 8.66 6.274 6.367 13.536 13.738 29.395 13.738 17.066 0 27.73-8.53 32-25.597-6.399 8.531-13.867 11.73-22.399 9.597-4.87-1.214-8.347-4.746-12.207-8.66C55.128 71.371 47.868 64 32.004 64zm0 0"
-        className="group-hover:fill-[#38bdf8]"
-      ></path>
+        variants={{
+          initial: { fill: "var(--primary-color)" },
+          whileHover: { fill: "group-hover:fill-[#38bdf8]" },
+        }}
+      ></motion.path>
     </Svg>
   );
 }
@@ -250,12 +290,12 @@ export function Angular(props: SvgProps) {
         gradientTransform="matrix(1 0 0 -1 0 130)"
         gradientUnits="userSpaceOnUse"
       >
-        <stop offset="0" stop-color="#e40035"></stop>
-        <stop offset=".24" stop-color="#f60a48"></stop>
-        <stop offset=".352" stop-color="#f20755"></stop>
-        <stop offset=".494" stop-color="#dc087d"></stop>
-        <stop offset=".745" stop-color="#9717e7"></stop>
-        <stop offset="1" stop-color="#6c00f5"></stop>
+        <motion.stop offset="0" stop-color="#e40035"></motion.stop>
+        <motion.stop offset=".24" stop-color="#f60a48"></motion.stop>
+        <motion.stop offset=".352" stop-color="#f20755"></motion.stop>
+        <motion.stop offset=".494" stop-color="#dc087d"></motion.stop>
+        <motion.stop offset=".745" stop-color="#9717e7"></motion.stop>
+        <motion.stop offset="1" stop-color="#6c00f5"></motion.stop>
       </linearGradient>
       <path
         className="fill-none group-hover:fill-[url(#angular-gradient-a)]"
@@ -270,8 +310,12 @@ export function Angular(props: SvgProps) {
         gradientTransform="matrix(1 0 0 -1 0 130)"
         gradientUnits="userSpaceOnUse"
       >
-        <stop offset="0" stop-color="#ff31d9"></stop>
-        <stop offset="1" stop-color="#ff5be1" stop-opacity="0"></stop>
+        <motion.stop offset="0" stop-color="#ff31d9"></motion.stop>
+        <motion.stop
+          offset="1"
+          stop-color="#ff5be1"
+          stopOpacity="0"
+        ></motion.stop>
       </linearGradient>
       <path
         className={cn(
@@ -1619,16 +1663,6 @@ export function CSS(props: SvgProps) {
 }
 
 export function GoogleMaps(props: SvgProps) {
-  const b = {
-    viewBox: "0 0 48 48",
-    className: "fill-primary stroke-secondary",
-    style: {
-      strokeLinecap: "round",
-      strokeLinejoin: "round",
-    },
-    title: "Google Maps",
-  };
-
   return (
     <Svg viewBox="0 0 48 48" title="Google Maps" {...props}>
       <path
