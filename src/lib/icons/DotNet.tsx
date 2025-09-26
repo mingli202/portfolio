@@ -1,11 +1,14 @@
 import { motion } from "motion/react";
 import { Svg, type SvgProps } from ".";
+import { useRef } from "react";
 
 export function DotNet(props: SvgProps) {
+  const random = useRef(Math.random());
+
   return (
     <Svg viewBox="0 0 128 128" title=".NET" {...props}>
       <linearGradient
-        id="dot-net-original-a"
+        id={`dot-net-original-a-${random.current}`}
         gradientUnits="userSpaceOnUse"
         x1="61.631"
         y1="563.347"
@@ -57,11 +60,11 @@ export function DotNet(props: SvgProps) {
         />
       </linearGradient>
       <path
-        fill="url(#dot-net-original-a)"
+        fill={`url(#dot-net-original-a-${random.current})`}
         d="M45.288 49.559c4.417 13.507 6.09 37.601 19.006 37.601.982 0 1.977-.096 2.974-.286-11.74-2.737-13.132-26.569-20.297-38.912a61.601 61.601 0 00-1.683 1.597"
       ></path>
       <linearGradient
-        id="dot-net-original-b"
+        id={`dot-net-original-b-${random.current}`}
         gradientUnits="userSpaceOnUse"
         x1="61.705"
         y1="563.34"
@@ -113,7 +116,7 @@ export function DotNet(props: SvgProps) {
         />
       </linearGradient>
       <path
-        fill="url(#dot-net-original-b)"
+        fill={`url(#dot-net-original-b-${random.current})`}
         d="M46.971 47.962c7.165 12.342 8.557 36.174 20.297 38.912a18.621 18.621 0 002.773-.749C59.502 80.961 56.59 57.819 48.453 46.678c-.492.41-.987.839-1.482 1.284"
       ></path>
       <motion.path
@@ -124,7 +127,7 @@ export function DotNet(props: SvgProps) {
         d="M57.294 40.623c-.98 0-1.977.096-2.977.286-2.612.493-5.268 1.618-7.944 3.321.73.722 1.427 1.547 2.081 2.448 2.723-2.259 5.427-3.928 8.12-4.932a18.177 18.177 0 013.029-.842 9.393 9.393 0 00-2.309-.281"
       />
       <linearGradient
-        id="dot-net-original-c"
+        id={`dot-net-original-c-${random.current}`}
         gradientUnits="userSpaceOnUse"
         x1="67.486"
         y1="564.985"
@@ -156,7 +159,7 @@ export function DotNet(props: SvgProps) {
         />
       </linearGradient>
       <path
-        fill="url(#dot-net-original-c)"
+        fill={`url(#dot-net-original-c-${random.current})`}
         d="M78.268 81.366a47.16 47.16 0 003.24-2.84c-4.488-13.443-6.095-37.883-19.101-37.883-.93 0-1.868.087-2.804.26C71.45 43.85 72.968 69.625 78.268 81.366"
       ></path>
       <motion.path
@@ -174,7 +177,7 @@ export function DotNet(props: SvgProps) {
         d="M78.04 84.221a19.441 19.441 0 01-1.466-1.584c-2.188 1.549-4.368 2.724-6.533 3.489.771.376 1.578.656 2.436.829.664.136 1.353.206 2.075.206 2.431 0 4.353-.288 5.987-1.072-.9-.488-1.726-1.118-2.499-1.868"
       />
       <linearGradient
-        id="dot-net-original-d"
+        id={`dot-net-original-d-${random.current}`}
         gradientUnits="userSpaceOnUse"
         x1="61.852"
         y1="563.281"
@@ -226,11 +229,11 @@ export function DotNet(props: SvgProps) {
         />
       </linearGradient>
       <path
-        fill="url(#dot-net-original-d)"
+        fill={`url(#dot-net-original-d-${random.current})`}
         d="M56.573 41.748c10.611 5.55 11.534 30.684 20.001 40.889.568-.4 1.13-.824 1.691-1.271-5.3-11.741-6.815-37.519-18.66-40.463-1.011.189-2.02.469-3.032.845"
       ></path>
       <linearGradient
-        id="dot-net-original-e"
+        id={`dot-net-original-e-${random.current}`}
         gradientUnits="userSpaceOnUse"
         x1="61.975"
         y1="563.367"
@@ -282,11 +285,11 @@ export function DotNet(props: SvgProps) {
         />
       </linearGradient>
       <path
-        fill="url(#dot-net-original-e)"
+        fill={`url(#dot-net-original-e-${random.current})`}
         d="M48.453 46.678c8.137 11.141 11.049 34.284 21.588 39.448 2.166-.765 4.346-1.939 6.533-3.489-8.467-10.205-9.39-35.338-20.001-40.889-2.693 1.002-5.397 2.671-8.12 4.93"
       ></path>
       <linearGradient
-        id="dot-net-original-f"
+        id={`dot-net-original-f-${random.current}`}
         gradientUnits="userSpaceOnUse"
         x1="1006.454"
         y1="-1412.08"
@@ -311,7 +314,7 @@ export function DotNet(props: SvgProps) {
         />
       </linearGradient>
       <path
-        fill="url(#dot-net-original-f)"
+        fill={`url(#dot-net-original-f-${random.current})`}
         d="M40.083 49.234c-1.275 2.883-2.578 6.674-4.152 11.621 3.131-4.413 6.253-8.214 9.357-11.295a33.873 33.873 0 00-1.382-3.606 46.113 46.113 0 00-3.823 3.28"
       ></path>
       <motion.path
@@ -328,8 +331,9 @@ export function DotNet(props: SvgProps) {
         }}
         d="M46.373 44.229c-.445.282-.888.58-1.337.891.695.855 1.333 1.81 1.936 2.844.495-.448.989-.879 1.482-1.287-.654-.9-1.35-1.726-2.081-2.448"
       ></motion.path>
+
       <linearGradient
-        id="dot-net-original-g"
+        id={`dot-net-original-g-${random.current}`}
         gradientUnits="userSpaceOnUse"
         x1="67.564"
         y1="565.48"
@@ -362,11 +366,11 @@ export function DotNet(props: SvgProps) {
         />
       </linearGradient>
       <path
-        fill="url(#dot-net-original-g)"
+        fill={`url(#dot-net-original-g-${random.current})`}
         d="M118.751 39.594c-6.001 23.144-18.536 41.734-29.044 46.42h-.021l-.567.243-.069.027-.161.062-.072.03-.263.093-.108.038-.131.043-.126.044-.112.038-.224.068-.096.025-.151.041-.103.028-.165.043-.201.044c.475.175.97.264 1.503.264 9.965 0 20.013-17.858 36.638-47.556h-6.528l.001.005z"
       ></path>
       <linearGradient
-        id="dot-net-original-h"
+        id={`dot-net-original-h-${random.current}`}
         gradientUnits="userSpaceOnUse"
         x1="998.231"
         y1="-1414.829"
@@ -391,7 +395,7 @@ export function DotNet(props: SvgProps) {
         />
       </linearGradient>
       <path
-        fill="url(#dot-net-original-h)"
+        fill={`url(#dot-net-original-h-${random.current})`}
         d="M33.766 41.563l.019-.016.023-.015h.013l.161-.062.032-.016.042-.017.173-.062h.009l.383-.134.057-.015.164-.049.075-.024.165-.049.063-.017.548-.142.075-.017.16-.031.078-.024.161-.03h.038l.333-.062h.066l.154-.027.087-.015.147-.022.081-.016.358-.032a11.467 11.467 0 00-1.061-.054c-11.223 0-26.685 20.822-33.649 47.788h1.343a390.312 390.312 0 006.062-11.266c4.879-19.1 14.814-32.126 23.64-35.577"
       ></path>
       <motion.path
@@ -409,7 +413,7 @@ export function DotNet(props: SvgProps) {
         d="M41.005 41.72c.733.614 1.39 1.46 1.99 2.473.189-.232.381-.447.58-.649a11.263 11.263 0 00-2.712-1.897l.12.057.022.016"
       ></motion.path>
       <linearGradient
-        id="dot-net-original-i"
+        id={`dot-net-original-i-${random.current}`}
         gradientUnits="userSpaceOnUse"
         x1="67.491"
         y1="564.359"
@@ -433,7 +437,7 @@ export function DotNet(props: SvgProps) {
         />
       </linearGradient>
       <path
-        fill="url(#dot-net-original-i)"
+        fill={`url(#dot-net-original-i-${random.current})`}
         d="M10.127 77.138c10.233-19.719 15.081-32.199 23.64-35.577-8.825 3.454-18.762 16.479-23.64 35.577"
       ></path>
       <motion.path
@@ -444,7 +448,7 @@ export function DotNet(props: SvgProps) {
         d="M43.574 43.544c-.199.204-.389.417-.58.649.322.538.621 1.124.913 1.76.378-.29.756-.563 1.129-.832a15.351 15.351 0 00-1.462-1.577"
       ></motion.path>
       <linearGradient
-        id="dot-net-original-j"
+        id={`dot-net-original-j-${random.current}`}
         gradientUnits="userSpaceOnUse"
         x1="67.593"
         y1="564.41"
@@ -469,11 +473,11 @@ export function DotNet(props: SvgProps) {
         />
       </linearGradient>
       <path
-        fill="url(#dot-net-original-j)"
+        fill={`url(#dot-net-original-j-${random.current})`}
         d="M14.773 88.315l-.186.022h-.035l-.158.016h-.026l-.376.025h-.039c10.356-.29 15.091-5.475 17.44-12.997 1.785-5.701 3.252-10.505 4.537-14.535-4.338 6.106-8.696 13.384-13.077 21.539-2.112 3.93-5.325 5.572-8.08 5.922"
       ></path>
       <linearGradient
-        id="dot-net-original-k"
+        id={`dot-net-original-k-${random.current}`}
         gradientUnits="userSpaceOnUse"
         x1="68.291"
         y1="564.525"
@@ -518,7 +522,7 @@ export function DotNet(props: SvgProps) {
         />
       </linearGradient>
       <path
-        fill="url(#dot-net-original-k)"
+        fill={`url(#dot-net-original-k-${random.current})`}
         d="M14.773 88.311c2.755-.351 5.968-1.991 8.08-5.923 4.381-8.151 8.741-15.431 13.075-21.538 1.577-4.949 2.878-8.737 4.154-11.621-8.639 8.223-17.311 21.896-25.31 39.077"
       ></path>
       <motion.path
@@ -529,7 +533,7 @@ export function DotNet(props: SvgProps) {
         d="M10.127 77.139a388.004 388.004 0 01-6.063 11.266h3.904a95.502 95.502 0 012.158-11.264"
       ></motion.path>
       <linearGradient
-        id="dot-net-original-l"
+        id={`dot-net-original-l-${random.current}`}
         gradientUnits="userSpaceOnUse"
         x1="67.892"
         y1="563.82"
@@ -553,11 +557,11 @@ export function DotNet(props: SvgProps) {
         />
       </linearGradient>
       <path
-        fill="url(#dot-net-original-l)"
+        fill={`url(#dot-net-original-l-${random.current})`}
         d="M37.073 40.709l-.083.016-.146.021-.086.015-.154.027-.066.016-.333.058h-.038l-.162.032-.081.022-.157.031-.074.018-.549.142-.063.018-.166.049-.075.021-.163.049-.06.016-.381.134-.173.06-.072.03-.161.06-.054.026c-8.558 3.377-13.406 15.857-23.639 35.576A94.655 94.655 0 007.979 88.41h.547l3.755-.016h1.723l.375-.025h.024l.158-.016h.037l.186-.022c8-17.182 16.672-30.854 25.31-39.077.95-2.152 1.887-3.796 2.911-5.04-.6-1.013-1.256-1.861-1.988-2.476l-.021-.016-.122-.059-.121-.061-.117-.057-.139-.058-.108-.047-.227-.095-.097-.036-.169-.068-.091-.03-.235-.081h-.019l-.272-.077-.061-.019-.229-.064-.053-.015a7.851 7.851 0 00-.569-.125l-.059-.016-.247-.04-.049-.015-.292-.039h-.051l-.226-.025-.358.033"
       ></path>
       <linearGradient
-        id="dot-net-original-m"
+        id={`dot-net-original-m-${random.current}`}
         gradientUnits="userSpaceOnUse"
         x1="70.847"
         y1="566.882"
@@ -588,11 +592,11 @@ export function DotNet(props: SvgProps) {
         />
       </linearGradient>
       <path
-        fill="url(#dot-net-original-m)"
+        fill={`url(#dot-net-original-m-${random.current})`}
         d="M95.311 52.407c-1.97 6.307-3.563 11.51-4.952 15.791 5.403-7.435 10.725-16.787 15.792-27.579-5.913 1.857-9.065 6.107-10.84 11.788"
       ></path>
       <linearGradient
-        id="dot-net-original-n"
+        id={`dot-net-original-n-${random.current}`}
         gradientUnits="userSpaceOnUse"
         x1="61.634"
         y1="562.213"
@@ -631,7 +635,7 @@ export function DotNet(props: SvgProps) {
         />
       </linearGradient>
       <motion.path
-        fill="url(#dot-net-original-n)"
+        fill={`url(#dot-net-original-n-${random.current})`}
         d="M90.53 85.621c-.275.14-.552.273-.823.394 10.508-4.687 23.044-23.277 29.044-46.421h-1.216c-13.788 24.631-18.222 41.12-27.005 46.027"
       ></motion.path>
       <motion.path
@@ -670,7 +674,7 @@ export function DotNet(props: SvgProps) {
         d="M81.511 78.54v-.016a47.16 47.16 0 01-3.24 2.84 36.81 36.81 0 01-1.693 1.271c.476.568.959 1.1 1.468 1.585.772.749 1.597 1.38 2.498 1.867.205-.101.41-.211.609-.327.918-.536 1.741-1.26 2.52-2.209-.806-1.376-1.513-3.082-2.157-5.012"
       ></motion.path>
       <linearGradient
-        id="dot-net-original-o"
+        id={`dot-net-original-o-${random.current}`}
         gradientUnits="userSpaceOnUse"
         x1="61.149"
         y1="562.654"
@@ -701,7 +705,7 @@ export function DotNet(props: SvgProps) {
         />
       </linearGradient>
       <motion.path
-        fill="url(#dot-net-original-o)"
+        fill={`url(#dot-net-original-o-${random.current})`}
         d="M113.685 39.594h-6.121l-.97.047-.451.966c-5.068 10.793-10.388 20.145-15.791 27.58-2.54 7.818-4.404 12.563-6.69 15.353.977 1.668 2.114 2.84 3.466 3.337l.106-.023h.022l.075-.016.17-.042.101-.029.151-.039.094-.027.226-.068.112-.038.126-.046.13-.041.106-.04.264-.093.073-.027.162-.063.068-.025.568-.243h.02c.271-.119.547-.254.821-.394 8.785-4.908 13.22-21.396 27.008-46.026h-3.851l.005-.003z"
       ></motion.path>
       <motion.path
@@ -720,7 +724,7 @@ export function DotNet(props: SvgProps) {
       ></motion.path>
       <g transform="matrix(5.048 0 0 -5.048 -9064.26 2270.61)">
         <linearGradient
-          id="dot-net-original-p"
+          id={`dot-net-original-p-${random.current}`}
           gradientUnits="userSpaceOnUse"
           x1="1806.96"
           y1="336.158"
@@ -751,13 +755,13 @@ export function DotNet(props: SvgProps) {
           />
         </linearGradient>
         <motion.path
-          fill="url(#dot-net-original-p)"
+          fill={`url(#dot-net-original-p-${random.current})`}
           d="M1802.977 441.733l.165.007c.472 0 .881-.146 1.242-.402.381.301.842.406 1.482.406h-3.099l.21-.011"
         ></motion.path>
       </g>
       <g transform="matrix(5.048 0 0 -5.048 -9064.26 2270.61)">
         <linearGradient
-          id="dot-net-original-q"
+          id={`dot-net-original-q-${random.current}`}
           gradientUnits="userSpaceOnUse"
           x1="1808.848"
           y1="335.171"
@@ -781,12 +785,12 @@ export function DotNet(props: SvgProps) {
           />
         </linearGradient>
         <motion.path
-          fill="url(#dot-net-original-q)"
+          fill={`url(#dot-net-original-q-${random.current})`}
           d="M1805.866 441.744c-.64 0-1.1-.105-1.482-.406.126-.089.248-.193.364-.309.531.337 1.056.561 1.574.658.198.037.395.056.589.056h-1.045v.001z"
         ></motion.path>
       </g>
       <linearGradient
-        id="dot-net-original-r"
+        id={`dot-net-original-r-${random.current}`}
         gradientUnits="userSpaceOnUse"
         x1="61.049"
         y1="562.706"
@@ -811,7 +815,7 @@ export function DotNet(props: SvgProps) {
         />
       </linearGradient>
       <motion.path
-        fill="url(#dot-net-original-r)"
+        fill={`url(#dot-net-original-r-${random.current})`}
         d="M90.359 68.202c1.391-4.284 2.98-9.485 4.954-15.794 1.777-5.684 4.925-9.934 10.835-11.788l.456-.966c-9.636.577-14.14 5.479-16.405 12.738-3.964 12.673-6.365 20.888-8.677 26.123 2.952-2.823 5.904-6.288 8.837-10.313"
       ></motion.path>
     </Svg>
