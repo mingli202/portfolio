@@ -1,27 +1,43 @@
-import { Svg, type SvgProps } from ".";
+import { motion } from "motion/react";
+import { hoverFillColorVariantBuilder, Svg, type SvgProps } from ".";
 
 export function GoogleMaps(props: SvgProps) {
   return (
     <Svg viewBox="0 0 48 48" title="Google Maps" {...props}>
-      <path
+      <motion.path
         d="M17.8971,33.398A39.3963,39.3963,0,0,1,20.97,37.9305a22.9991,22.9991,0,0,1,1.6835,4.2849c.3512.9893.6687,1.2846,1.3513,1.2846.7439,0,1.0814-.5023,1.3421-1.2792A23.224,23.224,0,0,1,26.9837,38.02a47.8757,47.8757,0,0,1,4.5556-6.4576A41.3528,41.3528,0,0,0,36.05,25.0614a15.78,15.78,0,0,0,1.5553-6.887,13.5933,13.5933,0,0,0-1.5338-6.3579"
-        className="fill-primary group-hover:fill-[#34A851]"
+        variants={hoverFillColorVariantBuilder(
+          "var(--primary-color)",
+          "#34A851",
+        )}
       />
-      <path
+      <motion.path
         d="M11.7348,24.5783c1.4572,3.3284,4.2673,6.2543,6.1685,8.822L28.0015,21.4384a5.3056,5.3056,0,0,1-4.0034,1.8606,5.1725,5.1725,0,0,1-5.1967-5.19,5.5055,5.5055,0,0,1,1.1941-3.3484"
-        className="fill-primary group-hover:fill-[#F9BB0E]"
+        variants={hoverFillColorVariantBuilder(
+          "var(--primary-color)",
+          "#F9BB0E",
+        )}
       />
-      <path
+      <motion.path
         d="M28.1142,5.1151a13.519,13.519,0,0,1,7.9608,6.6991l-8.0705,9.6173a5.6064,5.6064,0,0,0,1.1941-3.3606A5.2235,5.2235,0,0,0,24.01,12.8964a5.4179,5.4179,0,0,0-4.0111,1.8575"
-        className="fill-primary group-hover:fill-[#4285F5]"
+        variants={hoverFillColorVariantBuilder(
+          "var(--primary-color)",
+          "#4285F5",
+        )}
       />
-      <path
+      <motion.path
         d="M13.5847,9.3646A13.4781,13.4781,0,0,1,23.972,4.5a13.8562,13.8562,0,0,1,4.1338.6189l-8.1142,9.64"
-        className="fill-primary group-hover:fill-[#1A73E6]"
+        variants={hoverFillColorVariantBuilder(
+          "var(--primary-color)",
+          "#1A73E6",
+        )}
       />
-      <path
+      <motion.path
         d="M11.7348,24.5783A15.3756,15.3756,0,0,1,10.3943,18.15a13.5161,13.5161,0,0,1,3.19-8.7852L19.9962,14.76Z"
-        className="fill-primary group-hover:fill-[#E74335]"
+        variants={hoverFillColorVariantBuilder(
+          "var(--primary-color)",
+          "#E74335",
+        )}
       />
     </Svg>
   );
