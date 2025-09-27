@@ -2,11 +2,6 @@ import { type Variants, motion } from "motion/react";
 import { type SvgProps, hoverVariantBuilder, Svg } from ".";
 
 export function ArrowAngularTopRight(props: SvgProps) {
-  const svgVariants: Variants = hoverVariantBuilder(
-    { stroke: "var(--text-color-secondary)" },
-    { stroke: "var(--primary-color)" },
-  );
-
   const pathVariants1: Variants = hoverVariantBuilder(
     { d: "M15 3h6v6" },
     { d: "M12 2h10v10" },
@@ -28,7 +23,7 @@ export function ArrowAngularTopRight(props: SvgProps) {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
-      variants={svgVariants}
+      stroke="var(--primary-color)"
       {...props}
     >
       <motion.path variants={pathVariants1} fill="none" />
