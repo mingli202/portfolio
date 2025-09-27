@@ -3,12 +3,6 @@ import { projects } from "../data/projects";
 import { SkillIconList } from "../lib/SkillIcon";
 import type { ProjectItem } from "../types";
 import { useIsVisibleCallback } from "../hooks/useIsVisibleCallback";
-import {
-  AnimatePresence,
-  motion,
-  useAnimate,
-  useMotionValue,
-} from "motion/react";
 
 export default function Projects() {
   return (
