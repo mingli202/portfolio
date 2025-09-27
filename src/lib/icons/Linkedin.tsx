@@ -7,7 +7,7 @@ export function Linkedin(props: SvgProps) {
       <motion.path
         d="M116 3H12a8.91 8.91 0 00-9 8.8v104.42a8.91 8.91 0 009 8.78h104a8.93 8.93 0 009-8.81V11.77A8.93 8.93 0 00116 3z"
         variants={hoverVariantBuilder(
-          { fill: "var(--text-color-secondary)" },
+          { fill: "var(--primary-color)" },
           { fill: "#0076b2" },
         )}
       ></motion.path>
