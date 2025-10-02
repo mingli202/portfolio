@@ -97,7 +97,7 @@ export function Cargo(props: SvgProps) {
       />
       <motion.path
         variants={hoverVariantBuilder(
-          { fill: "var(--text-color-secondary)" },
+          { fill: "var(--primary-color)" },
           { fill: "#c69c6d" },
         )}
         d="M3.3,22.36l12.966-4.519L29.229,22.36,16.264,28.379Z"
@@ -105,7 +105,7 @@ export function Cargo(props: SvgProps) {
       <motion.path
         variants={hoverVariantBuilder(
           {
-            fill: "var(--text-color-secondary)",
+            fill: "var(--primary-color)",
             stroke: "var(--background-color)",
           },
           { fill: "#e5ac3d", stroke: "#73561f" },
@@ -117,7 +117,7 @@ export function Cargo(props: SvgProps) {
       <motion.path
         variants={hoverVariantBuilder(
           {
-            fill: "var(--text-color-secondary)",
+            fill: "var(--primary-color)",
             stroke: "var(--background-color)",
           },
           { fill: "#e3b04e", stroke: "#73561f" },
@@ -138,7 +138,7 @@ export function Cargo(props: SvgProps) {
       <motion.path
         variants={hoverVariantBuilder(
           {
-            fill: "var(--text-color-secondary)",
+            fill: "var(--primary-color)",
             stroke: "var(--background-color)",
           },
           { fill: "#e5ac3d", stroke: "#73561f" },
@@ -150,7 +150,7 @@ export function Cargo(props: SvgProps) {
       <motion.path
         variants={hoverVariantBuilder(
           {
-            fill: "var(--text-color-secondary)",
+            fill: "var(--primary-color)",
             stroke: "var(--background-color)",
           },
           { fill: "#e5ac3d", stroke: "#73561f" },
@@ -162,7 +162,7 @@ export function Cargo(props: SvgProps) {
       <motion.path
         variants={hoverVariantBuilder(
           {
-            fill: "var(--text-color-secondary)",
+            fill: "var(--primary-color)",
             stroke: "var(--background-color)",
           },
           { fill: "#e3b04e", stroke: "#73561f" },
@@ -174,7 +174,7 @@ export function Cargo(props: SvgProps) {
       <motion.path
         variants={hoverVariantBuilder(
           {
-            fill: "var(--text-color-secondary)",
+            fill: "var(--primary-color)",
             stroke: "var(--background-color)",
           },
           { fill: "#e5ac3d", stroke: "#73561f" },
@@ -186,7 +186,7 @@ export function Cargo(props: SvgProps) {
       <motion.path
         variants={hoverVariantBuilder(
           {
-            fill: "var(--text-color-secondary)",
+            fill: "var(--primary-color)",
             stroke: "var(--background-color)",
           },
           { fill: "#e3b04e", stroke: "#73561f" },
@@ -211,7 +211,7 @@ export function Cargo(props: SvgProps) {
       <motion.path
         variants={hoverVariantBuilder(
           {
-            fill: "var(--text-color-secondary)",
+            fill: "var(--primary-color)",
             stroke: "var(--background-color)",
           },
           { fill: "#e5ac3d", stroke: "#73561f" },
@@ -223,7 +223,7 @@ export function Cargo(props: SvgProps) {
       <motion.path
         variants={hoverVariantBuilder(
           {
-            fill: "var(--text-color-secondary)",
+            fill: "var(--primary-color)",
             stroke: "var(--background-color)",
           },
           { fill: "#e5ac3d", stroke: "#73561f" },
@@ -235,7 +235,7 @@ export function Cargo(props: SvgProps) {
       <motion.path
         variants={hoverVariantBuilder(
           {
-            fill: "var(--text-color-secondary)",
+            fill: "var(--primary-color)",
             stroke: "var(--background-color)",
           },
           { fill: "#e5ac3d", stroke: "#73561f" },
@@ -247,7 +247,7 @@ export function Cargo(props: SvgProps) {
       <motion.path
         variants={hoverVariantBuilder(
           {
-            fill: "var(--text-color-secondary)",
+            fill: "var(--primary-color)",
             stroke: "var(--background-color)",
           },
           { fill: "#e5ac3d", stroke: "#73561f" },
@@ -259,7 +259,7 @@ export function Cargo(props: SvgProps) {
       <motion.path
         variants={hoverVariantBuilder(
           {
-            fill: "var(--text-color-secondary)",
+            fill: "var(--primary-color)",
             stroke: "var(--background-color)",
           },
           { fill: "#e3b04e", stroke: "#73561f" },
@@ -310,7 +310,7 @@ export function Cargo(props: SvgProps) {
       <motion.polygon
         variants={hoverVariantBuilder(
           {
-            fill: "var(--text-color-secondary)",
+            fill: "var(--primary-color)",
             stroke: "var(--background-color)",
           },
           { fill: "#ffffff", stroke: "#73561f" },
@@ -323,7 +323,7 @@ export function Cargo(props: SvgProps) {
       <motion.polygon
         variants={hoverVariantBuilder(
           {
-            fill: "var(--text-color-secondary)",
+            fill: "var(--primary-color)",
             stroke: "var(--background-color)",
           },
           { fill: "#ffffff", stroke: "#73561f" },
@@ -336,7 +336,7 @@ export function Cargo(props: SvgProps) {
       <motion.polygon
         variants={hoverVariantBuilder(
           {
-            fill: "var(--text-color-secondary)",
+            fill: "var(--primary-color)",
             stroke: "var(--background-color)",
           },
           { fill: "#ffffff", stroke: "#73561f" },
@@ -349,7 +349,7 @@ export function Cargo(props: SvgProps) {
       <motion.polygon
         variants={hoverVariantBuilder(
           {
-            fill: "var(--text-color-secondary)",
+            fill: "var(--primary-color)",
             stroke: "var(--background-color)",
           },
           { fill: "#ffffff", stroke: "#73561f" },
@@ -370,7 +370,7 @@ export function Cargo(props: SvgProps) {
       <motion.polygon
         variants={hoverVariantBuilder(
           {
-            fill: "var(--text-color-secondary)",
+            fill: "var(--primary-color)",
             stroke: "var(--background-color)",
           },
           { fill: "#ffffff", stroke: "#73561f" },
@@ -391,7 +391,7 @@ export function Cargo(props: SvgProps) {
       <motion.polygon
         variants={hoverVariantBuilder(
           {
-            fill: "var(--text-color-secondary)",
+            fill: "var(--primary-color)",
             stroke: "var(--background-color)",
           },
           { fill: "#ffffff", stroke: "#73561f" },
@@ -412,7 +412,7 @@ export function Cargo(props: SvgProps) {
       <motion.polygon
         variants={hoverVariantBuilder(
           {
-            fill: "var(--text-color-secondary)",
+            fill: "var(--primary-color)",
             stroke: "var(--background-color)",
           },
           { fill: "#ffffff", stroke: "#73561f" },
@@ -433,7 +433,7 @@ export function Cargo(props: SvgProps) {
       <motion.polygon
         variants={hoverVariantBuilder(
           {
-            fill: "var(--text-color-secondary)",
+            fill: "var(--primary-color)",
             stroke: "var(--background-color)",
           },
           { fill: "#ffffff", stroke: "#73561f" },
@@ -454,7 +454,7 @@ export function Cargo(props: SvgProps) {
       <motion.polygon
         variants={hoverVariantBuilder(
           {
-            fill: "var(--text-color-secondary)",
+            fill: "var(--primary-color)",
             stroke: "var(--background-color)",
           },
           { fill: "#ffffff", stroke: "#73561f" },
@@ -475,7 +475,7 @@ export function Cargo(props: SvgProps) {
       <motion.polygon
         variants={hoverVariantBuilder(
           {
-            fill: "var(--text-color-secondary)",
+            fill: "var(--primary-color)",
             stroke: "var(--background-color)",
           },
           { fill: "#ffffff", stroke: "#73561f" },
@@ -496,7 +496,7 @@ export function Cargo(props: SvgProps) {
       <motion.polygon
         variants={hoverVariantBuilder(
           {
-            fill: "var(--text-color-secondary)",
+            fill: "var(--primary-color)",
             stroke: "var(--background-color)",
           },
           { fill: "#ffffff", stroke: "#73561f" },
@@ -517,7 +517,7 @@ export function Cargo(props: SvgProps) {
       <motion.polygon
         variants={hoverVariantBuilder(
           {
-            fill: "var(--text-color-secondary)",
+            fill: "var(--primary-color)",
             stroke: "var(--background-color)",
           },
           { fill: "#ffffff", stroke: "#73561f" },
@@ -538,7 +538,7 @@ export function Cargo(props: SvgProps) {
       <motion.polygon
         variants={hoverVariantBuilder(
           {
-            fill: "var(--text-color-secondary)",
+            fill: "var(--primary-color)",
             stroke: "var(--background-color)",
           },
           { fill: "#ffffff", stroke: "#73561f" },
