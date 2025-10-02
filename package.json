@@ -4,10 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "dev": "node server",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "vite build --outDir dist/client",
+    "build:server": "vite build --ssr src/entry-server.tsx --outDir dist/server",
+    "preview": "cross-env NODE_ENV=production node server"
   },
   "dependencies": {
     "@react-three/drei": "^10.1.2",
@@ -20,21 +22,25 @@
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
     "clsx": "^2.1.1",
+    "compression": "^1.8.1",
     "express": "^5.1.0",
     "motion": "^12.23.21",
     "ogl": "^1.0.11",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "sirv": "^3.0.2",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.8",
     "three": "^0.176.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
+    "@types/express": "^5.0.3",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@types/three": "^0.176.0",
     "@vitejs/plugin-react-swc": "^3.9.0",
+    "cross-env": "^10.1.0",
     "eslint": "^9.25.0",
     "eslint-plugin-react-dom": "^1.52.2",
     "eslint-plugin-react-hooks": "^5.2.0",
