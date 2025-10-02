@@ -13,10 +13,18 @@
 
     <title>Ming Li's Portfolio</title>
   </head>
-  <body
-    class="bg-background text-text font-nunito flex w-screen flex-col items-center justify-center overflow-x-hidden"
-    id="root"
-  >
+  <body class="bg-background text-text font-nunito w-screen overflow-x-hidden">
+    <canvas
+      id="canvas"
+      width="900px"
+      height="900px"
+      class="border-primary border-2"
+    ></canvas>
+    <main
+      id="root"
+      class="flex w-full flex-col items-center justify-center"
+    ></main>
     <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="/src/fluid-simulation/main.ts"></script>
   </body>
 </html>

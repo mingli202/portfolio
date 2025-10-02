@@ -20,6 +20,7 @@
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
     "clsx": "^2.1.1",
+    "gl-matrix": "^3.4.4",
     "motion": "^12.23.21",
     "ogl": "^1.0.11",
     "react": "^19.1.0",
