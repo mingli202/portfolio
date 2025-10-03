@@ -52,8 +52,9 @@ app.use("*all", async (req, res) => {
     }
 
     const rendered = await render(url);
+    console.log("rendered:", rendered);
 
-    const html = template.replace(`<!-- ssr-outlet -->`, rendered.head ?? "");
+    const html = template.replace(`<!-- ssr-outlet -->`, rendered ?? "");
 
     res.status(200).set({ "Content-Type": "text/html" }).send(html);
   } catch (e) {
