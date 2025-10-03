@@ -12,12 +12,12 @@
     />
 
     <title>Ming Li's Portfolio</title>
+    <!--app-head-->
   </head>
-  <body
-    class="bg-background text-text font-nunito flex w-screen flex-col items-center justify-center overflow-x-hidden"
-    id="root"
-  >
-    <!-- ssr-outlet -->
-    <script type="module" src="/src/main.tsx"></script>
+  <body class="bg-background text-text font-nunito w-screen overflow-x-hidden">
+    <div id="root" class="flex w-full flex-col items-center justify-center">
+      <!--app-html-->
+    </div>
+    <script type="module" src="/src/entry-client.tsx"></script>
   </body>
 </html>
