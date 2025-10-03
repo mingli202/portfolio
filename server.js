@@ -1,7 +1,9 @@
 import fs from "node:fs/promises";
 import express from "express";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const toAbsolute = (p) => path.resolve(__dirname, p);
 // Constants
@@ -58,7 +60,7 @@ app.use("*all", async (req, res) => {
 
     const html = template.replace(`<!-- ssr-outlet -->`, rendered.head ?? "");
 
-    res.status(200).set({ "Content-Type": "text/html" }).send(html);
+    res.status(200).set({ "Content-Type": "text/html" }).end(html);
   } catch (e) {
     vite?.ssrFixStacktrace(e);
     console.log(e.stack);
