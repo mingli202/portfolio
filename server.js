@@ -1,11 +1,6 @@
 import fs from "node:fs/promises";
 import express from "express";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-const toAbsolute = (p) => path.resolve(__dirname, p);
 // Constants
 const isProduction = process.env.NODE_ENV === "production";
 const port = process.env.PORT || 5173;
@@ -13,7 +8,7 @@ const base = process.env.BASE || "/";
 
 // Cached production assets
 const templateHtml = isProduction
-  ? await fs.readFile(toAbsolute("dist/client/index.html"), "utf-8")
+  ? await fs.readFile("./dist/client/index.html", "utf-8")
   : "";
 
 // Create http server
@@ -34,7 +29,7 @@ if (!isProduction) {
   const compression = (await import("compression")).default;
   const sirv = (await import("sirv")).default;
   app.use(compression());
-  app.use(base, sirv(toAbsolute("dist/client"), { extensions: [] }));
+  app.use(base, sirv("./dist/client", { extensions: [] }));
 }
 
 // Serve HTML
@@ -53,14 +48,14 @@ app.use("*all", async (req, res) => {
       render = (await vite.ssrLoadModule("/src/entry-server.tsx")).render;
     } else {
       template = templateHtml;
-      render = (await import(toAbsolute("dist/server/entry-server.js"))).render;
+      render = (await import("./dist/server/entry-server.js")).render;
     }
 
     const rendered = await render(url);
 
     const html = template.replace(`<!-- ssr-outlet -->`, rendered.head ?? "");
 
-    res.status(200).set({ "Content-Type": "text/html" }).end(html);
+    res.status(200).set({ "Content-Type": "text/html" }).send(html);
   } catch (e) {
     vite?.ssrFixStacktrace(e);
     console.log(e.stack);
