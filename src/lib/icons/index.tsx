@@ -129,7 +129,6 @@ export const Icon = {
   Rust,
   Python,
   WebsiteLink: ArrowAngularTopRight,
-  // TODO: animation and the rest below
   Docker,
   Firebase,
   "C#": CSharp,
