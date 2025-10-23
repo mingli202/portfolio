@@ -82,7 +82,7 @@ function Project(project: ProjectItem) {
           </div>
           <p className="font-light">{subtitle}</p>
         </div>
-        <p className="text-text-secondary font-light">{description}</p>
+        <p className="text-text-secondary">{description}</p>
         <p className="text-text-secondary">
           {startDate} {endDate ? `- ${endDate}` : null}
         </p>

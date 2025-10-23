@@ -1,5 +1,5 @@
+import { useCallback, useRef } from "react";
 import cn from "../lib/cn";
-import { Icon } from "../lib/icons";
 import { SkillIconList } from "../lib/SkillIcon";
 import type { ExperienceListItem } from "../types";
 
@@ -29,12 +29,21 @@ function ListItem(item: ExperienceListItem) {
     location,
   } = item;
 
+  const additionalInfoRef = useRef<HTMLDivElement>(null!);
+
+  const showAdditionalInfo = useCallback(() => {
+    additionalInfoRef.current.style.display = "flex";
+  }, []);
+
   return (
     <div
       className={cn(
         "ring-secondary flex w-full gap-4 rounded-[calc(0.25rem+0.75rem)] p-3 ring-1 transition md:rounded-[calc(0.25rem+1rem)] md:p-4",
         "hover:ring-primary hover:cursor-pointer",
       )}
+      onClick={() => {
+        document.startViewTransition(showAdditionalInfo);
+      }}
     >
       <img
         src={imageUrl}
@@ -51,7 +60,11 @@ function ListItem(item: ExperienceListItem) {
           </p>
         </div>
         <p>{title}</p>
-        <div className="text-text-secondary flex flex-col gap-2 text-sm md:text-base">
+
+        <div
+          className="text-text-secondary hidden flex-col gap-2 text-sm md:text-base"
+          ref={additionalInfoRef}
+        >
           <p>{location}</p>
           <ul className="list-inside list-disc">
             {additionalInfo.map((info, index) => (
@@ -59,6 +72,7 @@ function ListItem(item: ExperienceListItem) {
             ))}
           </ul>
         </div>
+
         <SkillIconList skills={skills} />
       </div>
     </div>
