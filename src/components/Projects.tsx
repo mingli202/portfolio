@@ -3,6 +3,7 @@ import { projects } from "../data/projects";
 import { SkillIconList } from "../lib/SkillIcon";
 import type { ProjectItem } from "../types";
 import { useIsVisibleCallback } from "../hooks/useIsVisibleCallback";
+import cn from "../lib/cn";
 
 export default function Projects() {
   return (
@@ -33,7 +34,12 @@ function Project(project: ProjectItem) {
   });
 
   return (
-    <div className="border-secondary flex flex-col gap-3 rounded-[calc(1rem+0.75rem)] border border-solid p-3 md:gap-4 md:rounded-[2rem] md:p-4">
+    <div
+      className={cn(
+        "border-secondary flex flex-col gap-3 rounded-[calc(1rem+0.75rem)] border border-solid p-3 md:gap-4 md:rounded-[2rem] md:p-4",
+        "hover:border-primary transition",
+      )}
+    >
       <div
         className="relative aspect-video w-full overflow-hidden rounded-2xl"
         ref={ref}
