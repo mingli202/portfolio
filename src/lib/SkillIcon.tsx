@@ -1,4 +1,6 @@
+import type { HTMLProps } from "react";
 import { Icon, type IconName } from "./icons";
+import cn from "./cn";
 
 type SkillIconProps = {
   iconName: keyof typeof Icon;
@@ -21,10 +23,17 @@ export function SkillIcon(props: SkillIconProps) {
   );
 }
 
-export function SkillIconList(props: { skills: IconName[] }) {
+export function SkillIconList({
+  skills,
+  className,
+  ...props
+}: { skills: IconName[] } & HTMLProps<HTMLDivElement>) {
   return (
-    <div className="mt-2 flex w-full flex-wrap gap-1 md:gap-2">
-      {props.skills.map((iconName, index) => (
+    <div
+      className={cn("mt-2 flex w-full flex-wrap gap-1 md:gap-2", className)}
+      {...props}
+    >
+      {skills.map((iconName, index) => (
         <SkillIcon key={iconName + index} iconName={iconName} />
       ))}
     </div>
