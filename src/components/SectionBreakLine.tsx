@@ -4,7 +4,10 @@ type Props = {
 
 export default function SectionBreakLine({ sectionName }: Props) {
   return (
-    <div className="flex items-center gap-4 py-2 md:py-4">
+    <div
+      className="flex items-center gap-4 py-2 md:py-4"
+      style={{ viewTransitionName: "match-element" }}
+    >
       <div className="bg-secondary h-0.5 w-full rounded-full" />
       <h2 className="text-primary shrink-0">{sectionName}</h2>
       <div className="bg-secondary h-0.5 w-full rounded-full" />

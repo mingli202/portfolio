@@ -7,7 +7,10 @@ import cn from "../lib/cn";
 
 export default function Projects() {
   return (
-    <div className="flex flex-col gap-3 p-2 md:gap-4 md:p-4">
+    <div
+      className="flex flex-col gap-3 p-2 md:gap-4 md:p-4"
+      style={{ viewTransitionName: "match-element" }}
+    >
       {projects.map((item, index) => (
         <Project {...item} key={index} />
       ))}
