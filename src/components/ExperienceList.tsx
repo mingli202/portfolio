@@ -39,10 +39,12 @@ function ListItem(item: ExperienceListItem) {
     const el = additionalInfoRef.current;
     if (isClicked.current) {
       el.style.display = "none";
+      ref.current.classList.replace("ring-primary", "ring-secondary");
 
       isClicked.current = false;
     } else {
       el.style.display = "flex";
+      ref.current.classList.replace("ring-secondary", "ring-primary");
 
       isClicked.current = true;
     }
