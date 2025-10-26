@@ -1,10 +1,3 @@
-const GRAVITY = -9.81;
-const DELTA_T = 1 / 30;
-const DENSITY = 1;
-const OVERRELAXATION_COEFFICIENT = 1.9;
-const MIN_SQUARES = 100;
-const N_ITERATIONS = 2;
-
 const Field = {
   U: "U",
   V: "V",
@@ -28,7 +21,14 @@ class FluidSimulation {
   private gridWidth: number;
   private gridHeight: number;
 
-  public constructor() {
+  public constructor(
+    public minSquares: number = 100,
+    public nIterations: number = 2,
+    public deltaT: number = 1 / 30,
+    public density: number = 1,
+    public gravity: number = -9.81,
+    public overrelaxationCoefficient: number = 1.9,
+  ) {
     this.initDimensions();
     this.initArrays();
   }
@@ -52,7 +52,7 @@ class FluidSimulation {
     this.canvas = document.querySelector("canvas")!;
 
     const h = Math.min(this.canvas.height, this.canvas.width);
-    this.squareSize = Math.ceil(h / MIN_SQUARES);
+    this.squareSize = Math.ceil(h / this.minSquares);
     this.gridWidth = Math.ceil(this.canvas.width / this.squareSize);
     this.gridHeight = Math.ceil(this.canvas.height / this.squareSize);
   }
@@ -69,13 +69,13 @@ class FluidSimulation {
   private applyExternalForces() {
     for (let i = 0; i < this.gridHeight; i++) {
       for (let k = 0; k < this.gridWidth; k++) {
-        this.v[i][k] += DELTA_T * GRAVITY;
+        this.v[i][k] += this.deltaT * this.gravity;
       }
     }
   }
 
   private projection() {
-    for (let l = 0; l < N_ITERATIONS; l++) {
+    for (let l = 0; l < this.nIterations; l++) {
       for (let i = 0; i < this.gridHeight; i++) {
         for (let k = 0; k < this.gridWidth; k++) {
           const divergence =
@@ -83,7 +83,7 @@ class FluidSimulation {
               this.u[i][k] +
               this.v[i + 1][k] -
               this.v[i][k]) *
-            OVERRELAXATION_COEFFICIENT;
+            this.overrelaxationCoefficient;
 
           const s0 = k + 1 < this.gridWidth ? this.s[i][k + 1] : 0;
           const s1 = k - 1 >= 0 ? this.s[i][k - 1] : 0;
@@ -98,7 +98,7 @@ class FluidSimulation {
           this.v[i + 1][k] -= (divergence * s2) / s;
 
           this.p[i][k] +=
-            (divergence / s) * ((DENSITY * this.squareSize) / DELTA_T);
+            (divergence / s) * ((this.density * this.squareSize) / this.deltaT);
         }
       }
     }
@@ -168,8 +168,8 @@ class FluidSimulation {
     let [x, y] = this.getCanvasPointFromGridPoint([i, k]);
     y += this.squareSize / 2;
 
-    const previousX = x - u * DELTA_T;
-    const previousY = y - vAvg * DELTA_T;
+    const previousX = x - u * this.deltaT;
+    const previousY = y - vAvg * this.deltaT;
 
     this.nextV[i][k] = this.interpolate(previousX, previousY, Field.V);
   }
@@ -181,8 +181,8 @@ class FluidSimulation {
     let [x, y] = this.getCanvasPointFromGridPoint([i, k]);
     x += this.squareSize / 2;
 
-    const previousX = x - uAvg * DELTA_T;
-    const previousY = y - v * DELTA_T;
+    const previousX = x - uAvg * this.deltaT;
+    const previousY = y - v * this.deltaT;
 
     this.nextU[i][k] = this.interpolate(previousX, previousY, Field.U);
   }
@@ -197,8 +197,8 @@ class FluidSimulation {
     x += this.squareSize / 2;
     y += this.squareSize / 2;
 
-    const previousX = x - u * DELTA_T;
-    const previousY = y - v * DELTA_T;
+    const previousX = x - u * this.deltaT;
+    const previousY = y - v * this.deltaT;
 
     this.nextS[i][k] = this.interpolate(previousX, previousY, Field.S);
   }
