@@ -6,7 +6,7 @@ export const Field = {
 
 export type Field = (typeof Field)[keyof typeof Field];
 
-export class FluidSimulation {
+export class Fluid {
   private u: Float32Array[]; // x-direction
   private v: Float32Array[]; // y-direction
   private s: Float32Array[]; // blocks and obstacles
@@ -21,19 +21,35 @@ export class FluidSimulation {
   private gridWidth: number;
   private gridHeight: number;
 
-  public constructor(
-    public minSquares: number = 100,
-    public nIterations: number = 2,
-    public deltaT: number = 1 / 30,
-    public density: number = 1,
-    public gravity: number = -9.81,
-    public overrelaxationCoefficient: number = 1.9,
-  ) {
-    this.initDimensions();
-    this.initArrays();
-  }
+  public minSquares: number;
+  public nIterations: number;
+  public deltaT: number;
+  public density: number;
+  public gravity: number;
+  public overrelaxationCoefficient: number;
 
-  private initArrays() {
+  public constructor(
+    minSquares: number = 100,
+    nIterations: number = 100,
+    deltaT: number = 1 / 30,
+    density: number = 1,
+    gravity: number = -9.81,
+    overrelaxationCoefficient: number = 1.9,
+  ) {
+    this.minSquares = minSquares;
+    this.nIterations = nIterations;
+    this.deltaT = deltaT;
+    this.density = density;
+    this.gravity = gravity;
+    this.overrelaxationCoefficient = overrelaxationCoefficient;
+
+    this.canvas = document.querySelector("canvas")!;
+
+    const h = Math.min(this.canvas.height, this.canvas.width);
+    this.squareSize = Math.ceil(h / this.minSquares);
+    this.gridWidth = Math.ceil(this.canvas.width / this.squareSize);
+    this.gridHeight = Math.ceil(this.canvas.height / this.squareSize);
+
     this.u = Array(this.gridHeight + 1)
       .fill(0)
       .map(() => new Float32Array(this.gridWidth + 1).fill(0));
@@ -46,22 +62,19 @@ export class FluidSimulation {
     this.p = Array(this.gridHeight)
       .fill(0)
       .map(() => new Float32Array(this.gridWidth).fill(0));
-  }
-
-  private initDimensions() {
-    this.canvas = document.querySelector("canvas")!;
-
-    const h = Math.min(this.canvas.height, this.canvas.width);
-    this.squareSize = Math.ceil(h / this.minSquares);
-    this.gridWidth = Math.ceil(this.canvas.width / this.squareSize);
-    this.gridHeight = Math.ceil(this.canvas.height / this.squareSize);
-  }
-
-  public init() {
-    this.applyExternalForces();
+    this.nextU = Array(this.gridHeight)
+      .fill(0)
+      .map(() => new Float32Array(this.gridWidth).fill(0));
+    this.nextV = Array(this.gridHeight)
+      .fill(0)
+      .map(() => new Float32Array(this.gridWidth).fill(0));
+    this.nextS = Array(this.gridHeight)
+      .fill(0)
+      .map(() => new Float32Array(this.gridWidth).fill(0));
   }
 
   public render() {
+    this.applyExternalForces();
     this.projection();
     this.advection();
   }
