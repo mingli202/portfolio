@@ -58,6 +58,11 @@ function ListItem(item: ExperienceListItem) {
           "hover:ring-primary hover:cursor-pointer",
         )}
         onPointerDown={() => {
+          if (!document.startViewTransition) {
+            showAdditionalInfo();
+            return;
+          }
+
           document.startViewTransition(() => showAdditionalInfo());
         }}
         ref={ref}
