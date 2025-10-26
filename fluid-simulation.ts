@@ -1,12 +1,12 @@
-const Field = {
+export const Field = {
   U: "U",
   V: "V",
   S: "S", // smoke
 } as const;
 
-type Field = (typeof Field)[keyof typeof Field];
+export type Field = (typeof Field)[keyof typeof Field];
 
-class FluidSimulation {
+export class FluidSimulation {
   private u: Float32Array[]; // x-direction
   private v: Float32Array[]; // y-direction
   private s: Float32Array[]; // blocks and obstacles
