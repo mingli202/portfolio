@@ -71,9 +71,11 @@ export class Fluid {
     this.nextS = Array(this.gridHeight)
       .fill(0)
       .map(() => new Float32Array(this.gridWidth).fill(0));
+
+    console.log(this.s);
   }
 
-  public render() {
+  public simulate() {
     this.applyExternalForces();
     this.projection();
     this.advection();
@@ -128,39 +130,55 @@ export class Fluid {
 
     this.v = this.nextV;
     this.u = this.nextU;
+    this.s = this.nextS;
   }
 
   private getNeighborsVAverage(i: number, k: number) {
-    const v_ik = this.v[i][k];
-    const v_ikm1 = k - 1 >= 0 ? this.v[i][k - 1] : 0;
-    const v_ip1k = i + 1 < this.gridHeight ? this.v[i + 1][k] : 0;
-    const v_ip1km1 =
-      k - 1 >= 0 && i + 1 < this.gridHeight ? this.v[i + 1][k - 1] : 0;
+    let s = 0;
+    let n = 0;
 
-    const vArr = [v_ik, v_ikm1, v_ip1k, v_ip1km1];
-    const vAvg =
-      vArr.reduce((acc, val) => acc + val, 0) /
-      vArr.filter((v) => v !== 0).length;
-    return vAvg;
+    s += this.v[i][k];
+    if (k - 1 >= 0) {
+      s += this.v[i][k - 1];
+      n++;
+    }
+    if (i + 1 < this.gridHeight) {
+      s += this.v[i + 1][k];
+      n++;
+    }
+    if (k - 1 >= 0 && i + 1 < this.gridHeight) {
+      s += this.v[i + 1][k - 1];
+      n++;
+    }
+
+    return s / n;
   }
 
   private getNeighborsUAverage(i: number, k: number) {
-    const u_ik = this.u[i][k];
-    const u_ikm1 = k - 1 >= 0 ? this.u[i][k - 1] : 0;
-    const u_ip1k = i + 1 < this.gridHeight ? this.u[i + 1][k] : 0;
-    const u_ip1km1 =
-      k - 1 >= 0 && i + 1 < this.gridHeight ? this.u[i + 1][k - 1] : 0;
+    let s = 0;
+    let n = 0;
 
-    const uArr = [u_ik, u_ikm1, u_ip1k, u_ip1km1];
-    const uAvg =
-      uArr.reduce((acc, val) => acc + val, 0) /
-      uArr.filter((u) => u !== 0).length;
-    return uAvg;
+    s += this.u[i][k];
+    if (k - 1 >= 0) {
+      s += this.u[i][k - 1];
+      n++;
+    }
+    if (i + 1 < this.gridHeight) {
+      s += this.u[i + 1][k];
+      n++;
+    }
+    if (k - 1 >= 0 && i + 1 < this.gridHeight) {
+      s += this.u[i + 1][k - 1];
+      n++;
+    }
+
+    return s / n;
   }
 
   private getGridPointFromCanvasPoint(
     point: [number, number],
   ): [number, number] {
+    console.log("point", point);
     const x = Math.round(point[0] / this.squareSize);
     const y = Math.round(point[1] / this.squareSize);
     return [x, y] as const;
@@ -190,9 +208,12 @@ export class Fluid {
   private advectU(i: number, k: number) {
     const v = this.v[i][k];
     const uAvg = this.getNeighborsUAverage(i, k);
+    console.log("uAvg", uAvg);
 
     let [x, y] = this.getCanvasPointFromGridPoint([i, k]);
     x += this.squareSize / 2;
+    console.log("x", x);
+    console.log("y", y);
 
     const previousX = x - uAvg * this.deltaT;
     const previousY = y - v * this.deltaT;
@@ -256,11 +277,23 @@ export class Fluid {
     const w_10 = 1 - yy / this.squareSize;
     const w_11 = yy / this.squareSize;
 
+    console.log(field);
+    console.log(fieldArr);
+    console.log(previousI, previousK, fieldArr[previousI]);
+
     const newVal =
-      w_00 * w_10 * fieldArr[previousI][previousK - 1] +
+      w_00 *
+        w_10 *
+        (previousK - 1 >= 0 ? fieldArr[previousI][previousK - 1] : 0) +
       w_01 * w_10 * fieldArr[previousI][previousK] +
-      w_00 * w_11 * fieldArr[previousI + 1][previousK - 1] +
-      w_01 * w_11 * fieldArr[previousI + 1][previousK];
+      w_00 *
+        w_11 *
+        (previousI + 1 < this.gridHeight && previousK - 1 >= 0
+          ? fieldArr[previousI + 1][previousK - 1]
+          : 0) +
+      w_01 *
+        w_11 *
+        (previousI < this.gridHeight ? fieldArr[previousI + 1][previousK] : 0);
 
     return newVal;
   }
