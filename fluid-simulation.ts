@@ -5,6 +5,14 @@ const OVERRELAXATION_COEFFICIENT = 1.9;
 const MIN_SQUARES = 100;
 const N_ITERATIONS = 2;
 
+const Field = {
+  U: "U",
+  V: "V",
+  S: "S", // smoke
+} as const;
+
+type Field = (typeof Field)[keyof typeof Field];
+
 class FluidSimulation {
   private u: Float32Array[]; // x-direction
   private v: Float32Array[]; // y-direction
@@ -14,6 +22,7 @@ class FluidSimulation {
 
   private nextU: Float32Array[]; // x-direction
   private nextV: Float32Array[]; // y-direction
+  private nextS: Float32Array[]; // smoke
 
   private squareSize: number;
   private gridWidth: number;
@@ -27,16 +36,16 @@ class FluidSimulation {
   private initArrays() {
     this.u = Array(this.gridHeight + 1)
       .fill(0)
-      .map(() => new Float32Array(this.gridWidth + 1));
+      .map(() => new Float32Array(this.gridWidth + 1).fill(0));
     this.v = Array(this.gridHeight + 1)
       .fill(0)
-      .map(() => new Float32Array(this.gridWidth + 1));
+      .map(() => new Float32Array(this.gridWidth + 1).fill(0));
     this.s = Array(this.gridHeight)
       .fill(0)
-      .map(() => new Float32Array(this.gridWidth).map(() => 1));
+      .map(() => new Float32Array(this.gridWidth).fill(1));
     this.p = Array(this.gridHeight)
       .fill(0)
-      .map(() => new Float32Array(this.gridWidth).map(() => 0));
+      .map(() => new Float32Array(this.gridWidth).fill(0));
   }
 
   private initDimensions() {
@@ -98,8 +107,9 @@ class FluidSimulation {
   private advection() {
     for (let i = 0; i < this.gridHeight; i++) {
       for (let k = 0; k < this.gridWidth; k++) {
-        this.interpolateV(i, k);
-        this.interpolateU(i, k);
+        this.advectV(i, k);
+        this.advectU(i, k);
+        this.advectS(i, k);
       }
     }
 
@@ -151,7 +161,7 @@ class FluidSimulation {
     return [x, y] as const;
   }
 
-  private interpolateV(i: number, k: number) {
+  private advectV(i: number, k: number) {
     const u = this.u[i][k];
     const vAvg = this.getNeighborsVAverage(i, k);
 
@@ -161,35 +171,10 @@ class FluidSimulation {
     const previousX = x - u * DELTA_T;
     const previousY = y - vAvg * DELTA_T;
 
-    const [previousI, previousK] = this.getGridPointFromCanvasPoint([
-      previousX,
-      previousY,
-    ]);
-
-    let [gridX, gridY] = this.getCanvasPointFromGridPoint([
-      previousI,
-      previousK,
-    ]);
-
-    gridX -= this.squareSize / 2;
-    const xx = previousX - gridX;
-    const yy = previousY - gridY;
-
-    const w_00 = 1 - xx / this.squareSize;
-    const w_01 = xx / this.squareSize;
-    const w_10 = 1 - yy / this.squareSize;
-    const w_11 = yy / this.squareSize;
-
-    const newVAvg =
-      w_00 * w_10 * this.v[previousI][previousK - 1] +
-      w_01 * w_10 * this.v[previousI][previousK] +
-      w_00 * w_11 * this.v[previousI + 1][previousK - 1] +
-      w_01 * w_11 * this.v[previousI + 1][previousK];
-
-    this.nextV[i][k] = newVAvg;
+    this.nextV[i][k] = this.interpolate(previousX, previousY, Field.V);
   }
 
-  private interpolateU(i: number, k: number) {
+  private advectU(i: number, k: number) {
     const v = this.v[i][k];
     const uAvg = this.getNeighborsUAverage(i, k);
 
@@ -199,6 +184,40 @@ class FluidSimulation {
     const previousX = x - uAvg * DELTA_T;
     const previousY = y - v * DELTA_T;
 
+    this.nextU[i][k] = this.interpolate(previousX, previousY, Field.U);
+  }
+
+  private advectS(i: number, k: number) {
+    const v =
+      (this.v[i][k] + (i + 1 < this.gridHeight ? this.v[i + 1][k] : 0)) / 2;
+    const u =
+      (this.u[i][k] + (k + 1 < this.gridWidth ? this.u[i][k + 1] : 0)) / 2;
+
+    let [x, y] = this.getCanvasPointFromGridPoint([i, k]);
+    x += this.squareSize / 2;
+    y += this.squareSize / 2;
+
+    const previousX = x - u * DELTA_T;
+    const previousY = y - v * DELTA_T;
+
+    this.nextS[i][k] = this.interpolate(previousX, previousY, Field.S);
+  }
+
+  private interpolate(previousX: number, previousY: number, field: Field) {
+    let fieldArr: Float32Array[];
+
+    switch (field) {
+      case Field.U:
+        fieldArr = this.u;
+        break;
+      case Field.V:
+        fieldArr = this.v;
+        break;
+      case Field.S:
+        fieldArr = this.s;
+        break;
+    }
+
     const [previousI, previousK] = this.getGridPointFromCanvasPoint([
       previousX,
       previousY,
@@ -209,7 +228,13 @@ class FluidSimulation {
       previousK,
     ]);
 
-    gridY -= this.squareSize / 2;
+    if (field === Field.U || field === Field.S) {
+      gridY -= this.squareSize / 2;
+    }
+    if (field === Field.V || field === Field.S) {
+      gridX -= this.squareSize / 2;
+    }
+
     const xx = previousX - gridX;
     const yy = previousY - gridY;
 
@@ -218,12 +243,12 @@ class FluidSimulation {
     const w_10 = 1 - yy / this.squareSize;
     const w_11 = yy / this.squareSize;
 
-    const newUAvg =
-      w_00 * w_10 * this.u[previousI][previousK - 1] +
-      w_01 * w_10 * this.u[previousI][previousK] +
-      w_00 * w_11 * this.u[previousI + 1][previousK - 1] +
-      w_01 * w_11 * this.u[previousI + 1][previousK];
+    const newVal =
+      w_00 * w_10 * fieldArr[previousI][previousK - 1] +
+      w_01 * w_10 * fieldArr[previousI][previousK] +
+      w_00 * w_11 * fieldArr[previousI + 1][previousK - 1] +
+      w_01 * w_11 * fieldArr[previousI + 1][previousK];
 
-    this.nextU[i][k] = newUAvg;
+    return newVal;
   }
 }
