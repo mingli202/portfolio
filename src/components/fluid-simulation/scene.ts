@@ -10,21 +10,27 @@ export class Scene {
   }
 
   public draw() {
-    for (let i = 1; i <= this.fluid.gridHeight; i++) {
-      for (let k = 1; k <= this.fluid.gridWidth; k++) {
-        const color = this.getSmokeColor(this.fluid.smoke[i][k]);
-        this.drawRect(k, i, color);
-      }
-    }
+    const ctx = this.canvas.getContext("2d")!;
+
+    this.fluid.smoke.forEach((value, x, y) => {
+      const color =
+        this.fluid.obstacles.get(x, y) === 0 // red if obstacle
+          ? "#ff0"
+          : this.getSmokeColor(value);
+      this.drawRect(x, y, color, ctx);
+    });
   }
 
   private getSmokeColor(value: number): string {
     return `rgb(255, 255, 255, ${Math.min(Math.max(0, value * 255), 255)})`;
   }
 
-  private drawRect(x: number, y: number, color: string): void {
-    const ctx = this.canvas.getContext("2d")!;
-
+  private drawRect(
+    x: number,
+    y: number,
+    color: string,
+    ctx: CanvasRenderingContext2D,
+  ): void {
     ctx.fillStyle = color;
     ctx.fillRect(
       x * this.fluid.squareSize,

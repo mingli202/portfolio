@@ -31,17 +31,21 @@ export class Fluid {
   public gravity: number;
   public overrelaxationCoefficient: number;
 
-  public get smoke(): Float32Array[] {
-    return this.s.grid;
+  public get smoke(): Grid {
+    return this.s;
+  }
+
+  public get obstacles(): Grid {
+    return this.b;
   }
 
   public constructor(
     canvas: HTMLCanvasElement,
-    minSquares: number = 100,
+    minSquares: number = 20,
     nIterations: number = 100,
     deltaT: number = 1 / 30,
-    density: number = 1,
-    gravity: number = -9.81,
+    density: number = 1000,
+    gravity: number = 9.81,
     overrelaxationCoefficient: number = 1.9,
   ) {
     this.canvas = canvas;
@@ -61,20 +65,30 @@ export class Fluid {
     this.v = new Grid(this.gridWidth, this.gridHeight);
     this.b = new Grid(this.gridWidth, this.gridHeight);
     this.s = new Grid(this.gridWidth, this.gridHeight);
-    this.p = new Grid(this.gridWidth, this.gridHeight);
+    // this.p = new Grid(this.gridWidth, this.gridHeight);
     this.nextU = new Grid(this.gridWidth, this.gridHeight);
     this.nextV = new Grid(this.gridWidth, this.gridHeight);
     this.nextS = new Grid(this.gridWidth, this.gridHeight);
 
+    // initial smoke density
+    this.s.fill(1.0);
     // the edges of the grid are obstacles
     this.b.fill(1);
-    for (let k = 0; k < this.b.height; k++) {
-      this.b.set(0, k, 0);
-      this.b.set(this.b.width - 1, k, 0);
-    }
-    for (let i = 0; i < this.b.width; i++) {
-      this.b.set(i, 0, 0);
-      this.b.set(i, this.b.height - 1, 0);
+
+    // add a square obstacle
+    const obstacleSize = 4;
+    for (
+      let i = Math.floor((this.gridWidth - obstacleSize) / 2);
+      i < Math.floor((this.gridWidth + obstacleSize) / 2);
+      i++
+    ) {
+      for (
+        let k = Math.floor((this.gridHeight - obstacleSize) / 2);
+        k < Math.floor((this.gridHeight + obstacleSize) / 2);
+        k++
+      ) {
+        this.b.set(i, k, 0);
+      }
     }
   }
 
@@ -82,53 +96,61 @@ export class Fluid {
     this.applyExternalForces();
     this.projection();
     this.advection();
-  }
-
-  private applyExternalForces() {
-    this.b.forEach((value, x, y) => {
-      this.v.set(x, y, value + this.deltaT * this.gravity);
-    });
-  }
-
-  private projection() {
-    for (let l = 0; l < this.nIterations; l++) {
-      for (let i = 0; i < this.b.width; i++) {
-        for (let k = 0; k < this.b.height; k++) {
-          const divergence =
-            (this.u.get(i + 1, k) -
-              this.u.get(i, k) +
-              this.v.get(i, k + 1) -
-              this.v.get(i, k)) *
-            this.overrelaxationCoefficient;
-
-          const b0 = this.b.get(i - 1, k);
-          const b1 = this.b.get(i + 1, k);
-          const b2 = this.b.get(i, k - 1);
-          const b3 = this.b.get(i, k + 1);
-
-          const b = b0 + b1 + b2 + b3;
-
-          this.nextU.set(i, k, (v) => v + (divergence * b0) / b);
-          this.nextU.set(i + 1, k, (v) => v - (divergence * b1) / b);
-          this.nextV.set(i, k, (v) => v + (divergence * b2) / b);
-          this.nextV.set(i, k + 1, (v) => v - (divergence * b3) / b);
-        }
-      }
-    }
-  }
-
-  private advection() {
-    for (let i = 1; i < this.gridHeight + 1; i++) {
-      for (let k = 1; k < this.gridWidth + 1; k++) {
-        this.advectV(i, k);
-        this.advectU(i, k);
-        this.advectS(i, k);
-      }
-    }
 
     this.v = this.nextV;
     this.u = this.nextU;
     this.s = this.nextS;
+  }
+
+  private applyExternalForces() {
+    for (
+      let k = Math.floor(this.b.width / 2) - 2;
+      k < Math.floor(this.b.width / 2) + 2;
+      k++
+    ) {
+      this.v.set(0, k, (value) => value + this.deltaT * this.gravity);
+    }
+  }
+
+  private projection() {
+    for (let l = 0; l < this.nIterations; l++) {
+      this.b.forEach((value, i, k) => {
+        if (value === 0) {
+          return;
+        }
+
+        const divergence =
+          (this.u.get(i + 1, k) -
+            this.u.get(i, k) +
+            this.v.get(i, k + 1) -
+            this.v.get(i, k)) *
+          this.overrelaxationCoefficient;
+
+        const b0 = this.b.get(i - 1, k);
+        const b1 = this.b.get(i + 1, k);
+        const b2 = this.b.get(i, k - 1);
+        const b3 = this.b.get(i, k + 1);
+
+        const b = b0 + b1 + b2 + b3;
+
+        this.u.set(i, k, (v) => v + (divergence * b0) / b);
+        this.u.set(i + 1, k, (v) => v - (divergence * b1) / b);
+        this.v.set(i, k, (v) => v + (divergence * b2) / b);
+        this.v.set(i, k + 1, (v) => v - (divergence * b3) / b);
+      });
+    }
+  }
+
+  private advection() {
+    this.b.forEach((value, i, k) => {
+      if (value === 0) {
+        return;
+      }
+
+      this.advectV(i, k);
+      this.advectU(i, k);
+      this.advectS(i, k);
+    });
   }
 
   private getNeighborsAverage(i: number, k: number, field: Field) {
@@ -195,7 +217,7 @@ export class Fluid {
     const v = (this.v.get(i, k) + this.v.get(i, k + 1)) / 2;
     const u = (this.u.get(i, k) + this.u.get(i + 1, k)) / 2;
 
-    let [x, y] = this.getCanvasPointFromGridPoint([i - 1, k - 1]);
+    let [x, y] = this.getCanvasPointFromGridPoint([i, k]);
     x += this.squareSize / 2;
     y += this.squareSize / 2;
 

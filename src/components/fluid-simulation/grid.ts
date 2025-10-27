@@ -64,18 +64,22 @@ export class Grid {
    * Set the value of a cell in the grid.
    * @param x The x-coordinate of the cell (column).
    * @param y The y-coordinate of the cell (row)
-   * @param value The value to set.
+   * @param newValue The value to set.
    */
   public set(
     x: number,
     y: number,
-    value: number | ((val: number) => number),
+    newValue: number | ((oldValue: number) => number),
   ): void {
+    if (!this.has(x, y)) {
+      return;
+    }
+
     let val;
-    if (typeof value === "function") {
-      val = value(this.get(x, y));
+    if (typeof newValue === "function") {
+      val = newValue(this.get(x, y));
     } else {
-      val = value;
+      val = newValue;
     }
 
     if (isNaN(val)) {
