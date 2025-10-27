@@ -26,7 +26,8 @@ export function FluidSimulation() {
       // }, t);
     }
 
-    update(0);
+    // update(0);
+    scene.drawVelocities();
   }, []);
 
   return (
