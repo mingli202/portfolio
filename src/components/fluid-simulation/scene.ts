@@ -13,10 +13,22 @@ export class Scene {
   velocityMultiplier: number = 20;
   lastMousePosition: [number, number] = [-1, -1];
   lastTime: DOMHighResTimeStamp = 0;
+  isMouseDown: boolean = false;
 
   constructor(canvas: HTMLCanvasElement, fluid: Fluid) {
     this.canvas = canvas;
     this.fluid = fluid;
+
+    this.canvas.addEventListener("mousedown", (_) => {
+      this.isMouseDown = true;
+    });
+
+    this.canvas.addEventListener("mouseup", (_) => {
+      this.isMouseDown = false;
+      this.lastMousePosition = [-1, -1];
+    });
+
+    this.addMouseMove();
   }
 
   public draw() {
@@ -206,19 +218,22 @@ export class Scene {
     });
   }
 
-  public toggleMouseMove() {
+  public addMouseMove() {
     const f = (e: MouseEvent) => this.handleMouseMove(e);
-
-    if (this.enableMouseMove) {
-      this.canvas.removeEventListener("mousemove", f);
-    } else {
-      this.canvas.addEventListener("mousemove", f);
-    }
+    this.canvas.addEventListener("mousemove", f);
 
     this.enableMouseMove = !this.enableMouseMove;
   }
 
   public handleMouseMove(e: MouseEvent) {
+    if (!this.isMouseDown) {
+      return;
+    }
+
+    if (!this.enableMouseMove) {
+      return;
+    }
+
     if (
       this.lastTime === 0 ||
       !this.lastMousePosition ||
@@ -231,7 +246,7 @@ export class Scene {
 
     const deltaT = e.timeStamp - this.lastTime;
 
-    if (deltaT < 100) {
+    if (deltaT < this.fluid.deltaT * 1000) {
       return;
     }
     this.lastTime = e.timeStamp;

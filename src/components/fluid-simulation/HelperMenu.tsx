@@ -61,7 +61,7 @@ export default function HelperMenu({ scene }: Props) {
           type="checkbox"
           defaultChecked={scene.enableMouseMove}
           onChange={(e) => {
-            scene.toggleMouseMove();
+            scene.enableMouseMove = !scene.enableMouseMove;
             e.target.checked = scene.enableMouseMove;
           }}
         />
