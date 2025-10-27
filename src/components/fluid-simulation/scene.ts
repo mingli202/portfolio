@@ -4,6 +4,13 @@ export class Scene {
   fluid: Fluid;
   canvas: HTMLCanvasElement;
 
+  showDivergence: boolean = false;
+  showGridLines: boolean = true;
+  showVelocities: boolean = true;
+  showCenterVelocities: boolean = false;
+
+  velocityMultiplier: number = 20;
+
   constructor(canvas: HTMLCanvasElement, fluid: Fluid) {
     this.canvas = canvas;
     this.fluid = fluid;
@@ -45,9 +52,10 @@ export class Scene {
 
   public drawHelperData(): void {
     this.clearHelperData();
-    this.showDivergence();
-    this.drawVelocities();
-    this.drawGridLines();
+    if (this.showDivergence) this.drawDivergence();
+    if (this.showVelocities) this.drawVelocities();
+    if (this.showCenterVelocities) this.drawCenterVelocities();
+    if (this.showGridLines) this.drawGridLines();
   }
 
   public clearHelperData(): void {
@@ -73,7 +81,7 @@ export class Scene {
 
       ctx.beginPath();
       ctx.moveTo(x, y);
-      ctx.lineTo(x + value * 20, y);
+      ctx.lineTo(x + value * this.velocityMultiplier, y);
       ctx.closePath();
       ctx.stroke();
     });
@@ -89,7 +97,7 @@ export class Scene {
 
       ctx.beginPath();
       ctx.moveTo(x, y);
-      ctx.lineTo(x, y + value * 20);
+      ctx.lineTo(x, y + value * this.velocityMultiplier);
       ctx.closePath();
       ctx.stroke();
     });
@@ -122,9 +130,10 @@ export class Scene {
       this.fluid.v.set(x, y, 4 * Math.random() - 2);
       this.fluid.u.set(x, y, 4 * Math.random() - 2);
     });
+    this.drawHelperData();
   }
 
-  public showDivergence(): void {
+  public drawDivergence(): void {
     const ctx = this.canvas.getContext("2d")!;
 
     ctx.fillStyle = "#fff";
@@ -134,7 +143,7 @@ export class Scene {
 
       ctx.fillText(
         div.toFixed(2),
-        x * this.fluid.squareSize + this.fluid.squareSize / 2,
+        x * this.fluid.squareSize + this.fluid.squareSize / 3,
         y * this.fluid.squareSize + this.fluid.squareSize / 2,
       );
     });
@@ -153,13 +162,44 @@ export class Scene {
           this.fluid.solveDivergence(x, y);
           break;
         }
-        case 1: {
-          console.log("solve divergence all");
-          this.fluid.solveDivergenceAll();
-          break;
-        }
       }
       this.drawHelperData();
+    });
+  }
+
+  public runSolveDivergenceAll() {
+    console.log("solve divergence all");
+    this.fluid.solveDivergenceAll();
+    this.drawHelperData();
+  }
+
+  public runProjection() {
+    console.log("solve divergence all");
+    this.fluid.projection();
+    this.drawHelperData();
+  }
+
+  public drawCenterVelocities() {
+    const ctx = this.canvas.getContext("2d")!;
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "#f0f";
+    ctx.fillStyle = "#f0f";
+
+    this.fluid.obstacles.forEach((_, x, y) => {
+      const v = this.fluid.v.get(x, y) * this.velocityMultiplier;
+      const u = this.fluid.u.get(x, y) * this.velocityMultiplier;
+
+      x = x * this.fluid.squareSize + this.fluid.squareSize / 2;
+      y = y * this.fluid.squareSize + this.fluid.squareSize / 2;
+
+      ctx.arc(x, y, 4, 0, 2 * Math.PI);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + u, y + v);
+      ctx.closePath();
+      ctx.stroke();
     });
   }
 }

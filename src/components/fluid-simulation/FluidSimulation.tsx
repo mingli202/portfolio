@@ -1,10 +1,13 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Fluid } from "./fluid";
 import { Scene } from "./scene";
+import HelperMenu from "./HelperMenu";
 
 export function FluidSimulation() {
   const canvas = useRef<HTMLCanvasElement>(null!);
   const start = useRef<DOMHighResTimeStamp>(0);
+
+  const [scene, setScene] = useState<Scene>();
 
   useEffect(() => {
     canvas.current.width = window.innerWidth;
@@ -30,16 +33,19 @@ export function FluidSimulation() {
     }
 
     // update(0);
-    scene.generateRandomVelocities();
     scene.drawHelperData();
-
     scene.solveDivergenceInteractive();
+
+    setScene(scene);
   }, []);
 
   return (
-    <canvas
-      className="fixed top-0 left-0 z-10 h-screen w-screen bg-black"
-      ref={canvas}
-    />
+    <>
+      <canvas
+        className="fixed top-0 left-0 z-10 h-screen w-screen bg-black"
+        ref={canvas}
+      />
+      {scene && <HelperMenu scene={scene} />}
+    </>
   );
 }

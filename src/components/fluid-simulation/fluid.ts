@@ -125,7 +125,7 @@ export class Fluid {
     }
   }
 
-  private projection() {
+  public projection() {
     for (let l = 0; l < this.nIterations; l++) {
       this.solveDivergenceAll();
     }
