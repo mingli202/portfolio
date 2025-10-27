@@ -6,10 +6,13 @@ export class Scene {
 
   showDivergence: boolean = false;
   showGridLines: boolean = true;
-  showVelocities: boolean = true;
-  showCenterVelocities: boolean = false;
+  showVelocities: boolean = false;
+  showCenterVelocities: boolean = true;
+  enableMouseMove: boolean = false;
 
   velocityMultiplier: number = 20;
+  lastMousePosition: [number, number] = [-1, -1];
+  lastTime: DOMHighResTimeStamp = 0;
 
   constructor(canvas: HTMLCanvasElement, fluid: Fluid) {
     this.canvas = canvas;
@@ -201,5 +204,56 @@ export class Scene {
       ctx.closePath();
       ctx.stroke();
     });
+  }
+
+  public toggleMouseMove() {
+    const f = (e: MouseEvent) => this.handleMouseMove(e);
+
+    if (this.enableMouseMove) {
+      this.canvas.removeEventListener("mousemove", f);
+    } else {
+      this.canvas.addEventListener("mousemove", f);
+    }
+
+    this.enableMouseMove = !this.enableMouseMove;
+  }
+
+  public handleMouseMove(e: MouseEvent) {
+    if (
+      this.lastTime === 0 ||
+      !this.lastMousePosition ||
+      this.lastMousePosition[0] === -1
+    ) {
+      this.lastTime = e.timeStamp;
+      this.lastMousePosition = [e.offsetX, e.offsetY];
+      return;
+    }
+
+    const deltaT = e.timeStamp - this.lastTime;
+
+    if (deltaT < 100) {
+      return;
+    }
+    this.lastTime = e.timeStamp;
+
+    const deltaX = e.offsetX - this.lastMousePosition[0];
+    const deltaY = e.offsetY - this.lastMousePosition[1];
+    const norm = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+    if (norm < 1) {
+      return;
+    }
+
+    this.lastMousePosition = [e.offsetX, e.offsetY];
+
+    const [x, y] = this.fluid.getGridPointFromCanvasPoint([
+      e.offsetX,
+      e.offsetY,
+    ]);
+
+    this.fluid.v.set(x, y, (deltaY / norm) * (this.fluid.squareSize / 40));
+    this.fluid.u.set(x, y, (deltaX / norm) * (this.fluid.squareSize / 40));
+
+    this.drawHelperData();
   }
 }

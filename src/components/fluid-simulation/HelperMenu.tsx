@@ -56,6 +56,17 @@ export default function HelperMenu({ scene }: Props) {
         />
         Center velocities
       </label>
+      <label className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          defaultChecked={scene.enableMouseMove}
+          onChange={(e) => {
+            scene.toggleMouseMove();
+            e.target.checked = scene.enableMouseMove;
+          }}
+        />
+        Enable mouse move
+      </label>
       <Button
         onClick={() => {
           scene.runSolveDivergenceAll();

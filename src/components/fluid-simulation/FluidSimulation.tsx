@@ -34,7 +34,6 @@ export function FluidSimulation() {
 
     // update(0);
     scene.drawHelperData();
-    scene.solveDivergenceInteractive();
 
     setScene(scene);
   }, []);
