@@ -8,12 +8,17 @@ export class Scene {
   showGridLines: boolean = true;
   showVelocities: boolean = false;
   showCenterVelocities: boolean = true;
+
   enableMouseMove: boolean = false;
+  enableProjection: boolean = false;
 
   velocityMultiplier: number = 20;
   lastMousePosition: [number, number] = [-1, -1];
   lastTime: DOMHighResTimeStamp = 0;
   isMouseDown: boolean = false;
+
+  radius: number = 2;
+  lineWidth: number = 1;
 
   constructor(canvas: HTMLCanvasElement, fluid: Fluid) {
     this.canvas = canvas;
@@ -67,6 +72,7 @@ export class Scene {
 
   public drawHelperData(): void {
     this.clearHelperData();
+    if (this.enableProjection) this.fluid.projection();
     if (this.showDivergence) this.drawDivergence();
     if (this.showVelocities) this.drawVelocities();
     if (this.showCenterVelocities) this.drawCenterVelocities();
@@ -80,10 +86,8 @@ export class Scene {
   }
 
   public drawVelocities(): void {
-    const radius = 4;
-
     const ctx = this.canvas.getContext("2d")!;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = this.lineWidth;
 
     ctx.strokeStyle = "#ff0";
     ctx.fillStyle = "#ff0";
@@ -91,7 +95,7 @@ export class Scene {
       x = x * this.fluid.squareSize;
       y = (y + 1 / 2) * this.fluid.squareSize;
 
-      ctx.arc(x, y, radius, 0, 2 * Math.PI);
+      ctx.arc(x, y, this.radius, 0, 2 * Math.PI);
       ctx.fill();
 
       ctx.beginPath();
@@ -107,7 +111,7 @@ export class Scene {
       x = (x + 1 / 2) * this.fluid.squareSize;
       y = y * this.fluid.squareSize;
 
-      ctx.arc(x, y, radius, 0, 2 * Math.PI);
+      ctx.arc(x, y, this.radius, 0, 2 * Math.PI);
       ctx.fill();
 
       ctx.beginPath();
@@ -196,7 +200,7 @@ export class Scene {
 
   public drawCenterVelocities() {
     const ctx = this.canvas.getContext("2d")!;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = this.lineWidth;
     ctx.strokeStyle = "#f0f";
     ctx.fillStyle = "#f0f";
 
@@ -207,7 +211,7 @@ export class Scene {
       x = x * this.fluid.squareSize + this.fluid.squareSize / 2;
       y = y * this.fluid.squareSize + this.fluid.squareSize / 2;
 
-      ctx.arc(x, y, 4, 0, 2 * Math.PI);
+      ctx.arc(x, y, this.radius, 0, 2 * Math.PI);
       ctx.fill();
 
       ctx.beginPath();
@@ -266,9 +270,24 @@ export class Scene {
       e.offsetY,
     ]);
 
-    this.fluid.v.set(x, y, (deltaY / norm) * (this.fluid.squareSize / 40));
-    this.fluid.u.set(x, y, (deltaX / norm) * (this.fluid.squareSize / 40));
+    this.fluid.v.set(x, y, (deltaY / norm) * 2);
+    this.fluid.u.set(x, y, (deltaX / norm) * 2);
 
+    this.fluid.v.set(x - 1, y, (deltaY / norm) * 1);
+    this.fluid.u.set(x + 1, y, (deltaX / norm) * 1);
+    this.fluid.v.set(x, y - 1, (deltaY / norm) * 1);
+    this.fluid.u.set(x, y + 1, (deltaX / norm) * 1);
+
+    this.fluid.v.set(x - 1, y - 1, (deltaY / norm) * 0.5);
+    this.fluid.u.set(x + 1, y - 1, (deltaX / norm) * 0.5);
+    this.fluid.v.set(x - 1, y - 1, (deltaY / norm) * 0.5);
+    this.fluid.u.set(x - 1, y + 1, (deltaX / norm) * 0.5);
+
+    this.drawHelperData();
+  }
+
+  public clear() {
+    this.fluid.clear();
     this.drawHelperData();
   }
 }

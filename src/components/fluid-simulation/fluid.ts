@@ -41,7 +41,7 @@ export class Fluid {
 
   public constructor(
     canvas: HTMLCanvasElement,
-    minSquares: number = 10,
+    minSquares: number = 40,
     nIterations: number = 40,
     deltaT: number = 1 / 30,
     density: number = 1000,
@@ -312,5 +312,11 @@ export class Fluid {
       w_01 * w_11 * fieldArr.get(previousI + 1, previousK);
 
     return newVal;
+  }
+
+  public clear() {
+    this.u.fill(0);
+    this.v.fill(0);
+    this.s.fill(0);
   }
 }

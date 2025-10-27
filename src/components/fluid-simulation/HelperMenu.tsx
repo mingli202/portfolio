@@ -67,6 +67,17 @@ export default function HelperMenu({ scene }: Props) {
         />
         Enable mouse move
       </label>
+      <label className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          defaultChecked={scene.enableProjection}
+          onChange={(e) => {
+            scene.enableProjection = !scene.enableProjection;
+            e.target.checked = scene.enableProjection;
+          }}
+        />
+        Enable projection
+      </label>
       <Button
         onClick={() => {
           scene.runSolveDivergenceAll();
@@ -87,6 +98,13 @@ export default function HelperMenu({ scene }: Props) {
         }}
       >
         Randomize velocities
+      </Button>
+      <Button
+        onClick={() => {
+          scene.clear();
+        }}
+      >
+        Clear
       </Button>
     </div>
   );
