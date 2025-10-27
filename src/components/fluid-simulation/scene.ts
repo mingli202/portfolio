@@ -44,7 +44,10 @@ export class Scene {
   }
 
   public drawVelocities(): void {
+    const radius = 4;
+
     const ctx = this.canvas.getContext("2d")!;
+    ctx.lineWidth = 2;
 
     ctx.strokeStyle = "#ff0";
     ctx.fillStyle = "#ff0";
@@ -52,7 +55,7 @@ export class Scene {
       x = x * this.fluid.squareSize;
       y = (y + 1 / 2) * this.fluid.squareSize;
 
-      ctx.arc(x, y, 5, 0, 2 * Math.PI);
+      ctx.arc(x, y, radius, 0, 2 * Math.PI);
       ctx.fill();
 
       ctx.beginPath();
@@ -68,7 +71,7 @@ export class Scene {
       x = (x + 1 / 2) * this.fluid.squareSize;
       y = y * this.fluid.squareSize;
 
-      ctx.arc(x, y, 5, 0, 2 * Math.PI);
+      ctx.arc(x, y, radius, 0, 2 * Math.PI);
       ctx.fill();
 
       ctx.beginPath();
@@ -77,5 +80,23 @@ export class Scene {
       ctx.closePath();
       ctx.stroke();
     });
+  }
+
+  public drawGridLines(): void {
+    const ctx = this.canvas.getContext("2d")!;
+    ctx.lineWidth = 1;
+
+    ctx.strokeStyle = "#555";
+    ctx.beginPath();
+    for (let i = 0; i <= this.fluid.gridWidth; i++) {
+      ctx.moveTo(i * this.fluid.squareSize, 0);
+      ctx.lineTo(i * this.fluid.squareSize, this.canvas.height);
+    }
+
+    for (let k = 0; k <= this.fluid.gridHeight; k++) {
+      ctx.moveTo(0, k * this.fluid.squareSize);
+      ctx.lineTo(this.canvas.width * 20, k * this.fluid.squareSize);
+    }
+    ctx.stroke();
   }
 }

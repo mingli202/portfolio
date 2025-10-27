@@ -28,6 +28,7 @@ export function FluidSimulation() {
 
     // update(0);
     scene.drawVelocities();
+    scene.drawGridLines();
   }, []);
 
   return (
