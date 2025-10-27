@@ -1,4 +1,4 @@
-import type { HTMLAttributes } from "react";
+import { type HTMLAttributes } from "react";
 import cn from "../../lib/cn";
 import type { Scene } from "./scene";
 
@@ -14,7 +14,7 @@ export default function HelperMenu({ scene }: Props) {
           defaultChecked={scene.showDivergence}
           onChange={(e) => {
             scene.showDivergence = !scene.showDivergence;
-            scene.drawHelperData();
+            scene.drawNextFrame();
             e.currentTarget.checked = scene.showDivergence;
           }}
         />
@@ -26,7 +26,7 @@ export default function HelperMenu({ scene }: Props) {
           defaultChecked={scene.showGridLines}
           onChange={(e) => {
             scene.showGridLines = !scene.showGridLines;
-            scene.drawHelperData();
+            scene.drawNextFrame();
             e.target.checked = scene.showGridLines;
           }}
         />
@@ -38,7 +38,7 @@ export default function HelperMenu({ scene }: Props) {
           defaultChecked={scene.showVelocities}
           onChange={(e) => {
             scene.showVelocities = !scene.showVelocities;
-            scene.drawHelperData();
+            scene.drawNextFrame();
             e.target.checked = scene.showVelocities;
           }}
         />
@@ -50,7 +50,7 @@ export default function HelperMenu({ scene }: Props) {
           defaultChecked={scene.showCenterVelocities}
           onChange={(e) => {
             scene.showCenterVelocities = !scene.showCenterVelocities;
-            scene.drawHelperData();
+            scene.drawNextFrame();
             e.target.checked = scene.showCenterVelocities;
           }}
         />
@@ -78,6 +78,30 @@ export default function HelperMenu({ scene }: Props) {
         />
         Enable projection
       </label>
+      <label className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          defaultChecked={scene.enableAdvection}
+          onChange={(e) => {
+            scene.enableAdvection = !scene.enableAdvection;
+            e.target.checked = scene.enableAdvection;
+          }}
+        />
+        Enable advection
+      </label>
+      <label className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          defaultChecked={scene.enablePlaying}
+          onChange={(e) => {
+            scene.enablePlaying = !scene.enablePlaying;
+            e.target.checked = scene.enablePlaying;
+
+            requestAnimationFrame(scene.play.bind(scene));
+          }}
+        />
+        Enable playing
+      </label>
       <Button
         onClick={() => {
           scene.runSolveDivergenceAll();
@@ -101,6 +125,13 @@ export default function HelperMenu({ scene }: Props) {
       </Button>
       <Button
         onClick={() => {
+          scene.drawNextFrame();
+        }}
+      >
+        Next frame
+      </Button>
+      <Button
+        onClick={() => {
           scene.clear();
         }}
       >
@@ -117,7 +148,10 @@ function Button({
 }: { children: React.ReactNode } & HTMLAttributes<HTMLButtonElement>) {
   return (
     <button
-      className={cn("rounded-md bg-white px-2 py-1 text-black", className)}
+      className={cn(
+        "rounded-md bg-white px-2 py-1 text-black hover:bg-gray-300 active:bg-gray-500",
+        className,
+      )}
       {...props}
     >
       {children}

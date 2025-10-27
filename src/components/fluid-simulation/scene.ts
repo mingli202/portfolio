@@ -11,6 +11,8 @@ export class Scene {
 
   enableMouseMove: boolean = false;
   enableProjection: boolean = false;
+  enableAdvection: boolean = false;
+  enablePlaying: boolean = false;
 
   velocityMultiplier: number = 20;
   lastMousePosition: [number, number] = [-1, -1];
@@ -19,6 +21,8 @@ export class Scene {
 
   radius: number = 2;
   lineWidth: number = 1;
+
+  start: DOMHighResTimeStamp = 0;
 
   constructor(canvas: HTMLCanvasElement, fluid: Fluid) {
     this.canvas = canvas;
@@ -34,6 +38,24 @@ export class Scene {
     });
 
     this.addMouseMove();
+  }
+
+  public play(now: DOMHighResTimeStamp) {
+    if (!this.enablePlaying) {
+      return;
+    }
+    console.log("play");
+
+    const delta = now - this.start;
+
+    let t = Math.max(this.fluid.deltaT * 1000 - delta, 0);
+
+    setTimeout(() => {
+      this.start = now;
+      this.drawNextFrame();
+
+      requestAnimationFrame(this.play.bind(this));
+    }, t);
   }
 
   public draw() {
@@ -70,9 +92,10 @@ export class Scene {
     );
   }
 
-  public drawHelperData(): void {
+  public drawNextFrame(): void {
     this.clearHelperData();
     if (this.enableProjection) this.fluid.projection();
+    if (this.enableAdvection) this.fluid.advection();
     if (this.showDivergence) this.drawDivergence();
     if (this.showVelocities) this.drawVelocities();
     if (this.showCenterVelocities) this.drawCenterVelocities();
@@ -149,7 +172,7 @@ export class Scene {
       this.fluid.v.set(x, y, 4 * Math.random() - 2);
       this.fluid.u.set(x, y, 4 * Math.random() - 2);
     });
-    this.drawHelperData();
+    this.drawNextFrame();
   }
 
   public drawDivergence(): void {
@@ -182,20 +205,20 @@ export class Scene {
           break;
         }
       }
-      this.drawHelperData();
+      this.drawNextFrame();
     });
   }
 
   public runSolveDivergenceAll() {
     console.log("solve divergence all");
     this.fluid.solveDivergenceAll();
-    this.drawHelperData();
+    this.drawNextFrame();
   }
 
   public runProjection() {
     console.log("solve divergence all");
     this.fluid.projection();
-    this.drawHelperData();
+    this.drawNextFrame();
   }
 
   public drawCenterVelocities() {
@@ -283,11 +306,11 @@ export class Scene {
     this.fluid.v.set(x - 1, y - 1, (deltaY / norm) * 0.5);
     this.fluid.u.set(x - 1, y + 1, (deltaX / norm) * 0.5);
 
-    this.drawHelperData();
+    this.drawNextFrame();
   }
 
   public clear() {
     this.fluid.clear();
-    this.drawHelperData();
+    this.drawNextFrame();
   }
 }

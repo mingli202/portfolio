@@ -103,16 +103,7 @@ export class Fluid {
   public simulate() {
     // this.applyExternalForces();
     this.projection();
-
-    this.nextV = this.v;
-    this.nextU = this.u;
-    this.nextS = this.s;
-
     this.advection();
-
-    this.v = this.nextV;
-    this.u = this.nextU;
-    this.s = this.nextS;
   }
 
   private applyExternalForces() {
@@ -170,7 +161,11 @@ export class Fluid {
     );
   }
 
-  private advection() {
+  public advection() {
+    this.nextV = this.v;
+    this.nextU = this.u;
+    this.nextS = this.s;
+
     this.b.forEach((value, i, k) => {
       if (value === 0) {
         return;
@@ -181,6 +176,10 @@ export class Fluid {
 
       this.advectS(i, k);
     });
+
+    this.v = this.nextV;
+    this.u = this.nextU;
+    this.s = this.nextS;
   }
 
   private getNeighborsAverage(i: number, k: number, field: Field) {
@@ -231,7 +230,7 @@ export class Fluid {
     const previousX = x - u * this.deltaT;
     const previousY = y - vAvg * this.deltaT;
 
-    this.nextU.set(i, k, this.interpolate(previousX, previousY, Field.V));
+    this.nextU.set(i, k, this.interpolate(previousX, previousY, Field.U));
   }
 
   private advectV(i: number, k: number) {
@@ -248,7 +247,7 @@ export class Fluid {
     const previousX = x - uAvg * this.deltaT;
     const previousY = y - v * this.deltaT;
 
-    this.nextV.set(i, k, this.interpolate(previousX, previousY, Field.U));
+    this.nextV.set(i, k, this.interpolate(previousX, previousY, Field.V));
   }
 
   private advectS(i: number, k: number) {
