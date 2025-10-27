@@ -43,6 +43,19 @@ export class Scene {
     );
   }
 
+  public drawHelperData(): void {
+    this.clearHelperData();
+    this.showDivergence();
+    this.drawVelocities();
+    this.drawGridLines();
+  }
+
+  public clearHelperData(): void {
+    this.canvas
+      .getContext("2d")!
+      .clearRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+
   public drawVelocities(): void {
     const radius = 4;
 
@@ -102,5 +115,51 @@ export class Scene {
       ctx.closePath();
       ctx.stroke();
     }
+  }
+
+  public generateRandomVelocities(): void {
+    this.fluid.obstacles.forEach((_, x, y) => {
+      this.fluid.v.set(x, y, 4 * Math.random() - 2);
+      this.fluid.u.set(x, y, 4 * Math.random() - 2);
+    });
+  }
+
+  public showDivergence(): void {
+    const ctx = this.canvas.getContext("2d")!;
+
+    ctx.fillStyle = "#fff";
+
+    this.fluid.obstacles.forEach((_, x, y) => {
+      const div = this.fluid.getDivergence(x, y);
+
+      ctx.fillText(
+        div.toFixed(2),
+        x * this.fluid.squareSize + this.fluid.squareSize / 2,
+        y * this.fluid.squareSize + this.fluid.squareSize / 2,
+      );
+    });
+  }
+
+  public solveDivergenceInteractive(): void {
+    this.canvas.addEventListener("mousedown", (e) => {
+      switch (e.button) {
+        case 0: {
+          const [x, y] = this.fluid.getGridPointFromCanvasPoint([
+            e.offsetX,
+            e.offsetY,
+          ]);
+
+          console.log("solve divergence for", x, y);
+          this.fluid.solveDivergence(x, y);
+          break;
+        }
+        case 1: {
+          console.log("solve divergence all");
+          this.fluid.solveDivergenceAll();
+          break;
+        }
+      }
+      this.drawHelperData();
+    });
   }
 }

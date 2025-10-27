@@ -75,7 +75,7 @@ export class Fluid {
     // the edges of the grid are obstacles
     this.b.fill(1);
 
-    this.initialState();
+    // this.initialState();
   }
 
   private initialState() {
@@ -127,36 +127,47 @@ export class Fluid {
 
   private projection() {
     for (let l = 0; l < this.nIterations; l++) {
-      this.b.forEach((value, i, k) => {
-        if (value === 0) {
-          return;
-        }
-
-        const b0 = this.b.get(i - 1, k);
-        const b1 = this.b.get(i + 1, k);
-        const b2 = this.b.get(i, k - 1);
-        const b3 = this.b.get(i, k + 1);
-
-        const b = b0 + b1 + b2 + b3;
-
-        if (b === 0) {
-          return;
-        }
-
-        const divergence =
-          ((this.u.get(i + 1, k) -
-            this.u.get(i, k) +
-            this.v.get(i, k + 1) -
-            this.v.get(i, k)) *
-            this.overrelaxationCoefficient) /
-          b;
-
-        this.u.set(i, k, (v) => v + divergence * b0);
-        this.u.set(i + 1, k, (v) => v - divergence * b1);
-        this.v.set(i, k, (v) => v + divergence * b2);
-        this.v.set(i, k + 1, (v) => v - divergence * b3);
-      });
+      this.solveDivergenceAll();
     }
+  }
+
+  public solveDivergenceAll() {
+    this.b.forEach((value, i, k) => {
+      if (value === 0) {
+        return;
+      }
+      this.solveDivergence(i, k);
+    });
+  }
+
+  public solveDivergence(i: number, k: number) {
+    const b0 = this.b.get(i - 1, k);
+    const b1 = this.b.get(i + 1, k);
+    const b2 = this.b.get(i, k - 1);
+    const b3 = this.b.get(i, k + 1);
+
+    const b = b0 + b1 + b2 + b3;
+
+    if (b === 0) {
+      return;
+    }
+
+    const divergence =
+      (this.getDivergence(i, k) * this.overrelaxationCoefficient) / b;
+
+    this.u.set(i, k, (v) => v + divergence * b0);
+    this.u.set(i + 1, k, (v) => v - divergence * b1);
+    this.v.set(i, k, (v) => v + divergence * b2);
+    this.v.set(i, k + 1, (v) => v - divergence * b3);
+  }
+
+  public getDivergence(i: number, k: number): number {
+    return (
+      this.u.get(i + 1, k) -
+      this.u.get(i, k) +
+      this.v.get(i, k + 1) -
+      this.v.get(i, k)
+    );
   }
 
   private advection() {
@@ -190,15 +201,15 @@ export class Fluid {
     return (v * b + vLeft * bLeft + vTop * bTop + vTopLeft * bTopLeft) / bSum;
   }
 
-  private getGridPointFromCanvasPoint(
+  public getGridPointFromCanvasPoint(
     point: [number, number],
   ): [number, number] {
-    const x = Math.round(point[0] / this.squareSize);
-    const y = Math.round(point[1] / this.squareSize);
+    const x = Math.floor(point[0] / this.squareSize);
+    const y = Math.floor(point[1] / this.squareSize);
     return [x, y] as const;
   }
 
-  private getCanvasPointFromGridPoint(
+  public getCanvasPointFromGridPoint(
     point: [number, number],
   ): [number, number] {
     const x = point[0] * this.squareSize;

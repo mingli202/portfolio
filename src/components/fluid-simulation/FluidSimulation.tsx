@@ -30,8 +30,10 @@ export function FluidSimulation() {
     }
 
     // update(0);
-    scene.drawVelocities();
-    scene.drawGridLines();
+    scene.generateRandomVelocities();
+    scene.drawHelperData();
+
+    scene.solveDivergenceInteractive();
   }, []);
 
   return (
