@@ -21,7 +21,10 @@ export function FluidSimulation() {
       // setTimeout(() => {
       start.current = now;
       fluid.simulate();
-      scene.draw();
+      // scene.draw();
+
+      scene.drawVelocities();
+      scene.drawGridLines();
       requestAnimationFrame(update);
       // }, t);
     }

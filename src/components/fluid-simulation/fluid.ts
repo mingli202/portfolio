@@ -80,20 +80,20 @@ export class Fluid {
 
   private initialState() {
     // add a square obstacle
-    // const obstacleSize = 4;
-    // for (
-    //   let i = Math.floor((this.gridWidth - obstacleSize) / 2);
-    //   i < Math.floor((this.gridWidth + obstacleSize) / 2);
-    //   i++
-    // ) {
-    //   for (
-    //     let k = Math.floor((this.gridHeight - obstacleSize) / 2);
-    //     k < Math.floor((this.gridHeight + obstacleSize) / 2);
-    //     k++
-    //   ) {
-    //     this.b.set(i, k, 0);
-    //   }
-    // }
+    const obstacleSize = 4;
+    for (
+      let i = Math.floor((this.gridWidth - obstacleSize) / 2);
+      i < Math.floor((this.gridWidth + obstacleSize) / 2);
+      i++
+    ) {
+      for (
+        let k = Math.floor((this.gridHeight - obstacleSize) / 2);
+        k < Math.floor((this.gridHeight + obstacleSize) / 2);
+        k++
+      ) {
+        this.b.set(i, k, 0);
+      }
+    }
 
     for (let i = 0; i < this.gridWidth; i++) {
       this.u.set(0, i, 2);

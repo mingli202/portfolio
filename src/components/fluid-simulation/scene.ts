@@ -87,16 +87,20 @@ export class Scene {
     ctx.lineWidth = 1;
 
     ctx.strokeStyle = "#555";
-    ctx.beginPath();
     for (let i = 0; i <= this.fluid.gridWidth; i++) {
+      ctx.beginPath();
       ctx.moveTo(i * this.fluid.squareSize, 0);
       ctx.lineTo(i * this.fluid.squareSize, this.canvas.height);
+      ctx.closePath();
+      ctx.stroke();
     }
 
     for (let k = 0; k <= this.fluid.gridHeight; k++) {
+      ctx.beginPath();
       ctx.moveTo(0, k * this.fluid.squareSize);
       ctx.lineTo(this.canvas.width * 20, k * this.fluid.squareSize);
+      ctx.closePath();
+      ctx.stroke();
     }
-    ctx.stroke();
   }
 }
