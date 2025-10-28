@@ -5,16 +5,16 @@ export class Scene {
   canvas: HTMLCanvasElement;
 
   showDivergence: boolean = false;
-  showGridLines: boolean = true;
+  showGridLines: boolean = false;
   showVelocities: boolean = false;
   showCenterVelocities: boolean = false;
   showDetailedVelocities: boolean = false;
   showVelocityColor: boolean = true;
 
   enableMouseMove: boolean = false;
-  enableProjection: boolean = false;
-  enableAdvection: boolean = false;
-  enablePlaying: boolean = false;
+  enableProjection: boolean = true;
+  enableAdvection: boolean = true;
+  enablePlaying: boolean = true;
 
   lastMousePosition: [number, number] = [-1, -1];
   lastTime: DOMHighResTimeStamp = 0;
@@ -24,6 +24,9 @@ export class Scene {
   lineWidth: number = 1;
 
   start: DOMHighResTimeStamp = 0;
+  mouseRadius: number = 1;
+
+  subdivisions: number = 3;
 
   constructor(canvas: HTMLCanvasElement, fluid: Fluid) {
     this.canvas = canvas;
@@ -39,6 +42,10 @@ export class Scene {
     };
 
     this.addMouseMove();
+
+    if (this.enablePlaying) {
+      requestAnimationFrame(this.play.bind(this));
+    }
   }
 
   public play(now: DOMHighResTimeStamp) {
@@ -325,11 +332,6 @@ export class Scene {
 
     const deltaX = e.offsetX - this.lastMousePosition[0];
     const deltaY = e.offsetY - this.lastMousePosition[1];
-    const norm = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-    if (norm < 1) {
-      return;
-    }
 
     this.lastMousePosition = [e.offsetX, e.offsetY];
 
@@ -337,46 +339,67 @@ export class Scene {
       e.offsetX,
       e.offsetY,
     ]);
-    const v = 5 * this.fluid.squareSize;
 
-    this.fluid.v.set(x, y, (val) => val + (deltaY / norm) * v);
-    this.fluid.u.set(x, y, (val) => val + (deltaX / norm) * v);
+    for (let i = 0; i < this.mouseRadius * 2 + 1; i++) {
+      for (let k = 0; k < this.mouseRadius * 2 + 1; k++) {
+        const v1 =
+          this.gaussian(i - this.mouseRadius, k - this.mouseRadius) /
+          (deltaT / 1000);
 
-    this.fluid.v.set(x - 1, y, (val) => val + (deltaY / norm) * (v / 2));
-    this.fluid.u.set(x + 1, y, (val) => val + (deltaX / norm) * (v / 2));
-    this.fluid.v.set(x, y - 1, (val) => val + (deltaY / norm) * (v / 2));
-    this.fluid.u.set(x, y + 1, (val) => val + (deltaX / norm) * (v / 2));
+        this.fluid.v.set(
+          x - this.mouseRadius + i,
+          y - this.mouseRadius + k,
+          (val) => val + deltaY * v1,
+        );
+        this.fluid.u.set(
+          x - this.mouseRadius + i,
+          y - this.mouseRadius + k,
+          (val) => val + deltaX * v1,
+        );
+      }
+    }
+  }
 
-    this.fluid.v.set(x - 1, y - 1, (val) => val + (deltaY / norm) * (v / 4));
-    this.fluid.u.set(x + 1, y - 1, (val) => val + (deltaX / norm) * (v / 4));
-    this.fluid.v.set(x - 1, y - 1, (val) => val + (deltaY / norm) * (v / 4));
-    this.fluid.u.set(x - 1, y + 1, (val) => val + (deltaX / norm) * (v / 4));
-
-    this.drawNextFrame();
+  public gaussian(x: number, y: number, sigma: number = 10) {
+    return Math.exp(-(x * x + y * y) / (2 * sigma * sigma));
   }
 
   public drawVelocityColor() {
     const ctx = this.canvas.getContext("2d")!;
 
+    const scale = this.fluid.squareSize / this.subdivisions;
+
     this.fluid.obstacles.forEach((_, x, y) => {
-      const v = this.fluid.v.get(x, y);
-      const u = this.fluid.u.get(x, y);
+      for (let i = 0; i < this.subdivisions; i++) {
+        for (let k = 0; k < this.subdivisions; k++) {
+          const v = this.fluid.interpolate(
+            x * this.fluid.squareSize + i * scale,
+            y * this.fluid.squareSize + k * scale,
+            Field.V,
+          );
+          const u = this.fluid.interpolate(
+            x * this.fluid.squareSize + i * scale,
+            y * this.fluid.squareSize + k * scale,
+            Field.U,
+          );
 
-      const length = Math.sqrt(v * v + u * u);
+          const length = Math.sqrt(v * v + u * u);
 
-      const hue = Math.min(
-        this.map(length, 0, 10 * this.fluid.squareSize, 240, 0),
-        240,
-      );
+          const hue = Math.min(
+            this.map(length, 0, 10 * this.fluid.squareSize, 240, 0),
+            240,
+          );
 
-      ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
+          ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
 
-      ctx.fillRect(
-        x * this.fluid.squareSize,
-        y * this.fluid.squareSize,
-        this.fluid.squareSize,
-        this.fluid.squareSize,
-      );
+          ctx.fillRect(
+            x * this.fluid.squareSize + i * scale,
+            y * this.fluid.squareSize + k * scale,
+            this.fluid.squareSize,
+            this.fluid.squareSize,
+          );
+        }
+      }
     });
   }
 
