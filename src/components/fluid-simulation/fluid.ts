@@ -74,46 +74,12 @@ export class Fluid {
     this.s.fill(1.0);
     // the edges of the grid are obstacles
     this.b.fill(1.0);
-
-    // this.initialState();
-  }
-
-  private initialState() {
-    // add a square obstacle
-    const obstacleSize = 4;
-    for (
-      let i = Math.floor((this.gridWidth - obstacleSize) / 2);
-      i < Math.floor((this.gridWidth + obstacleSize) / 2);
-      i++
-    ) {
-      for (
-        let k = Math.floor((this.gridHeight - obstacleSize) / 2);
-        k < Math.floor((this.gridHeight + obstacleSize) / 2);
-        k++
-      ) {
-        this.b.set(i, k, 0);
-      }
-    }
-
-    for (let i = 0; i < this.gridWidth; i++) {
-      this.u.set(0, i, 2);
-    }
   }
 
   public simulate() {
     // this.applyExternalForces();
     this.projection();
     this.advection();
-  }
-
-  private applyExternalForces() {
-    for (
-      let k = Math.floor(this.b.width / 2) - 2;
-      k < Math.floor(this.b.width / 2) + 2;
-      k++
-    ) {
-      this.v.set(0, k, (value) => value + this.deltaT * this.gravity);
-    }
   }
 
   public projection() {
