@@ -1,4 +1,4 @@
-import type { Fluid } from "./fluid";
+import { Field, type Fluid } from "./fluid";
 
 export class Scene {
   fluid: Fluid;
@@ -6,15 +6,15 @@ export class Scene {
 
   showDivergence: boolean = false;
   showGridLines: boolean = true;
-  showVelocities: boolean = false;
+  showVelocities: boolean = true;
   showCenterVelocities: boolean = true;
+  showDetailedVelocities: boolean = true;
 
   enableMouseMove: boolean = false;
   enableProjection: boolean = false;
   enableAdvection: boolean = false;
   enablePlaying: boolean = false;
 
-  velocityMultiplier: number = 20;
   lastMousePosition: [number, number] = [-1, -1];
   lastTime: DOMHighResTimeStamp = 0;
   isMouseDown: boolean = false;
@@ -28,23 +28,23 @@ export class Scene {
     this.canvas = canvas;
     this.fluid = fluid;
 
-    this.canvas.addEventListener("mousedown", (_) => {
+    this.canvas.addEventListener("pointerdown", (_) => {
       this.isMouseDown = true;
     });
 
-    this.canvas.addEventListener("mouseup", (_) => {
+    this.canvas.addEventListener("pointerup", (_) => {
       this.isMouseDown = false;
       this.lastMousePosition = [-1, -1];
     });
 
     this.addMouseMove();
+    console.log(fluid.squareSize);
   }
 
   public play(now: DOMHighResTimeStamp) {
     if (!this.enablePlaying) {
       return;
     }
-    console.log("play");
 
     const delta = now - this.start;
 
@@ -93,7 +93,7 @@ export class Scene {
   }
 
   public drawNextFrame(): void {
-    this.clearHelperData();
+    this.clearCanvas();
     if (this.enableProjection) this.fluid.projection();
     if (this.enableAdvection) this.fluid.advection();
     if (this.showDivergence) this.drawDivergence();
@@ -102,7 +102,7 @@ export class Scene {
     if (this.showGridLines) this.drawGridLines();
   }
 
-  public clearHelperData(): void {
+  public clearCanvas(): void {
     this.canvas
       .getContext("2d")!
       .clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -123,26 +123,26 @@ export class Scene {
 
       ctx.beginPath();
       ctx.moveTo(x, y);
-      ctx.lineTo(x + value * this.velocityMultiplier, y);
+      ctx.lineTo(x + value, y);
       ctx.closePath();
       ctx.stroke();
     });
 
-    ctx.strokeStyle = "#0ff";
-    ctx.fillStyle = "#0ff";
-    this.fluid.v.forEach((value, x, y) => {
-      x = (x + 1 / 2) * this.fluid.squareSize;
-      y = y * this.fluid.squareSize;
-
-      ctx.arc(x, y, this.radius, 0, 2 * Math.PI);
-      ctx.fill();
-
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.lineTo(x, y + value * this.velocityMultiplier);
-      ctx.closePath();
-      ctx.stroke();
-    });
+    // ctx.strokeStyle = "#0ff";
+    // ctx.fillStyle = "#0ff";
+    // this.fluid.v.forEach((value, x, y) => {
+    //   x = (x + 1 / 2) * this.fluid.squareSize;
+    //   y = y * this.fluid.squareSize;
+    //
+    //   ctx.arc(x, y, this.radius, 0, 2 * Math.PI);
+    //   ctx.fill();
+    //
+    //   ctx.beginPath();
+    //   ctx.moveTo(x, y);
+    //   ctx.lineTo(x, y + value);
+    //   ctx.closePath();
+    //   ctx.stroke();
+    // });
   }
 
   public drawGridLines(): void {
@@ -167,10 +167,14 @@ export class Scene {
     }
   }
 
+  private randomVelocity(range: number = 1): number {
+    return (2 * range * Math.random() - range) * this.fluid.squareSize;
+  }
+
   public generateRandomVelocities(): void {
     this.fluid.obstacles.forEach((_, x, y) => {
-      this.fluid.v.set(x, y, 4 * Math.random() - 2);
-      this.fluid.u.set(x, y, 4 * Math.random() - 2);
+      this.fluid.v.set(x, y, this.randomVelocity());
+      this.fluid.u.set(x, y, this.randomVelocity());
     });
     this.drawNextFrame();
   }
@@ -221,33 +225,72 @@ export class Scene {
     this.drawNextFrame();
   }
 
+  public runAdvection() {
+    console.log("advection");
+    this.fluid.advection();
+    this.drawNextFrame();
+  }
+
   public drawCenterVelocities() {
+    const n = this.fluid.squareSize;
     const ctx = this.canvas.getContext("2d")!;
     ctx.lineWidth = this.lineWidth;
     ctx.strokeStyle = "#f0f";
     ctx.fillStyle = "#f0f";
 
     this.fluid.obstacles.forEach((_, x, y) => {
-      const v = this.fluid.v.get(x, y) * this.velocityMultiplier;
-      const u = this.fluid.u.get(x, y) * this.velocityMultiplier;
+      let v = this.fluid.v.get(x, y);
+      let u = this.fluid.u.get(x, y);
 
-      x = x * this.fluid.squareSize + this.fluid.squareSize / 2;
-      y = y * this.fluid.squareSize + this.fluid.squareSize / 2;
+      x = x * this.fluid.squareSize + n / 2;
+      y = y * this.fluid.squareSize + n / 2;
 
-      ctx.arc(x, y, this.radius, 0, 2 * Math.PI);
-      ctx.fill();
+      this.drawVelocityArrow(x, y, u, v);
 
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.lineTo(x + u, y + v);
-      ctx.closePath();
-      ctx.stroke();
+      if (this.showDetailedVelocities) {
+        ctx.fillStyle = "#f8f";
+        ctx.lineWidth = this.lineWidth / 2;
+        for (var [otherX, otherY] of [
+          [x - n / 4, y],
+          [x + n / 4, y],
+          [x, y - n / 4],
+          [x, y + n / 4],
+          [x - n / 4, y - n / 4],
+          [x + n / 4, y - n / 4],
+          [x - n / 4, y + n / 4],
+          [x + n / 4, y + n / 4],
+          [x - n / 4, y + n / 2],
+          [x - n / 2, y + n / 2],
+          [x, y + n / 2],
+          [x + n / 4, y + n / 2],
+          [x + (3 * n) / 2, y + n / 2],
+          [x + n / 2, y - n / 4],
+          [x + n / 2, y + n / 4],
+        ]) {
+          v = this.fluid.interpolate(x, y, Field.V);
+          u = this.fluid.interpolate(x, y, Field.U);
+
+          this.drawVelocityArrow(otherX, otherY, u, v);
+        }
+      }
     });
+  }
+
+  public drawVelocityArrow(x: number, y: number, u: number, v: number) {
+    const ctx = this.canvas.getContext("2d")!;
+    ctx.arc(x, y, this.radius, 0, 2 * Math.PI);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + u, y + v);
+    ctx.closePath();
+    ctx.stroke();
   }
 
   public addMouseMove() {
     const f = (e: MouseEvent) => this.handleMouseMove(e);
-    this.canvas.addEventListener("mousemove", f);
+    this.canvas.addEventListener("pointermove", f);
 
     this.enableMouseMove = !this.enableMouseMove;
   }
@@ -292,19 +335,20 @@ export class Scene {
       e.offsetX,
       e.offsetY,
     ]);
+    const v = 0.25 * this.fluid.squareSize;
 
-    this.fluid.v.set(x, y, (deltaY / norm) * 2);
-    this.fluid.u.set(x, y, (deltaX / norm) * 2);
+    // this.fluid.v.set(x, y, (deltaY / norm) * v);
+    this.fluid.u.set(x, y, (deltaX / norm) * v);
 
-    this.fluid.v.set(x - 1, y, (deltaY / norm) * 1);
-    this.fluid.u.set(x + 1, y, (deltaX / norm) * 1);
-    this.fluid.v.set(x, y - 1, (deltaY / norm) * 1);
-    this.fluid.u.set(x, y + 1, (deltaX / norm) * 1);
-
-    this.fluid.v.set(x - 1, y - 1, (deltaY / norm) * 0.5);
-    this.fluid.u.set(x + 1, y - 1, (deltaX / norm) * 0.5);
-    this.fluid.v.set(x - 1, y - 1, (deltaY / norm) * 0.5);
-    this.fluid.u.set(x - 1, y + 1, (deltaX / norm) * 0.5);
+    // this.fluid.v.set(x - 1, y, (deltaY / norm) * (v / 2));
+    // this.fluid.u.set(x + 1, y, (deltaX / norm) * (v / 2));
+    // this.fluid.v.set(x, y - 1, (deltaY / norm) * (v / 2));
+    // this.fluid.u.set(x, y + 1, (deltaX / norm) * (v / 2));
+    //
+    // this.fluid.v.set(x - 1, y - 1, (deltaY / norm) * (v / 4));
+    // this.fluid.u.set(x + 1, y - 1, (deltaX / norm) * (v / 4));
+    // this.fluid.v.set(x - 1, y - 1, (deltaY / norm) * (v / 4));
+    // this.fluid.u.set(x - 1, y + 1, (deltaX / norm) * (v / 4));
 
     this.drawNextFrame();
   }

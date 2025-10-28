@@ -46,7 +46,7 @@ export class Fluid {
     deltaT: number = 1 / 30,
     density: number = 1000,
     gravity: number = 9.81,
-    overrelaxationCoefficient: number = 1.9,
+    overrelaxationCoefficient: number = 1.7,
   ) {
     this.canvas = canvas;
     this.minSquares = minSquares;
@@ -73,7 +73,7 @@ export class Fluid {
     // initial smoke density
     this.s.fill(1.0);
     // the edges of the grid are obstacles
-    this.b.fill(1);
+    this.b.fill(1.0);
 
     // this.initialState();
   }
@@ -172,9 +172,8 @@ export class Fluid {
       }
 
       this.advectU(i, k);
-      this.advectV(i, k);
-
-      this.advectS(i, k);
+      // this.advectV(i, k);
+      // this.advectS(i, k);
     });
 
     this.v = this.nextV;
@@ -190,14 +189,15 @@ export class Fluid {
     const vTop = fieldGrid.get(i, k + 1);
     const vTopLeft = fieldGrid.get(i - 1, k + 1);
 
-    const b = this.b.get(i, k);
-    const bLeft = this.b.get(i - 1, k);
-    const bTop = this.b.get(i, k + 1);
-    const bTopLeft = this.b.get(i - 1, k + 1);
+    // const b = this.b.get(i, k);
+    // const bLeft = this.b.get(i - 1, k);
+    // const bTop = this.b.get(i, k + 1);
+    // const bTopLeft = this.b.get(i - 1, k + 1);
+    //
+    // const bSum = b + bLeft + bTop + bTopLeft;
 
-    const bSum = b + bLeft + bTop + bTopLeft;
-
-    return (v * b + vLeft * bLeft + vTop * bTop + vTopLeft * bTopLeft) / bSum;
+    // return (v * b + vLeft * bLeft + vTop * bTop + vTopLeft * bTopLeft) / bSum;
+    return (v + vLeft + vTop + vTopLeft) / 4;
   }
 
   public getGridPointFromCanvasPoint(
@@ -210,22 +210,22 @@ export class Fluid {
 
   public getCanvasPointFromGridPoint(
     point: [number, number],
+    field?: Field,
   ): [number, number] {
-    const x = point[0] * this.squareSize;
-    const y = point[1] * this.squareSize;
+    const x =
+      point[0] * this.squareSize +
+      (field && field === Field.V ? this.squareSize / 2 : 0);
+    const y =
+      point[1] * this.squareSize +
+      (field && field === Field.U ? this.squareSize / 2 : 0);
     return [x, y] as const;
   }
 
-  private advectU(i: number, k: number) {
-    if (this.b.get(i - 1, k) === 0 || k >= this.b.width) {
-      return;
-    }
-
+  public advectU(i: number, k: number) {
     const u = this.u.get(i, k);
-    const vAvg = this.getNeighborsAverage(i, k, Field.V);
+    const vAvg = 0; // this.getNeighborsAverage(i, k, Field.V);
 
     let [x, y] = this.getCanvasPointFromGridPoint([i, k]);
-    y += this.squareSize / 2;
 
     const previousX = x - u * this.deltaT;
     const previousY = y - vAvg * this.deltaT;
@@ -233,11 +233,7 @@ export class Fluid {
     this.nextU.set(i, k, this.interpolate(previousX, previousY, Field.U));
   }
 
-  private advectV(i: number, k: number) {
-    if (this.b.get(i, k - 1) === 0 || i >= this.b.height) {
-      return;
-    }
-
+  public advectV(i: number, k: number) {
     const v = this.v.get(i, k);
     const uAvg = this.getNeighborsAverage(i, k, Field.U);
 
@@ -247,7 +243,7 @@ export class Fluid {
     const previousX = x - uAvg * this.deltaT;
     const previousY = y - v * this.deltaT;
 
-    this.nextV.set(i, k, this.interpolate(previousX, previousY, Field.V));
+    this.nextU.set(i, k, this.interpolate(previousX, previousY, Field.U));
   }
 
   private advectS(i: number, k: number) {
@@ -264,7 +260,7 @@ export class Fluid {
     this.nextS.set(i, k, this.interpolate(previousX, previousY, Field.S));
   }
 
-  private interpolate(previousX: number, previousY: number, field: Field) {
+  public interpolate(x: number, y: number, field: Field) {
     let fieldArr: Grid;
 
     switch (field) {
@@ -279,36 +275,23 @@ export class Fluid {
         break;
     }
 
-    let [previousI, previousK] = this.getGridPointFromCanvasPoint([
-      previousX,
-      previousY,
-    ]);
+    const [i, k] = this.getGridPointFromCanvasPoint([x, y]);
 
-    let [gridX, gridY] = this.getCanvasPointFromGridPoint([
-      previousI,
-      previousK,
-    ]);
+    const [gridX, gridY] = this.getCanvasPointFromGridPoint([i, k], field);
 
-    if (field === Field.U || field === Field.S) {
-      gridX -= this.squareSize / 2;
-    }
-    if (field === Field.V || field === Field.S) {
-      gridY -= this.squareSize / 2;
-    }
+    const xx = x - gridX;
+    const yy = y - gridY;
 
-    const xx = previousX - gridX;
-    const yy = previousY - gridY;
+    const wX = 1 - xx / this.squareSize;
+    const wY = 1 - yy / this.squareSize;
 
-    const w_00 = 1 - xx / this.squareSize;
-    const w_01 = xx / this.squareSize;
-    const w_10 = 1 - yy / this.squareSize;
-    const w_11 = yy / this.squareSize;
+    const newValBot =
+      wX * fieldArr.get(i, k) + (1 - wX) * fieldArr.get(i + 1, k);
 
-    const newVal =
-      w_00 * w_10 * fieldArr.get(previousI, previousK - 1) +
-      w_01 * w_10 * fieldArr.get(previousI, previousK) +
-      w_00 * w_11 * fieldArr.get(previousI + 1, previousK - 1) +
-      w_01 * w_11 * fieldArr.get(previousI + 1, previousK);
+    const newValTop =
+      wX * fieldArr.get(i, k + 1) + (1 - wX) * fieldArr.get(i + 1, k + 1);
+
+    const newVal = wY * newValBot + (1 - wY) * newValTop;
 
     return newVal;
   }

@@ -102,6 +102,18 @@ export default function HelperMenu({ scene }: Props) {
         />
         Enable playing
       </label>
+      <label className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          defaultChecked={scene.showDetailedVelocities}
+          onChange={(e) => {
+            scene.showDetailedVelocities = !scene.showDetailedVelocities;
+            e.target.checked = scene.showDetailedVelocities;
+            scene.drawNextFrame();
+          }}
+        />
+        Show detailed velocities
+      </label>
       <Button
         onClick={() => {
           scene.runSolveDivergenceAll();
@@ -115,6 +127,13 @@ export default function HelperMenu({ scene }: Props) {
         }}
       >
         Projection
+      </Button>
+      <Button
+        onClick={() => {
+          scene.runAdvection();
+        }}
+      >
+        Advection
       </Button>
       <Button
         onClick={() => {

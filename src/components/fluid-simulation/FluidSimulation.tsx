@@ -11,12 +11,15 @@ export function FluidSimulation() {
     canvas.current.width = window.innerWidth;
     canvas.current.height = window.innerHeight;
 
-    const fluid = new Fluid(canvas.current, 20);
+    const fluid = new Fluid(canvas.current, 5);
     const scene = new Scene(canvas.current, fluid);
 
     scene.drawNextFrame();
 
     setScene(scene);
+
+    window.scene = scene;
+    window.fluid = fluid;
   }, []);
 
   return (
