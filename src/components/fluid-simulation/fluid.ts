@@ -41,7 +41,7 @@ export class Fluid {
 
   public constructor(
     canvas: HTMLCanvasElement,
-    minSquares: number = 40,
+    minSquares: number = 60,
     nIterations: number = 40,
     deltaT: number = 1 / 30,
     density: number = 1000,

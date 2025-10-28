@@ -26,7 +26,7 @@ export class Scene {
   start: DOMHighResTimeStamp = 0;
   mouseRadius: number = 1;
 
-  subdivisions: number = 3;
+  subdivisions: number = 2;
 
   constructor(canvas: HTMLCanvasElement, fluid: Fluid) {
     this.canvas = canvas;
@@ -343,8 +343,9 @@ export class Scene {
     for (let i = 0; i < this.mouseRadius * 2 + 1; i++) {
       for (let k = 0; k < this.mouseRadius * 2 + 1; k++) {
         const v1 =
-          this.gaussian(i - this.mouseRadius, k - this.mouseRadius) /
-          (deltaT / 1000);
+          (this.gaussian(i - this.mouseRadius, k - this.mouseRadius) /
+            (deltaT / 1000)) *
+          2;
 
         this.fluid.v.set(
           x - this.mouseRadius + i,
@@ -385,9 +386,12 @@ export class Scene {
 
           const length = Math.sqrt(v * v + u * u);
 
-          const hue = Math.min(
-            this.map(length, 0, 10 * this.fluid.squareSize, 240, 0),
-            240,
+          const hue = Math.max(
+            Math.min(
+              240 - this.map(length, 0, 30 * this.fluid.squareSize, 0, 240),
+              240,
+            ),
+            0,
           );
 
           ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
