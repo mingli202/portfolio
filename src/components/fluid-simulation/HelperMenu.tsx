@@ -83,6 +83,18 @@ export default function HelperMenu({ scene }: Props) {
       <label className="flex items-center gap-2">
         <input
           type="checkbox"
+          defaultChecked={scene.showSmoke}
+          onChange={(e) => {
+            scene.showSmoke = !scene.showSmoke;
+            e.target.checked = scene.showSmoke;
+            scene.drawNextFrame();
+          }}
+        />
+        Show smoke
+      </label>
+      <label className="flex items-center gap-2">
+        <input
+          type="checkbox"
           defaultChecked={scene.enableMouseMove}
           onChange={(e) => {
             scene.enableMouseMove = !scene.enableMouseMove;

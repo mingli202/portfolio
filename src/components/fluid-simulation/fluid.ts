@@ -11,8 +11,8 @@ export type Field = (typeof Field)[keyof typeof Field];
 export class Fluid {
   public u: Grid; // x-direction
   public v: Grid; // y-direction
+  public s: Grid; // smoke
   private b: Grid; // blocks and obstacles
-  private s: Grid; // smoke
   // private p: Grid; // pressure
   private canvas: HTMLCanvasElement;
 
@@ -30,10 +30,6 @@ export class Fluid {
   public density: number;
   public gravity: number;
   public overrelaxationCoefficient: number;
-
-  public get smoke(): Grid {
-    return this.s;
-  }
 
   public get obstacles(): Grid {
     return this.b;
@@ -139,7 +135,7 @@ export class Fluid {
 
       this.advectU(i, k);
       this.advectV(i, k);
-      // this.advectS(i, k);
+      this.advectS(i, k);
     });
 
     this.v = this.nextV;
@@ -155,14 +151,6 @@ export class Fluid {
     const vTop = fieldGrid.get(i, k + 1);
     const vTopLeft = fieldGrid.get(i - 1, k + 1);
 
-    // const b = this.b.get(i, k);
-    // const bLeft = this.b.get(i - 1, k);
-    // const bTop = this.b.get(i, k + 1);
-    // const bTopLeft = this.b.get(i - 1, k + 1);
-    //
-    // const bSum = b + bLeft + bTop + bTopLeft;
-
-    // return (v * b + vLeft * bLeft + vTop * bTop + vTopLeft * bTopLeft) / bSum;
     return (v + vLeft + vTop + vTopLeft) / 4;
   }
 
@@ -222,9 +210,7 @@ export class Fluid {
     const v = (this.v.get(i, k) + this.v.get(i, k + 1)) / 2;
     const u = (this.u.get(i, k) + this.u.get(i + 1, k)) / 2;
 
-    let [x, y] = this.getCanvasPointFromGridPoint([i, k]);
-    x += this.squareSize / 2;
-    y += this.squareSize / 2;
+    let [x, y] = this.getCanvasPointFromGridPoint([i, k], Field.S);
 
     const previousX = x - u * this.deltaT;
     const previousY = y - v * this.deltaT;

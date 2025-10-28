@@ -9,7 +9,8 @@ export class Scene {
   showVelocities: boolean = false;
   showCenterVelocities: boolean = false;
   showDetailedVelocities: boolean = false;
-  showVelocityColor: boolean = true;
+  showVelocityColor: boolean = false;
+  showSmoke: boolean = true;
 
   enableMouseMove: boolean = false;
   enableProjection: boolean = true;
@@ -24,7 +25,7 @@ export class Scene {
   lineWidth: number = 1;
 
   start: DOMHighResTimeStamp = 0;
-  mouseRadius: number = 1;
+  mouseRadius: number = 3;
 
   subdivisions: number = 2;
 
@@ -65,19 +66,6 @@ export class Scene {
     }, t);
   }
 
-  public draw() {
-    const ctx = this.canvas.getContext("2d")!;
-    ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-    this.fluid.smoke.forEach((value, x, y) => {
-      const color =
-        this.fluid.obstacles.get(x, y) === 0 // red if obstacle
-          ? "#ff0"
-          : this.getSmokeColor(value);
-      this.drawRect(x, y, color, ctx);
-    });
-  }
-
   private getSmokeColor(value: number): string {
     const v = Math.min(Math.max(0, value), 1) * 255;
 
@@ -108,6 +96,7 @@ export class Scene {
     if (this.showDivergence) this.drawDivergence();
     if (this.showCenterVelocities) this.drawCenterVelocities();
     if (this.showVelocities) this.drawVelocities();
+    if (this.showSmoke) this.drawSmoke();
     if (this.showGridLines) this.drawGridLines();
   }
 
@@ -333,6 +322,8 @@ export class Scene {
     const deltaX = e.offsetX - this.lastMousePosition[0];
     const deltaY = e.offsetY - this.lastMousePosition[1];
 
+    const norm = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
     this.lastMousePosition = [e.offsetX, e.offsetY];
 
     const [x, y] = this.fluid.getGridPointFromCanvasPoint([
@@ -402,6 +393,31 @@ export class Scene {
             this.fluid.squareSize,
             this.fluid.squareSize,
           );
+        }
+      }
+    });
+  }
+
+  public drawSmoke() {
+    const ctx = this.canvas.getContext("2d")!;
+    ctx.lineWidth = this.lineWidth;
+
+    const scale = this.fluid.squareSize / this.subdivisions;
+
+    this.fluid.s.forEach((_, x, y) => {
+      for (let i = 0; i < this.subdivisions; i++) {
+        for (let k = 0; k < this.subdivisions; k++) {
+          const v = this.fluid.interpolate(
+            x * this.fluid.squareSize + i * scale,
+            y * this.fluid.squareSize + k * scale,
+            Field.S,
+          );
+
+          const color =
+            this.fluid.obstacles.get(x, y) === 0 // red if obstacle
+              ? "#ff0"
+              : this.getSmokeColor(v);
+          this.drawRect(x + i * scale, y + k * scale, color, ctx);
         }
       }
     });
