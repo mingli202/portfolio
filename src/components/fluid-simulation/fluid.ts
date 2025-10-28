@@ -46,7 +46,7 @@ export class Fluid {
     deltaT: number = 1 / 30,
     density: number = 1000,
     gravity: number = 9.81,
-    overrelaxationCoefficient: number = 1.7,
+    overrelaxationCoefficient: number = 1.9,
   ) {
     this.canvas = canvas;
     this.minSquares = minSquares;
@@ -172,7 +172,7 @@ export class Fluid {
       }
 
       this.advectU(i, k);
-      // this.advectV(i, k);
+      this.advectV(i, k);
       // this.advectS(i, k);
     });
 
@@ -202,9 +202,16 @@ export class Fluid {
 
   public getGridPointFromCanvasPoint(
     point: [number, number],
+    field?: Field,
   ): [number, number] {
-    const x = Math.floor(point[0] / this.squareSize);
-    const y = Math.floor(point[1] / this.squareSize);
+    const x = Math.floor(
+      (point[0] - (field && field === Field.V ? this.squareSize / 2 : 0)) /
+        this.squareSize,
+    );
+    const y = Math.floor(
+      (point[1] - (field && field === Field.U ? this.squareSize / 2 : 0)) /
+        this.squareSize,
+    );
     return [x, y] as const;
   }
 
@@ -223,9 +230,9 @@ export class Fluid {
 
   public advectU(i: number, k: number) {
     const u = this.u.get(i, k);
-    const vAvg = 0; // this.getNeighborsAverage(i, k, Field.V);
+    const vAvg = this.getNeighborsAverage(i, k, Field.V);
 
-    let [x, y] = this.getCanvasPointFromGridPoint([i, k]);
+    let [x, y] = this.getCanvasPointFromGridPoint([i, k], Field.U);
 
     const previousX = x - u * this.deltaT;
     const previousY = y - vAvg * this.deltaT;
@@ -237,13 +244,12 @@ export class Fluid {
     const v = this.v.get(i, k);
     const uAvg = this.getNeighborsAverage(i, k, Field.U);
 
-    let [x, y] = this.getCanvasPointFromGridPoint([i, k]);
-    x += this.squareSize / 2;
+    let [x, y] = this.getCanvasPointFromGridPoint([i, k], Field.V);
 
     const previousX = x - uAvg * this.deltaT;
     const previousY = y - v * this.deltaT;
 
-    this.nextU.set(i, k, this.interpolate(previousX, previousY, Field.U));
+    this.nextV.set(i, k, this.interpolate(previousX, previousY, Field.V));
   }
 
   private advectS(i: number, k: number) {
@@ -275,15 +281,15 @@ export class Fluid {
         break;
     }
 
-    const [i, k] = this.getGridPointFromCanvasPoint([x, y]);
+    const [i, k] = this.getGridPointFromCanvasPoint([x, y], field);
 
     const [gridX, gridY] = this.getCanvasPointFromGridPoint([i, k], field);
 
     const xx = x - gridX;
     const yy = y - gridY;
 
-    const wX = 1 - xx / this.squareSize;
-    const wY = 1 - yy / this.squareSize;
+    const wX = Math.min(Math.max(0, 1 - xx / this.squareSize), 1);
+    const wY = Math.min(Math.max(0, 1 - yy / this.squareSize), 1);
 
     const newValBot =
       wX * fieldArr.get(i, k) + (1 - wX) * fieldArr.get(i + 1, k);

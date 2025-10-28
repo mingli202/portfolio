@@ -59,6 +59,30 @@ export default function HelperMenu({ scene }: Props) {
       <label className="flex items-center gap-2">
         <input
           type="checkbox"
+          defaultChecked={scene.showDetailedVelocities}
+          onChange={(e) => {
+            scene.showDetailedVelocities = !scene.showDetailedVelocities;
+            e.target.checked = scene.showDetailedVelocities;
+            scene.drawNextFrame();
+          }}
+        />
+        Show detailed velocities
+      </label>
+      <label className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          defaultChecked={scene.showVelocityColor}
+          onChange={(e) => {
+            scene.showVelocityColor = !scene.showVelocityColor;
+            e.target.checked = scene.showVelocityColor;
+            scene.drawNextFrame();
+          }}
+        />
+        Show velocity color
+      </label>
+      <label className="flex items-center gap-2">
+        <input
+          type="checkbox"
           defaultChecked={scene.enableMouseMove}
           onChange={(e) => {
             scene.enableMouseMove = !scene.enableMouseMove;
@@ -101,18 +125,6 @@ export default function HelperMenu({ scene }: Props) {
           }}
         />
         Enable playing
-      </label>
-      <label className="flex items-center gap-2">
-        <input
-          type="checkbox"
-          defaultChecked={scene.showDetailedVelocities}
-          onChange={(e) => {
-            scene.showDetailedVelocities = !scene.showDetailedVelocities;
-            e.target.checked = scene.showDetailedVelocities;
-            scene.drawNextFrame();
-          }}
-        />
-        Show detailed velocities
       </label>
       <Button
         onClick={() => {

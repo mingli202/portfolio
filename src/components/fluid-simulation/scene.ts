@@ -6,9 +6,10 @@ export class Scene {
 
   showDivergence: boolean = false;
   showGridLines: boolean = true;
-  showVelocities: boolean = true;
-  showCenterVelocities: boolean = true;
-  showDetailedVelocities: boolean = true;
+  showVelocities: boolean = false;
+  showCenterVelocities: boolean = false;
+  showDetailedVelocities: boolean = false;
+  showVelocityColor: boolean = true;
 
   enableMouseMove: boolean = false;
   enableProjection: boolean = false;
@@ -28,17 +29,16 @@ export class Scene {
     this.canvas = canvas;
     this.fluid = fluid;
 
-    this.canvas.addEventListener("pointerdown", (_) => {
+    this.canvas.onpointerdown = () => {
       this.isMouseDown = true;
-    });
+    };
 
-    this.canvas.addEventListener("pointerup", (_) => {
+    this.canvas.onpointerup = () => {
       this.isMouseDown = false;
       this.lastMousePosition = [-1, -1];
-    });
+    };
 
     this.addMouseMove();
-    console.log(fluid.squareSize);
   }
 
   public play(now: DOMHighResTimeStamp) {
@@ -96,9 +96,11 @@ export class Scene {
     this.clearCanvas();
     if (this.enableProjection) this.fluid.projection();
     if (this.enableAdvection) this.fluid.advection();
+
+    if (this.showVelocityColor) this.drawVelocityColor();
     if (this.showDivergence) this.drawDivergence();
-    if (this.showVelocities) this.drawVelocities();
     if (this.showCenterVelocities) this.drawCenterVelocities();
+    if (this.showVelocities) this.drawVelocities();
     if (this.showGridLines) this.drawGridLines();
   }
 
@@ -128,21 +130,21 @@ export class Scene {
       ctx.stroke();
     });
 
-    // ctx.strokeStyle = "#0ff";
-    // ctx.fillStyle = "#0ff";
-    // this.fluid.v.forEach((value, x, y) => {
-    //   x = (x + 1 / 2) * this.fluid.squareSize;
-    //   y = y * this.fluid.squareSize;
-    //
-    //   ctx.arc(x, y, this.radius, 0, 2 * Math.PI);
-    //   ctx.fill();
-    //
-    //   ctx.beginPath();
-    //   ctx.moveTo(x, y);
-    //   ctx.lineTo(x, y + value);
-    //   ctx.closePath();
-    //   ctx.stroke();
-    // });
+    ctx.strokeStyle = "#0ff";
+    ctx.fillStyle = "#0ff";
+    this.fluid.v.forEach((value, x, y) => {
+      x = (x + 1 / 2) * this.fluid.squareSize;
+      y = y * this.fluid.squareSize;
+
+      ctx.arc(x, y, this.radius, 0, 2 * Math.PI);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x, y + value);
+      ctx.closePath();
+      ctx.stroke();
+    });
   }
 
   public drawGridLines(): void {
@@ -235,22 +237,18 @@ export class Scene {
     const n = this.fluid.squareSize;
     const ctx = this.canvas.getContext("2d")!;
     ctx.lineWidth = this.lineWidth;
-    ctx.strokeStyle = "#f0f";
-    ctx.fillStyle = "#f0f";
+    ctx.strokeStyle = "#08f";
+    ctx.fillStyle = "#08f";
 
     this.fluid.obstacles.forEach((_, x, y) => {
-      let v = this.fluid.v.get(x, y);
-      let u = this.fluid.u.get(x, y);
-
       x = x * this.fluid.squareSize + n / 2;
       y = y * this.fluid.squareSize + n / 2;
 
-      this.drawVelocityArrow(x, y, u, v);
+      const points = [[x, y]];
+      ctx.lineWidth = this.lineWidth;
 
       if (this.showDetailedVelocities) {
-        ctx.fillStyle = "#f8f";
-        ctx.lineWidth = this.lineWidth / 2;
-        for (var [otherX, otherY] of [
+        points.push(
           [x - n / 4, y],
           [x + n / 4, y],
           [x, y - n / 4],
@@ -266,12 +264,16 @@ export class Scene {
           [x + (3 * n) / 2, y + n / 2],
           [x + n / 2, y - n / 4],
           [x + n / 2, y + n / 4],
-        ]) {
-          v = this.fluid.interpolate(x, y, Field.V);
-          u = this.fluid.interpolate(x, y, Field.U);
+          [x + n / 2, y],
+          [x - n / 2, y],
+        );
+      }
 
-          this.drawVelocityArrow(otherX, otherY, u, v);
-        }
+      for (var [otherX, otherY] of points) {
+        const v = this.fluid.interpolate(otherX, otherY, Field.V);
+        const u = this.fluid.interpolate(otherX, otherY, Field.U);
+
+        this.drawVelocityArrow(otherX, otherY, u, v);
       }
     });
   }
@@ -290,7 +292,7 @@ export class Scene {
 
   public addMouseMove() {
     const f = (e: MouseEvent) => this.handleMouseMove(e);
-    this.canvas.addEventListener("pointermove", f);
+    this.canvas.onpointermove = f;
 
     this.enableMouseMove = !this.enableMouseMove;
   }
@@ -335,22 +337,57 @@ export class Scene {
       e.offsetX,
       e.offsetY,
     ]);
-    const v = 0.25 * this.fluid.squareSize;
+    const v = 5 * this.fluid.squareSize;
 
-    // this.fluid.v.set(x, y, (deltaY / norm) * v);
-    this.fluid.u.set(x, y, (deltaX / norm) * v);
+    this.fluid.v.set(x, y, (val) => val + (deltaY / norm) * v);
+    this.fluid.u.set(x, y, (val) => val + (deltaX / norm) * v);
 
-    // this.fluid.v.set(x - 1, y, (deltaY / norm) * (v / 2));
-    // this.fluid.u.set(x + 1, y, (deltaX / norm) * (v / 2));
-    // this.fluid.v.set(x, y - 1, (deltaY / norm) * (v / 2));
-    // this.fluid.u.set(x, y + 1, (deltaX / norm) * (v / 2));
-    //
-    // this.fluid.v.set(x - 1, y - 1, (deltaY / norm) * (v / 4));
-    // this.fluid.u.set(x + 1, y - 1, (deltaX / norm) * (v / 4));
-    // this.fluid.v.set(x - 1, y - 1, (deltaY / norm) * (v / 4));
-    // this.fluid.u.set(x - 1, y + 1, (deltaX / norm) * (v / 4));
+    this.fluid.v.set(x - 1, y, (val) => val + (deltaY / norm) * (v / 2));
+    this.fluid.u.set(x + 1, y, (val) => val + (deltaX / norm) * (v / 2));
+    this.fluid.v.set(x, y - 1, (val) => val + (deltaY / norm) * (v / 2));
+    this.fluid.u.set(x, y + 1, (val) => val + (deltaX / norm) * (v / 2));
+
+    this.fluid.v.set(x - 1, y - 1, (val) => val + (deltaY / norm) * (v / 4));
+    this.fluid.u.set(x + 1, y - 1, (val) => val + (deltaX / norm) * (v / 4));
+    this.fluid.v.set(x - 1, y - 1, (val) => val + (deltaY / norm) * (v / 4));
+    this.fluid.u.set(x - 1, y + 1, (val) => val + (deltaX / norm) * (v / 4));
 
     this.drawNextFrame();
+  }
+
+  public drawVelocityColor() {
+    const ctx = this.canvas.getContext("2d")!;
+
+    this.fluid.obstacles.forEach((_, x, y) => {
+      const v = this.fluid.v.get(x, y);
+      const u = this.fluid.u.get(x, y);
+
+      const length = Math.sqrt(v * v + u * u);
+
+      const hue = Math.min(
+        this.map(length, 0, 10 * this.fluid.squareSize, 240, 0),
+        240,
+      );
+
+      ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
+
+      ctx.fillRect(
+        x * this.fluid.squareSize,
+        y * this.fluid.squareSize,
+        this.fluid.squareSize,
+        this.fluid.squareSize,
+      );
+    });
+  }
+
+  public map(
+    value: number,
+    inMin: number,
+    inMax: number,
+    outMin: number,
+    outMax: number,
+  ) {
+    return ((value - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
   }
 
   public clear() {
