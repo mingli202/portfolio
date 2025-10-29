@@ -88,4 +88,16 @@ export class Grid {
 
     this._grid[y][x] = val;
   }
+
+  public copyFrom(other: Grid): void {
+    if (other.width !== this.width || other.height !== this.height) {
+      throw new Error("grid dimensions do not match");
+    }
+
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        this.set(x, y, other.get(x, y));
+      }
+    }
+  }
 }

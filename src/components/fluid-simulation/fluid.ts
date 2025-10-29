@@ -41,10 +41,10 @@ export class Fluid {
     canvas: HTMLCanvasElement,
     minSquares: number = 60,
     nIterations: number = 40,
-    deltaT: number = 1 / 30,
+    deltaT: number = 1 / 20,
     density: number = 1000,
     gravity: number = 9.81,
-    overrelaxationCoefficient: number = 1.9,
+    overrelaxationCoefficient: number = 1.7,
   ) {
     this.canvas = canvas;
     this.minSquares = minSquares;
@@ -59,16 +59,17 @@ export class Fluid {
     this.gridWidth = Math.ceil(this.canvas.width / this.squareSize);
     this.gridHeight = Math.ceil(this.canvas.height / this.squareSize);
 
-    const n = 0;
+    const n = 1;
     this.blockOffset = this.squareSize * n;
 
     this.u = new Grid(this.gridWidth + 1 + 2 * n, this.gridHeight + 2 * n);
     this.v = new Grid(this.gridWidth + 2 * n, this.gridHeight + 1 + 2 * n);
     this.b = new Grid(this.gridWidth + 2 * n, this.gridHeight + 2 * n);
-    this.s = new Grid(this.gridWidth, this.gridHeight);
-    this.nextU = new Grid(this.gridWidth, this.gridHeight);
-    this.nextV = new Grid(this.gridWidth, this.gridHeight);
-    this.nextS = new Grid(this.gridWidth, this.gridHeight);
+    this.s = new Grid(this.gridWidth + 2 * n, this.gridHeight + 2 * n);
+
+    this.nextU = new Grid(this.u.width, this.u.height);
+    this.nextV = new Grid(this.v.width, this.v.height);
+    this.nextS = new Grid(this.s.width, this.s.height);
 
     // initial smoke density
     this.randomizeSmoke();
@@ -147,23 +148,40 @@ export class Fluid {
   }
 
   public advection() {
-    this.nextV = this.v;
-    this.nextU = this.u;
-    this.nextS = this.s;
+    // this.nextV = this.v;
+    // this.nextU = this.u;
+    // this.nextS = this.s;
 
     this.b.forEach((value, i, k) => {
       if (value === 0) {
+        this.nextU.set(i, k, this.u.get(i, k));
+        this.nextV.set(i, k, this.v.get(i, k));
+        this.nextS.set(i, k, this.s.get(i, k));
         return;
       }
+
+      // if (i === 5 && k === 5) {
+      //   console.log(this.v.get(i, k));
+      // }
 
       this.advectU(i, k);
       this.advectV(i, k);
       this.advectS(i, k);
     });
 
-    this.v = this.nextV;
-    this.u = this.nextU;
-    this.s = this.nextS;
+    // for (let i = 0; i < this.u.width; i++) {
+    //   for (let k = 0; k < this.v.height; k++) {
+    //     this.nextU.set(i, k, this.u.get(i, k));
+    //     this.nextV.set(i, k, this.v.get(i, k));
+    //     this.nextS.set(i, k, this.s.get(i, k));
+    //   }
+    // }
+
+    this.b.forEach((_, i, k) => {
+      this.u.set(i, k, this.nextU.get(i, k));
+      this.v.set(i, k, this.nextV.get(i, k));
+      this.s.set(i, k, this.nextS.get(i, k));
+    });
   }
 
   private getNeighborsAverage(i: number, k: number, field: Field) {
@@ -229,7 +247,8 @@ export class Fluid {
   }
 
   public advectU(i: number, k: number) {
-    if (this.b.get(i - 1, k) === 0 || k === this.gridHeight) {
+    if (this.b.get(i - 1, k) === 0) {
+      this.nextU.set(i, k, this.u.get(i, k));
       return;
     }
 
@@ -245,7 +264,8 @@ export class Fluid {
   }
 
   public advectV(i: number, k: number) {
-    if (this.b.get(i, k - 1) === 0 || i === this.gridWidth) {
+    if (this.b.get(i, k - 1) === 0) {
+      this.nextV.set(i, k, this.v.get(i, k));
       return;
     }
 
@@ -315,6 +335,9 @@ export class Fluid {
 
   public randomizeSmoke() {
     this.s.forEach((_, i, k) => {
+      if (this.b.get(i, k) === 0) {
+        return;
+      }
       this.s.set(i, k, Math.random());
     });
   }

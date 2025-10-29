@@ -9,8 +9,8 @@ export class Scene {
   showVelocities: boolean = false;
   showCenterVelocities: boolean = false;
   showDetailedVelocities: boolean = false;
-  showVelocityColor: boolean = true;
-  showSmoke: boolean = false;
+  showVelocityColor: boolean = false;
+  showSmoke: boolean = true;
   showObstacles: boolean = false;
 
   enableMouseMove: boolean = false;
@@ -29,6 +29,7 @@ export class Scene {
   mouseRadius: number = 1;
 
   subdivisions: number = 2;
+  maxVelocity: number;
 
   constructor(
     canvas: HTMLCanvasElement,
@@ -38,6 +39,8 @@ export class Scene {
     this.canvas = canvas;
     this.fluid = fluid;
     this.subdivisions = subdivisions;
+
+    this.maxVelocity = 30 * this.fluid.squareSize;
 
     this.canvas.onpointerdown = () => {
       this.isMouseDown = true;
@@ -73,7 +76,7 @@ export class Scene {
   }
 
   private getSmokeColor(value: number): string {
-    const v = Math.min(Math.max(0, value), 1) * 255;
+    const v = Math.min(Math.max(0, value / this.maxVelocity), 1) * 255;
 
     return `rgba(${v}, ${v}, ${v}, 1)`;
   }
@@ -212,7 +215,7 @@ export class Scene {
             e.offsetY,
           ]);
 
-          console.log("solve divergence for", x, y);
+          // console.log("solve divergence for", x, y);
           this.fluid.solveDivergence(x, y);
           break;
         }
@@ -222,19 +225,19 @@ export class Scene {
   }
 
   public runSolveDivergenceAll() {
-    console.log("solve divergence all");
+    // console.log("solve divergence all");
     this.fluid.solveDivergenceAll();
     this.drawNextFrame();
   }
 
   public runProjection() {
-    console.log("solve divergence all");
+    // console.log("solve divergence all");
     this.fluid.projection();
     this.drawNextFrame();
   }
 
   public runAdvection() {
-    console.log("advection");
+    // console.log("advection");
     this.fluid.advection();
     this.drawNextFrame();
   }
@@ -330,6 +333,7 @@ export class Scene {
 
     const deltaX = e.offsetX - this.lastMousePosition[0];
     const deltaY = e.offsetY - this.lastMousePosition[1];
+    const norm = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
     this.lastMousePosition = [e.offsetX, e.offsetY];
 
@@ -349,7 +353,8 @@ export class Scene {
 
         if (
           this.fluid.obstacles.get(xx - 1, yy) === 0 ||
-          this.fluid.obstacles.get(xx, yy - 1) === 0
+          this.fluid.obstacles.get(xx, yy - 1) === 0 ||
+          this.fluid.obstacles.get(xx, yy) === 0
         ) {
           continue;
         }
@@ -357,10 +362,11 @@ export class Scene {
         const v =
           (this.gaussian(i - this.mouseRadius, k - this.mouseRadius) /
             (deltaT / 1000)) *
-          0.5;
+          2;
 
         this.fluid.v.set(xx, yy, (val) => val + deltaY * v);
         this.fluid.u.set(xx, yy, (val) => val + deltaX * v);
+        this.fluid.s.set(xx, yy, (val) => val + norm * v);
       }
     }
   }
@@ -393,10 +399,7 @@ export class Scene {
           const length = Math.sqrt(v * v + u * u);
 
           const hue = Math.max(
-            Math.min(
-              240 - this.map(length, 0, 30 * this.fluid.squareSize, 0, 240),
-              240,
-            ),
+            Math.min(240 - this.map(length, 0, this.maxVelocity, 0, 240), 240),
             0,
           );
 
@@ -430,10 +433,7 @@ export class Scene {
             Field.S,
           );
 
-          const color =
-            this.fluid.obstacles.get(x, y) === 0 // red if obstacle
-              ? "#ff0"
-              : this.getSmokeColor(v);
+          const color = this.getSmokeColor(v);
           this.drawRect(xx + i * scale, yy + k * scale, color, ctx);
         }
       }
