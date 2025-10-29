@@ -180,6 +180,13 @@ export default function HelperMenu({ scene }: Props) {
       </Button>
       <Button
         onClick={() => {
+          scene.fluid.randomizeSmoke();
+        }}
+      >
+        Randomize smoke
+      </Button>
+      <Button
+        onClick={() => {
           scene.drawNextFrame();
         }}
       >

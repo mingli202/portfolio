@@ -14,7 +14,7 @@ export class Scene {
   showObstacles: boolean = false;
 
   enableMouseMove: boolean = false;
-  enableProjection: boolean = false;
+  enableProjection: boolean = true;
   enableAdvection: boolean = true;
   enablePlaying: boolean = true;
 
@@ -28,11 +28,16 @@ export class Scene {
   start: DOMHighResTimeStamp = 0;
   mouseRadius: number = 1;
 
-  subdivisions: number = 1;
+  subdivisions: number = 2;
 
-  constructor(canvas: HTMLCanvasElement, fluid: Fluid) {
+  constructor(
+    canvas: HTMLCanvasElement,
+    fluid: Fluid,
+    subdivisions: number = 2,
+  ) {
     this.canvas = canvas;
     this.fluid = fluid;
+    this.subdivisions = subdivisions;
 
     this.canvas.onpointerdown = () => {
       this.isMouseDown = true;
@@ -352,7 +357,7 @@ export class Scene {
         const v =
           (this.gaussian(i - this.mouseRadius, k - this.mouseRadius) /
             (deltaT / 1000)) *
-          2;
+          0.5;
 
         this.fluid.v.set(xx, yy, (val) => val + deltaY * v);
         this.fluid.u.set(xx, yy, (val) => val + deltaX * v);

@@ -59,19 +59,20 @@ export class Fluid {
     this.gridWidth = Math.ceil(this.canvas.width / this.squareSize);
     this.gridHeight = Math.ceil(this.canvas.height / this.squareSize);
 
-    const n = 1;
-    this.blockOffset = (this.squareSize * n * 1) / 2;
+    const n = 0;
+    this.blockOffset = this.squareSize * n;
 
-    this.u = new Grid(this.gridWidth + 1 + n, this.gridHeight + n);
-    this.v = new Grid(this.gridWidth + n, this.gridHeight + 1 + n);
-    this.b = new Grid(this.gridWidth + n, this.gridHeight + n);
+    this.u = new Grid(this.gridWidth + 1 + 2 * n, this.gridHeight + 2 * n);
+    this.v = new Grid(this.gridWidth + 2 * n, this.gridHeight + 1 + 2 * n);
+    this.b = new Grid(this.gridWidth + 2 * n, this.gridHeight + 2 * n);
     this.s = new Grid(this.gridWidth, this.gridHeight);
     this.nextU = new Grid(this.gridWidth, this.gridHeight);
     this.nextV = new Grid(this.gridWidth, this.gridHeight);
     this.nextS = new Grid(this.gridWidth, this.gridHeight);
 
     // initial smoke density
-    this.s.fill(1);
+    this.randomizeSmoke();
+
     // the edges of the grid are obstacles
     this.b.fill(1);
     for (let i = 0; i < this.b.width; i++) {
@@ -260,10 +261,9 @@ export class Fluid {
   }
 
   private advectS(i: number, k: number) {
-    const v = (this.v.get(i, k) + this.v.get(i, k + 1)) / 2;
-    const u = (this.u.get(i, k) + this.u.get(i + 1, k)) / 2;
-
     let [x, y] = this.getCanvasPointFromGridPoint([i, k], Field.S);
+    const u = this.interpolate(x, y, Field.U);
+    const v = this.interpolate(x, y, Field.V);
 
     const previousX = x - u * this.deltaT;
     const previousY = y - v * this.deltaT;
@@ -311,5 +311,11 @@ export class Fluid {
     this.u.fill(0);
     this.v.fill(0);
     this.s.fill(0);
+  }
+
+  public randomizeSmoke() {
+    this.s.forEach((_, i, k) => {
+      this.s.set(i, k, Math.random());
+    });
   }
 }
