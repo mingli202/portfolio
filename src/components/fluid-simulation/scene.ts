@@ -4,12 +4,12 @@ export class Scene {
   fluid: Fluid;
   canvas: HTMLCanvasElement;
 
-  showDivergence: boolean = true;
-  showGridLines: boolean = true;
+  showDivergence: boolean = false;
+  showGridLines: boolean = false;
   showVelocities: boolean = false;
-  showCenterVelocities: boolean = true;
-  showDetailedVelocities: boolean = true;
-  showVelocityColor: boolean = false;
+  showCenterVelocities: boolean = false;
+  showDetailedVelocities: boolean = false;
+  showVelocityColor: boolean = true;
   showSmoke: boolean = false;
   showObstacles: boolean = false;
 
@@ -80,12 +80,7 @@ export class Scene {
     ctx: CanvasRenderingContext2D,
   ): void {
     ctx.fillStyle = color;
-    ctx.fillRect(
-      x * this.fluid.squareSize,
-      y * this.fluid.squareSize,
-      this.fluid.squareSize,
-      this.fluid.squareSize,
-    );
+    ctx.fillRect(x, y, this.fluid.squareSize, this.fluid.squareSize);
   }
 
   public drawNextFrame(): void {
@@ -115,15 +110,14 @@ export class Scene {
     ctx.strokeStyle = "#ff0";
     ctx.fillStyle = "#ff0";
     this.fluid.u.forEach((value, x, y) => {
-      x = x * this.fluid.squareSize;
-      y = (y + 1 / 2) * this.fluid.squareSize;
+      const [xx, yy] = this.fluid.getCanvasPointFromGridPoint([x, y], Field.U);
 
-      ctx.arc(x, y, this.radius, 0, 2 * Math.PI);
+      ctx.arc(xx, yy, this.radius, 0, 2 * Math.PI);
       ctx.fill();
 
       ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.lineTo(x + value / 20, y);
+      ctx.moveTo(xx, yy);
+      ctx.lineTo(xx + value / 20, yy);
       ctx.closePath();
       ctx.stroke();
     });
@@ -131,15 +125,14 @@ export class Scene {
     ctx.strokeStyle = "#0ff";
     ctx.fillStyle = "#0ff";
     this.fluid.v.forEach((value, x, y) => {
-      x = (x + 1 / 2) * this.fluid.squareSize;
-      y = y * this.fluid.squareSize;
+      const [xx, yy] = this.fluid.getCanvasPointFromGridPoint([x, y], Field.V);
 
-      ctx.arc(x, y, this.radius, 0, 2 * Math.PI);
+      ctx.arc(xx, yy, this.radius, 0, 2 * Math.PI);
       ctx.fill();
 
       ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.lineTo(x, y + value / 20);
+      ctx.moveTo(xx, yy);
+      ctx.lineTo(xx, yy + value / 20);
       ctx.closePath();
       ctx.stroke();
     });
@@ -152,16 +145,22 @@ export class Scene {
     ctx.strokeStyle = "#555";
     for (let i = 0; i <= this.fluid.gridWidth; i++) {
       ctx.beginPath();
-      ctx.moveTo(i * this.fluid.squareSize, 0);
-      ctx.lineTo(i * this.fluid.squareSize, this.canvas.height);
+      ctx.moveTo(i * this.fluid.squareSize - this.fluid.blockOffset, 0);
+      ctx.lineTo(
+        i * this.fluid.squareSize - this.fluid.blockOffset,
+        this.canvas.height,
+      );
       ctx.closePath();
       ctx.stroke();
     }
 
     for (let k = 0; k <= this.fluid.gridHeight; k++) {
       ctx.beginPath();
-      ctx.moveTo(0, k * this.fluid.squareSize);
-      ctx.lineTo(this.canvas.width * 20, k * this.fluid.squareSize);
+      ctx.moveTo(0, k * this.fluid.squareSize - this.fluid.blockOffset);
+      ctx.lineTo(
+        this.canvas.width * 20,
+        k * this.fluid.squareSize - this.fluid.blockOffset,
+      );
       ctx.closePath();
       ctx.stroke();
     }
@@ -173,8 +172,8 @@ export class Scene {
 
   public generateRandomVelocities(): void {
     this.fluid.obstacles.forEach((_, x, y) => {
-      this.fluid.v.set(x, y, this.randomVelocity());
-      this.fluid.u.set(x, y, this.randomVelocity());
+      this.fluid.v.set(x, y, this.randomVelocity() * 20);
+      this.fluid.u.set(x, y, this.randomVelocity() * 20);
     });
     this.drawNextFrame();
   }
@@ -189,8 +188,12 @@ export class Scene {
 
       ctx.fillText(
         div.toFixed(2),
-        x * this.fluid.squareSize + this.fluid.squareSize / 3,
-        y * this.fluid.squareSize + this.fluid.squareSize / 2,
+        x * this.fluid.squareSize +
+          this.fluid.squareSize / 3 -
+          this.fluid.blockOffset,
+        y * this.fluid.squareSize +
+          this.fluid.squareSize / 2 -
+          this.fluid.blockOffset,
       );
     });
   }
@@ -239,31 +242,30 @@ export class Scene {
     ctx.fillStyle = "#08f";
 
     this.fluid.obstacles.forEach((_, x, y) => {
-      x = x * this.fluid.squareSize + n / 2;
-      y = y * this.fluid.squareSize + n / 2;
+      const [xx, yy] = this.fluid.getCanvasPointFromGridPoint([x, y], Field.S);
 
-      const points = [[x, y]];
+      const points = [[xx, yy]];
       ctx.lineWidth = this.lineWidth;
 
       if (this.showDetailedVelocities) {
         points.push(
-          [x - n / 4, y],
-          [x + n / 4, y],
-          [x, y - n / 4],
-          [x, y + n / 4],
-          [x - n / 4, y - n / 4],
-          [x + n / 4, y - n / 4],
-          [x - n / 4, y + n / 4],
-          [x + n / 4, y + n / 4],
-          [x - n / 4, y + n / 2],
-          [x - n / 2, y + n / 2],
-          [x, y + n / 2],
-          [x + n / 4, y + n / 2],
-          [x + (3 * n) / 2, y + n / 2],
-          [x + n / 2, y - n / 4],
-          [x + n / 2, y + n / 4],
-          [x + n / 2, y],
-          [x - n / 2, y],
+          [xx - n / 4, yy],
+          [xx + n / 4, yy],
+          [xx, yy - n / 4],
+          [xx, yy + n / 4],
+          [xx - n / 4, yy - n / 4],
+          [xx + n / 4, yy - n / 4],
+          [xx - n / 4, yy + n / 4],
+          [xx + n / 4, yy + n / 4],
+          [xx - n / 4, yy + n / 2],
+          [xx - n / 2, yy + n / 2],
+          [xx, yy + n / 2],
+          [xx + n / 4, yy + n / 2],
+          [xx + (3 * n) / 2, yy + n / 2],
+          [xx + n / 2, yy - n / 4],
+          [xx + n / 2, yy + n / 4],
+          [xx + n / 2, yy],
+          [xx - n / 2, yy],
         );
       }
 
@@ -340,7 +342,10 @@ export class Scene {
         const xx = x - this.mouseRadius + i;
         const yy = y - this.mouseRadius + k;
 
-        if (this.fluid.obstacles.get(xx, yy) === 0) {
+        if (
+          this.fluid.obstacles.get(xx - 1, yy) === 0 ||
+          this.fluid.obstacles.get(xx, yy - 1) === 0
+        ) {
           continue;
         }
 
@@ -367,14 +372,16 @@ export class Scene {
     this.fluid.obstacles.forEach((_, x, y) => {
       for (let i = 0; i < this.subdivisions; i++) {
         for (let k = 0; k < this.subdivisions; k++) {
+          let [xx, yy] = this.fluid.getCanvasPointFromGridPoint([x, y]);
+
           const v = this.fluid.interpolate(
-            x * this.fluid.squareSize + i * scale,
-            y * this.fluid.squareSize + k * scale,
+            xx + (i + 1 / 2) * scale,
+            yy + (k + 1 / 2) * scale,
             Field.V,
           );
           const u = this.fluid.interpolate(
-            x * this.fluid.squareSize + i * scale,
-            y * this.fluid.squareSize + k * scale,
+            xx + (i + 1 / 2) * scale,
+            yy + (k + 1 / 2) * scale,
             Field.U,
           );
 
@@ -391,8 +398,8 @@ export class Scene {
           ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
 
           ctx.fillRect(
-            x * this.fluid.squareSize + i * scale,
-            y * this.fluid.squareSize + k * scale,
+            xx + i * scale,
+            yy + k * scale,
             this.fluid.squareSize,
             this.fluid.squareSize,
           );
@@ -410,9 +417,11 @@ export class Scene {
     this.fluid.s.forEach((_, x, y) => {
       for (let i = 0; i < this.subdivisions; i++) {
         for (let k = 0; k < this.subdivisions; k++) {
+          const [xx, yy] = this.fluid.getCanvasPointFromGridPoint([x, y]);
+
           const v = this.fluid.interpolate(
-            x * this.fluid.squareSize + i * scale,
-            y * this.fluid.squareSize + k * scale,
+            xx + i * scale,
+            yy + k * scale,
             Field.S,
           );
 
@@ -420,7 +429,7 @@ export class Scene {
             this.fluid.obstacles.get(x, y) === 0 // red if obstacle
               ? "#ff0"
               : this.getSmokeColor(v);
-          this.drawRect(x + i * scale, y + k * scale, color, ctx);
+          this.drawRect(xx + i * scale, yy + k * scale, color, ctx);
         }
       }
     });
@@ -432,7 +441,8 @@ export class Scene {
 
     this.fluid.obstacles.forEach((value, x, y) => {
       if (value === 0) {
-        this.drawRect(x, y, "#aaa", ctx);
+        const [xx, yy] = this.fluid.getCanvasPointFromGridPoint([x, y]);
+        this.drawRect(xx, yy, "#aaa", ctx);
       }
     });
   }

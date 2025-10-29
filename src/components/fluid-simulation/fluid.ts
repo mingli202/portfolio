@@ -31,6 +31,8 @@ export class Fluid {
   public gravity: number;
   public overrelaxationCoefficient: number;
 
+  public blockOffset: number;
+
   public get obstacles(): Grid {
     return this.b;
   }
@@ -57,9 +59,12 @@ export class Fluid {
     this.gridWidth = Math.ceil(this.canvas.width / this.squareSize);
     this.gridHeight = Math.ceil(this.canvas.height / this.squareSize);
 
-    this.u = new Grid(this.gridWidth, this.gridHeight);
-    this.v = new Grid(this.gridWidth, this.gridHeight);
-    this.b = new Grid(this.gridWidth, this.gridHeight);
+    const n = 1;
+    this.blockOffset = (this.squareSize * n * 1) / 2;
+
+    this.u = new Grid(this.gridWidth + 1 + n, this.gridHeight + n);
+    this.v = new Grid(this.gridWidth + n, this.gridHeight + 1 + n);
+    this.b = new Grid(this.gridWidth + n, this.gridHeight + n);
     this.s = new Grid(this.gridWidth, this.gridHeight);
     this.nextU = new Grid(this.gridWidth, this.gridHeight);
     this.nextV = new Grid(this.gridWidth, this.gridHeight);
@@ -69,15 +74,14 @@ export class Fluid {
     this.s.fill(1);
     // the edges of the grid are obstacles
     this.b.fill(1);
-
-    for (let i = 0; i < this.gridWidth; i++) {
+    for (let i = 0; i < this.b.width; i++) {
       this.b.set(i, 0, 0);
-      this.b.set(i, this.gridHeight - 1, 0);
+      this.b.set(i, this.b.height - 1, 0);
     }
 
-    for (let k = 0; k < this.gridHeight; k++) {
+    for (let k = 0; k < this.b.height; k++) {
       this.b.set(0, k, 0);
-      this.b.set(this.gridWidth - 1, k, 0);
+      this.b.set(this.b.width - 1, k, 0);
     }
   }
 
@@ -93,7 +97,20 @@ export class Fluid {
   }
 
   public solveDivergenceAll() {
-    this.b.forEach((_, i, k) => {
+    this.b.forEach((val, i, k) => {
+      if (val === 0) {
+        this.v.set(i, k, 0);
+        this.u.set(i, k, 0);
+        return;
+      }
+
+      if (this.b.get(i - 1, k) === 0) {
+        this.u.set(i, k, 0);
+      }
+      if (this.b.get(i, k - 1) === 0) {
+        this.v.set(i, k, 0);
+      }
+
       this.solveDivergence(i, k);
     });
   }
@@ -176,14 +193,16 @@ export class Fluid {
       (point[0] -
         ((field && field === Field.V) || field === Field.S
           ? this.squareSize / 2
-          : 0)) /
+          : 0) +
+        this.blockOffset) /
         this.squareSize,
     );
     const y = Math.floor(
       (point[1] -
         ((field && field === Field.U) || field === Field.S
           ? this.squareSize / 2
-          : 0)) /
+          : 0) +
+        this.blockOffset) /
         this.squareSize,
     );
     return [x, y] as const;
@@ -197,12 +216,14 @@ export class Fluid {
       point[0] * this.squareSize +
       ((field && field === Field.V) || field === Field.S
         ? this.squareSize / 2
-        : 0);
+        : 0) -
+      this.blockOffset;
     const y =
       point[1] * this.squareSize +
       ((field && field === Field.U) || field === Field.S
         ? this.squareSize / 2
-        : 0);
+        : 0) -
+      this.blockOffset;
     return [x, y] as const;
   }
 
@@ -266,10 +287,6 @@ export class Fluid {
     }
 
     const [i, k] = this.getGridPointFromCanvasPoint([x, y], field);
-
-    if (this.b.get(i, k) === 0) {
-      return 0;
-    }
 
     const [gridX, gridY] = this.getCanvasPointFromGridPoint([i, k], field);
 
