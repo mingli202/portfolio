@@ -85,6 +85,8 @@ export function Svg({
   className,
   foregroundFill: _foregroundFill,
   backgroundFill: _backgroundFill,
+  initial,
+  whileHover,
   ...props
 }: SvgProps) {
   const svgVariants: HoverVariants = {
@@ -102,8 +104,8 @@ export function Svg({
           className,
         )}
         variants={svgVariants}
-        initial="initial"
-        whileHover="whileHover"
+        initial={initial === "" ? undefined : "initial"}
+        whileHover={whileHover === "" ? undefined : "whileHover"}
         transition={hoverTransition}
         {...props}
       >
