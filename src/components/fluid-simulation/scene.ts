@@ -4,16 +4,17 @@ export class Scene {
   fluid: Fluid;
   canvas: HTMLCanvasElement;
 
-  showDivergence: boolean = false;
-  showGridLines: boolean = false;
+  showDivergence: boolean = true;
+  showGridLines: boolean = true;
   showVelocities: boolean = false;
-  showCenterVelocities: boolean = false;
-  showDetailedVelocities: boolean = false;
+  showCenterVelocities: boolean = true;
+  showDetailedVelocities: boolean = true;
   showVelocityColor: boolean = false;
-  showSmoke: boolean = true;
+  showSmoke: boolean = false;
+  showObstacles: boolean = false;
 
   enableMouseMove: boolean = false;
-  enableProjection: boolean = true;
+  enableProjection: boolean = false;
   enableAdvection: boolean = true;
   enablePlaying: boolean = true;
 
@@ -25,9 +26,9 @@ export class Scene {
   lineWidth: number = 1;
 
   start: DOMHighResTimeStamp = 0;
-  mouseRadius: number = 3;
+  mouseRadius: number = 1;
 
-  subdivisions: number = 2;
+  subdivisions: number = 1;
 
   constructor(canvas: HTMLCanvasElement, fluid: Fluid) {
     this.canvas = canvas;
@@ -93,6 +94,7 @@ export class Scene {
     if (this.enableAdvection) this.fluid.advection();
 
     if (this.showVelocityColor) this.drawVelocityColor();
+    if (this.showObstacles) this.drawObstacles();
     if (this.showDivergence) this.drawDivergence();
     if (this.showCenterVelocities) this.drawCenterVelocities();
     if (this.showVelocities) this.drawVelocities();
@@ -121,7 +123,7 @@ export class Scene {
 
       ctx.beginPath();
       ctx.moveTo(x, y);
-      ctx.lineTo(x + value, y);
+      ctx.lineTo(x + value / 20, y);
       ctx.closePath();
       ctx.stroke();
     });
@@ -137,7 +139,7 @@ export class Scene {
 
       ctx.beginPath();
       ctx.moveTo(x, y);
-      ctx.lineTo(x, y + value);
+      ctx.lineTo(x, y + value / 20);
       ctx.closePath();
       ctx.stroke();
     });
@@ -266,8 +268,8 @@ export class Scene {
       }
 
       for (var [otherX, otherY] of points) {
-        const v = this.fluid.interpolate(otherX, otherY, Field.V);
-        const u = this.fluid.interpolate(otherX, otherY, Field.U);
+        const v = this.fluid.interpolate(otherX, otherY, Field.V) / 20;
+        const u = this.fluid.interpolate(otherX, otherY, Field.U) / 20;
 
         this.drawVelocityArrow(otherX, otherY, u, v);
       }
@@ -322,8 +324,6 @@ export class Scene {
     const deltaX = e.offsetX - this.lastMousePosition[0];
     const deltaY = e.offsetY - this.lastMousePosition[1];
 
-    const norm = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
     this.lastMousePosition = [e.offsetX, e.offsetY];
 
     const [x, y] = this.fluid.getGridPointFromCanvasPoint([
@@ -331,23 +331,26 @@ export class Scene {
       e.offsetY,
     ]);
 
+    if (this.fluid.obstacles.get(x, y) === 0) {
+      return;
+    }
+
     for (let i = 0; i < this.mouseRadius * 2 + 1; i++) {
       for (let k = 0; k < this.mouseRadius * 2 + 1; k++) {
-        const v1 =
+        const xx = x - this.mouseRadius + i;
+        const yy = y - this.mouseRadius + k;
+
+        if (this.fluid.obstacles.get(xx, yy) === 0) {
+          continue;
+        }
+
+        const v =
           (this.gaussian(i - this.mouseRadius, k - this.mouseRadius) /
             (deltaT / 1000)) *
           2;
 
-        this.fluid.v.set(
-          x - this.mouseRadius + i,
-          y - this.mouseRadius + k,
-          (val) => val + deltaY * v1,
-        );
-        this.fluid.u.set(
-          x - this.mouseRadius + i,
-          y - this.mouseRadius + k,
-          (val) => val + deltaX * v1,
-        );
+        this.fluid.v.set(xx, yy, (val) => val + deltaY * v);
+        this.fluid.u.set(xx, yy, (val) => val + deltaX * v);
       }
     }
   }
@@ -419,6 +422,17 @@ export class Scene {
               : this.getSmokeColor(v);
           this.drawRect(x + i * scale, y + k * scale, color, ctx);
         }
+      }
+    });
+  }
+
+  public drawObstacles() {
+    const ctx = this.canvas.getContext("2d")!;
+    ctx.lineWidth = this.lineWidth;
+
+    this.fluid.obstacles.forEach((value, x, y) => {
+      if (value === 0) {
+        this.drawRect(x, y, "#aaa", ctx);
       }
     });
   }
