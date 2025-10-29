@@ -1,3 +1,4 @@
+import { useCallback, useRef } from "react";
 import cn from "../lib/cn";
 import { SkillIconList } from "../lib/SkillIcon";
 import type { ExperienceListItem } from "../types";
@@ -17,14 +18,55 @@ export default function ExperienceList({ items, className, ...props }: Props) {
 }
 
 function ListItem(item: ExperienceListItem) {
-  const { title, imageUrl, startDate, endDate, subtitle } = item;
+  const {
+    title,
+    imageUrl,
+    startDate,
+    endDate,
+    subtitle,
+    skills,
+    additionalInfo,
+    location,
+  } = item;
+
+  const isClicked = useRef(false);
+
+  const additionalInfoRef = useRef<HTMLDivElement>(null!);
+
+  const ref = useRef<HTMLDivElement>(null!);
+
+  const showAdditionalInfo = useCallback(() => {
+    const el = additionalInfoRef.current;
+    if (isClicked.current) {
+      el.style.display = "none";
+      ref.current.classList.replace("ring-primary", "ring-secondary");
+
+      isClicked.current = false;
+    } else {
+      el.style.display = "flex";
+      ref.current.classList.replace("ring-secondary", "ring-primary");
+
+      isClicked.current = true;
+    }
+  }, []);
 
   return (
     <>
       <div
         className={cn(
-          "ring-secondary flex w-full gap-4 rounded-[calc(0.25rem+0.75rem)] p-3 ring-1 transition md:rounded-[calc(0.25rem+1rem)] md:p-4",
+          "ring-secondary bg-background relative flex w-full gap-4 rounded-[calc(0.25rem+0.75rem)] p-3 ring-2 transition md:rounded-[calc(0.25rem+1rem)] md:p-4",
+          "hover:ring-primary hover:cursor-pointer",
         )}
+        onPointerDown={() => {
+          if (!document.startViewTransition) {
+            showAdditionalInfo();
+            return;
+          }
+
+          document.startViewTransition(() => showAdditionalInfo());
+        }}
+        ref={ref}
+        style={{ viewTransitionName: "match-element" }}
       >
         <img
           src={imageUrl}
@@ -41,7 +83,23 @@ function ListItem(item: ExperienceListItem) {
             </p>
           </div>
           <p>{title}</p>
-          <SkillIconList skills={item.skills} />
+
+          <div
+            className="text-text-secondary hidden flex-col gap-2 text-sm md:text-base"
+            ref={additionalInfoRef}
+          >
+            <p>{location}</p>
+            <ul className="list-inside list-disc">
+              {additionalInfo.map((info, index) => (
+                <li key={index}>{info}</li>
+              ))}
+            </ul>
+          </div>
+
+          <SkillIconList
+            skills={skills}
+            style={{ viewTransitionName: "match-element" }}
+          />
         </div>
       </div>
     </>

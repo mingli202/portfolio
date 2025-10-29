@@ -17,6 +17,8 @@ export function useIsVisibleCallback<T extends HTMLElement>(
           if (entry.isIntersecting) {
             callback();
             hasBeenVisible.current = true;
+
+            observer.unobserve(entry.target);
           }
         });
       },

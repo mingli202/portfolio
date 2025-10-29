@@ -3,10 +3,14 @@ import { projects } from "../data/projects";
 import { SkillIconList } from "../lib/SkillIcon";
 import type { ProjectItem } from "../types";
 import { useIsVisibleCallback } from "../hooks/useIsVisibleCallback";
+import cn from "../lib/cn";
 
 export default function Projects() {
   return (
-    <div className="flex flex-col gap-3 p-2 md:gap-4 md:p-4">
+    <div
+      className="flex flex-col gap-3 p-2 md:gap-4 md:p-4"
+      style={{ viewTransitionName: "match-element" }}
+    >
       {projects.map((item, index) => (
         <Project {...item} key={index} />
       ))}
@@ -33,7 +37,12 @@ function Project(project: ProjectItem) {
   });
 
   return (
-    <div className="border-secondary flex flex-col gap-3 rounded-[calc(1rem+0.75rem)] border border-solid p-3 md:gap-4 md:rounded-[2rem] md:p-4">
+    <div
+      className={cn(
+        "ring-secondary flex flex-col gap-3 rounded-[calc(1rem+0.75rem)] p-3 ring-2 md:gap-4 md:rounded-[2rem] md:p-4",
+        "hover:ring-primary transition",
+      )}
+    >
       <div
         className="relative aspect-video w-full overflow-hidden rounded-2xl"
         ref={ref}
@@ -76,7 +85,7 @@ function Project(project: ProjectItem) {
           </div>
           <p className="font-light">{subtitle}</p>
         </div>
-        <p className="text-text-secondary font-light">{description}</p>
+        <p className="text-text-secondary">{description}</p>
         <p className="text-text-secondary">
           {startDate} {endDate ? `- ${endDate}` : null}
         </p>
