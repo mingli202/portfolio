@@ -169,39 +169,11 @@ export class Fluid {
       this.advectS(i, k);
     });
 
-    // for (let i = 0; i < this.u.width; i++) {
-    //   for (let k = 0; k < this.v.height; k++) {
-    //     this.nextU.set(i, k, this.u.get(i, k));
-    //     this.nextV.set(i, k, this.v.get(i, k));
-    //     this.nextS.set(i, k, this.s.get(i, k));
-    //   }
-    // }
-
     this.b.forEach((_, i, k) => {
       this.u.set(i, k, this.nextU.get(i, k));
       this.v.set(i, k, this.nextV.get(i, k));
       this.s.set(i, k, this.nextS.get(i, k));
     });
-  }
-
-  private getNeighborsAverage(i: number, k: number, field: Field) {
-    const fieldGrid = field === Field.U ? this.u : this.v;
-
-    const v = fieldGrid.get(i, k);
-    const vLeft = fieldGrid.get(i - 1, k);
-    const vTop = fieldGrid.get(i, k + 1);
-    const vTopLeft = fieldGrid.get(i - 1, k + 1);
-
-    const b = this.b.get(i, k);
-    const bLeft = this.b.get(i - 1, k);
-    const bTop = this.b.get(i, k + 1);
-    const bTopLeft = this.b.get(i - 1, k + 1);
-
-    const bSum = b + bLeft + bTop + bTopLeft;
-
-    if (bSum === 0) return 0;
-
-    return (v * b + vLeft * bLeft + vTop * bTop + vTopLeft * bTopLeft) / bSum;
   }
 
   public getGridPointFromCanvasPoint(

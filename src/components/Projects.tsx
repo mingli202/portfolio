@@ -39,7 +39,7 @@ function Project(project: ProjectItem) {
   return (
     <div
       className={cn(
-        "ring-secondary flex flex-col gap-3 rounded-[calc(1rem+0.75rem)] p-3 ring-1 md:gap-4 md:rounded-[2rem] md:p-4",
+        "ring-secondary flex flex-col gap-3 rounded-[calc(1rem+0.75rem)] p-3 ring-2 md:gap-4 md:rounded-[2rem] md:p-4",
         "hover:ring-primary transition",
       )}
     >

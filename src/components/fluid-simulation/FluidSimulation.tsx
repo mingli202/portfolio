@@ -18,8 +18,8 @@ export function FluidSimulation() {
 
     setScene(scene);
 
-    window.scene = scene;
-    window.fluid = fluid;
+    // window.scene = scene;
+    // window.fluid = fluid;
   }, []);
 
   return (

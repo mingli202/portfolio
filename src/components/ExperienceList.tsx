@@ -54,7 +54,7 @@ function ListItem(item: ExperienceListItem) {
     <>
       <div
         className={cn(
-          "ring-secondary bg-background relative flex w-full gap-4 rounded-[calc(0.25rem+0.75rem)] p-3 ring-1 transition md:rounded-[calc(0.25rem+1rem)] md:p-4",
+          "ring-secondary bg-background relative flex w-full gap-4 rounded-[calc(0.25rem+0.75rem)] p-3 ring-2 transition md:rounded-[calc(0.25rem+1rem)] md:p-4",
           "hover:ring-primary hover:cursor-pointer",
         )}
         onPointerDown={() => {
