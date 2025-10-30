@@ -37,6 +37,16 @@ impl<T: Default + Copy> Grid<T> {
         self.grid[i][k] = value;
     }
 
+    pub fn update<F: Fn(T) -> T>(&mut self, i: usize, k: usize, f: F) {
+        if !self.has(i, k) {
+            return;
+        }
+
+        let value = f(self.grid[i][k]);
+
+        self.grid[i][k] = value;
+    }
+
     pub fn fill(&mut self, value: T) {
         for i in 0..self.grid.len() {
             for k in 0..self.grid[0].len() {

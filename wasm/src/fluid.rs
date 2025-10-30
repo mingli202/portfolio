@@ -1,12 +1,12 @@
 use crate::grid::Grid;
 
-enum Field {
+pub enum Field {
     U,
     V,
     S,
 }
 
-trait FluidSimulation {
+pub trait FluidSimulation {
     fn simulate(&mut self) {
         self.projection();
         self.advection();
@@ -102,11 +102,60 @@ impl Fluid {
             self.b.set(self.b.width() - 1, k, 0);
         }
     }
+
+    fn solve_divergence_for_all(&mut self) {
+        for i in 0..self.b.width() {
+            for k in 0..self.b.height() {
+                if self.b.get(i, k) == 0 {
+                    self.u.set(i, k, 0.0);
+                    self.v.set(i, k, 0.0);
+                    continue;
+                }
+                if self.b.get(i - 1, k) == 0 {
+                    self.u.set(i, k, 0.0);
+                }
+                if self.b.get(i, k - 1) == 0 {
+                    self.v.set(i, k, 0.0);
+                }
+
+                self.solve_divergence(i, k);
+            }
+        }
+    }
+
+    fn solve_divergence(&mut self, i: usize, k: usize) {
+        let b0 = self.b.get(i - 1, k);
+        let b1 = self.b.get(i + 1, k);
+        let b2 = self.b.get(i, k - 1);
+        let b3 = self.b.get(i, k + 1);
+
+        let b = b0 + b1 + b2 + b3;
+
+        if b == 0 {
+            return;
+        }
+
+        let divergence = (self.get_divergence(i, k) * self.overrelaxation_coefficient) / b as f32;
+
+        self.u.update(i, k, |v| divergence * b0 as f32);
+        self.u.update(i + 1, k, |v| v - divergence * b1 as f32);
+        self.v.update(i, k, |v| v + divergence * b2 as f32);
+        self.v.update(i, k + 1, |v| v - divergence * b3 as f32);
+    }
+
+    fn get_divergence(&self, i: usize, k: usize) -> f32 {
+        self.u.get(i, k) - self.u.get(i + 1, k) + self.v.get(i, k) - self.v.get(i, k + 1)
+    }
 }
 
 impl FluidSimulation for Fluid {
-    fn projection(&mut self) {}
+    fn projection(&mut self) {
+        for _ in 0..self.n_iterations {
+            self.solve_divergence_for_all();
+        }
+    }
     fn advection(&mut self) {}
+
     fn interpolate(&mut self, x: usize, y: usize, field: Field) -> f32 {
         let field_arr = match field {
             Field::U => &self.u,

@@ -1,8 +1,9 @@
 use wasm_bindgen::prelude::*;
 
 mod fluid;
-mod grid;
+use fluid::FluidSimulation;
 
+mod grid;
 use grid::Grid;
 
 #[wasm_bindgen]
@@ -30,6 +31,7 @@ pub fn main() -> Result<(), JsValue> {
 
     let mut fluid = fluid::Fluid::new(canvas, None, None, None, None);
     fluid.fill_edges_with_obstacles();
+    fluid.simulate();
 
     Ok(())
 }
