@@ -39,10 +39,10 @@ impl Fluid {
         let delta_t = delta_t.unwrap_or(1_f32 / 30_f32);
         let overrelaxation_coefficient = overrelaxation_coefficient.unwrap_or(1.7);
 
-        let u = vec![vec![0.0; min_squares]; min_squares + 1];
-        let v = vec![vec![0.0; min_squares + 1]; min_squares];
-        let b = vec![vec![1; min_squares + 1]; min_squares + 1];
-        let s = vec![vec![0.0; min_squares + 1]; min_squares + 1];
+        let u = vec![vec![0.0; grid_height]; grid_width + 1];
+        let v = vec![vec![0.0; grid_height + 1]; grid_width];
+        let b = vec![vec![1; grid_height]; grid_width];
+        let s = vec![vec![0.0; b[0].len()]; b.len()];
 
         let next_u = vec![vec![0.0; u[0].len()]; u.len()];
         let next_v = vec![vec![0.0; v[0].len()]; v.len()];
@@ -65,6 +65,18 @@ impl Fluid {
             delta_t,
             overrelaxation_coefficient,
             canvas,
+        }
+    }
+
+    pub fn fill_edges_with_obstacles(&mut self) {
+        for i in 0..self.b.len() {
+            self.b[i][0] = 0;
+            *self.b[i].last_mut().unwrap() = 0;
+        }
+
+        for k in 0..self.b[0].len() {
+            self.b[0][k] = 0;
+            self.b.last_mut().unwrap()[k] = 0;
         }
     }
 }
