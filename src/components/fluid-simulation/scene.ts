@@ -466,4 +466,11 @@ export class Scene {
     this.fluid.clear();
     this.drawNextFrame();
   }
+
+  public destroy() {
+    this.canvas.onpointermove = null;
+    this.canvas.onpointerdown = null;
+    this.canvas.onpointerup = null;
+    this.enablePlaying = false;
+  }
 }

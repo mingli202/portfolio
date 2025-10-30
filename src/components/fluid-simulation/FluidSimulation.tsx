@@ -18,8 +18,7 @@ export function FluidSimulation() {
 
     setScene(scene);
 
-    // window.scene = scene;
-    // window.fluid = fluid;
+    return () => scene.destroy();
   }, []);
 
   return (
