@@ -108,27 +108,26 @@ impl FluidSimulation for Fluid {
     fn projection(&mut self) {}
     fn advection(&mut self) {}
     fn interpolate(&mut self, x: usize, y: usize, field: Field) -> f32 {
-        let fieldArr = match field {
+        let field_arr = match field {
             Field::U => &self.u,
             Field::V => &self.v,
             Field::S => &self.s,
         };
 
         let (i, k) = self.get_grid_indices_from_xy(x, y, Some(&field));
-        let (gridX, gridY) = self.get_xy_from_grid_indices(i, k, Some(&field));
+        let (grid_x, grid_y) = self.get_xy_from_grid_indices(i, k, Some(&field));
 
-        let xx = x - gridX;
-        let yy = y - gridY;
+        let xx = x - grid_x;
+        let yy = y - grid_y;
 
         let w_x = 1.0 - xx as f32 / self.square_size;
         let w_y = 1.0 - yy as f32 / self.square_size;
 
-        let new_value_bot = w_x * fieldArr.get(i, k) + (1.0 - w_x) * fieldArr.get(i + 1, k);
-        let new_value_top = w_x * fieldArr.get(i, k + 1) + (1.0 - w_x) * fieldArr.get(i + 1, k + 1);
+        let new_value_bot = w_x * field_arr.get(i, k) + (1.0 - w_x) * field_arr.get(i + 1, k);
+        let new_value_top =
+            w_x * field_arr.get(i, k + 1) + (1.0 - w_x) * field_arr.get(i + 1, k + 1);
 
-        let new_value = w_y * new_value_bot + (1.0 - w_y) * new_value_top;
-
-        new_value
+        w_y * new_value_bot + (1.0 - w_y) * new_value_top
     }
 
     fn get_grid_indices_from_xy(
