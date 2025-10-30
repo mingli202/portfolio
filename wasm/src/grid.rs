@@ -61,14 +61,7 @@ impl<T: Default + Copy> Grid<T> {
         }
     }
 
-    pub fn copy_from(&mut self, other: &Grid<T>) {
-        assert_eq!(self.width(), other.width());
-        assert_eq!(self.height(), other.height());
-
-        for i in 0..self.grid.len() {
-            for k in 0..self.grid[0].len() {
-                self.grid[i][k] = other.grid[i][k];
-            }
-        }
+    pub fn swap(&mut self, other: &mut Grid<T>) {
+        std::mem::swap(&mut self.grid, &mut other.grid);
     }
 }

@@ -232,6 +232,10 @@ impl FluidSimulation for Fluid {
                 self.advect_s(i, k);
             }
         }
+
+        self.u.swap(&mut self.next_u);
+        self.v.swap(&mut self.next_v);
+        self.s.swap(&mut self.next_s);
     }
 
     fn interpolate(&mut self, x: f32, y: f32, field: Field) -> f32 {
