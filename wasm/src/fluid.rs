@@ -39,6 +39,7 @@ pub struct Fluid {
     pub overrelaxation_coefficient: f32,
 
     pub canvas: web_sys::HtmlCanvasElement,
+    pub block_offset: f32,
 }
 
 impl Fluid {
@@ -61,10 +62,13 @@ impl Fluid {
         let delta_t = delta_t.unwrap_or(1_f32 / 30_f32);
         let overrelaxation_coefficient = overrelaxation_coefficient.unwrap_or(1.7);
 
-        let u = Grid::new(grid_width + 1, grid_height);
-        let v = Grid::new(grid_width, grid_height + 1);
-        let s = Grid::new(grid_width, grid_height);
-        let mut b = Grid::new(grid_width, grid_height);
+        let n = 1;
+        let block_offset = square_size * n as f32;
+
+        let u = Grid::new(grid_width + 1 + 2 * n, grid_height + 2 * n);
+        let v = Grid::new(grid_width + 2 * n, grid_height + 1 + 2 * n);
+        let s = Grid::new(grid_width + 2 * n, grid_height + 2 * n);
+        let mut b = Grid::new(grid_width + 2 * n, grid_height + 2 * n);
         b.fill(1);
 
         let next_u = Grid::new(u.width(), u.height());
@@ -79,6 +83,7 @@ impl Fluid {
             next_u,
             next_v,
             next_s,
+            block_offset,
 
             square_size,
             grid_width,
@@ -137,7 +142,7 @@ impl Fluid {
 
         let divergence = (self.get_divergence(i, k) * self.overrelaxation_coefficient) / b as f32;
 
-        self.u.update(i, k, |v| divergence * b0 as f32);
+        self.u.update(i, k, |v| v + divergence * b0 as f32);
         self.u.update(i + 1, k, |v| v - divergence * b1 as f32);
         self.v.update(i, k, |v| v + divergence * b2 as f32);
         self.v.update(i, k + 1, |v| v - divergence * b3 as f32);
