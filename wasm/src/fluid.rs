@@ -14,8 +14,10 @@ trait FluidSimulation {
     fn projection(&mut self);
     fn advection(&mut self);
     fn interpolate(&mut self, x: usize, y: usize, field: Field) -> f32;
-    fn get_grid_indices_from_xy(&self, x: usize, y: usize, field: Option<Field>) -> (usize, usize);
-    fn get_xy_from_grid_indices(&self, x: usize, y: usize, field: Option<Field>) -> (usize, usize);
+    fn get_grid_indices_from_xy(&self, x: usize, y: usize, field: Option<&Field>)
+        -> (usize, usize);
+    fn get_xy_from_grid_indices(&self, x: usize, y: usize, field: Option<&Field>)
+        -> (usize, usize);
 }
 
 pub struct Fluid {
@@ -112,8 +114,8 @@ impl FluidSimulation for Fluid {
             Field::S => &self.s,
         };
 
-        let (i, k) = self.get_grid_indices_from_xy(x, y, Some(field));
-        let (gridX, gridY) = self.get_xy_from_grid_indices(i, k, Some(field));
+        let (i, k) = self.get_grid_indices_from_xy(x, y, Some(&field));
+        let (gridX, gridY) = self.get_xy_from_grid_indices(i, k, Some(&field));
 
         let xx = x - gridX;
         let yy = y - gridY;
@@ -121,54 +123,53 @@ impl FluidSimulation for Fluid {
         let w_x = 1.0 - xx as f32 / self.square_size;
         let w_y = 1.0 - yy as f32 / self.square_size;
 
-        let new_value_bot = w_x * fieldArr
+        let new_value_bot = w_x * fieldArr.get(i, k) + (1.0 - w_x) * fieldArr.get(i + 1, k);
+        let new_value_top = w_x * fieldArr.get(i, k + 1) + (1.0 - w_x) * fieldArr.get(i + 1, k + 1);
+
+        let new_value = w_y * new_value_bot + (1.0 - w_y) * new_value_top;
+
+        new_value
     }
 
-    fn get_grid_indices_from_xy(&self, x: usize, y: usize, field: Option<Field>) -> (usize, usize) {
+    fn get_grid_indices_from_xy(
+        &self,
+        x: usize,
+        y: usize,
+        field: Option<&Field>,
+    ) -> (usize, usize) {
         let i = (x as f32
-            - if let Some(f) = &field {
-                match f {
-                    Field::V | Field::S => self.square_size / 2.0,
-                    _ => 0.0,
-                }
-            } else {
-                0.0
+            - match field {
+                Some(Field::V | Field::S) => self.square_size / 2.0,
+                _ => 0.0,
             })
             / self.square_size;
 
         let k = (y as f32
-            - if let Some(f) = &field {
-                match f {
-                    Field::U | Field::S => self.square_size / 2.0,
-                    _ => 0.0,
-                }
-            } else {
-                0.0
+            - match field {
+                Some(Field::U | Field::S) => self.square_size / 2.0,
+                _ => 0.0,
             })
             / self.square_size;
 
         (i as usize, k as usize)
     }
 
-    fn get_xy_from_grid_indices(&self, i: usize, k: usize, field: Option<Field>) -> (usize, usize) {
+    fn get_xy_from_grid_indices(
+        &self,
+        i: usize,
+        k: usize,
+        field: Option<&Field>,
+    ) -> (usize, usize) {
         let x = i as f32 * self.square_size
-            + if let Some(f) = &field {
-                match f {
-                    Field::V | Field::S => self.square_size / 2.0,
-                    _ => 0.0,
-                }
-            } else {
-                0.0
+            + match field {
+                Some(Field::V | Field::S) => self.square_size / 2.0,
+                _ => 0.0,
             };
 
         let y = k as f32 * self.square_size
-            + if let Some(f) = &field {
-                match f {
-                    Field::U | Field::S => self.square_size / 2.0,
-                    _ => 0.0,
-                }
-            } else {
-                0.0
+            + match field {
+                Some(Field::U | Field::S) => self.square_size / 2.0,
+                _ => 0.0,
             };
 
         (x as usize, y as usize)
