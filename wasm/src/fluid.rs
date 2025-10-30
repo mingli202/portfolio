@@ -5,7 +5,6 @@ pub enum Field {
     V,
     S,
 }
-
 pub trait FluidSimulation {
     fn simulate(&mut self) {
         self.projection();
@@ -36,13 +35,12 @@ pub struct Fluid {
     pub delta_t: f32,
     pub overrelaxation_coefficient: f32,
 
-    pub canvas: web_sys::HtmlCanvasElement,
     pub block_offset: f32,
 }
 
 impl Fluid {
     pub fn new(
-        canvas: web_sys::HtmlCanvasElement,
+        canvas: &web_sys::HtmlCanvasElement,
         min_squares: Option<usize>,
         n_iterations: Option<usize>,
         delta_t: Option<f32>,
@@ -90,7 +88,6 @@ impl Fluid {
             n_iterations,
             delta_t,
             overrelaxation_coefficient,
-            canvas,
         }
     }
 

@@ -1,10 +1,9 @@
-use wasm_bindgen::prelude::*;
-
 mod fluid;
-use fluid::FluidSimulation;
-
 mod grid;
-use grid::Grid;
+mod scene;
+mod util;
+
+use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 extern "C" {
@@ -29,9 +28,10 @@ pub fn main() -> Result<(), JsValue> {
     canvas.set_width(window.inner_width().unwrap().as_f64().unwrap() as u32);
     canvas.set_height(window.inner_height().unwrap().as_f64().unwrap() as u32);
 
-    let mut fluid = fluid::Fluid::new(canvas, None, None, None, None);
-    fluid.fill_edges_with_obstacles();
-    fluid.simulate();
+    let fluid = fluid::Fluid::new(&canvas, None, None, None, None);
+    let mut scene = scene::Scene::new(canvas, fluid);
+
+    scene.init();
 
     Ok(())
 }

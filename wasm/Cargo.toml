@@ -18,5 +18,9 @@ features = [
 	'Element',
 	'HtmlCanvasElement',
 	'Window',
+	'EventTarget',
+	'PointerEvent',
+	'HtmlElement',
+	'EventListener',
 ]
 version = "0.3.82"
