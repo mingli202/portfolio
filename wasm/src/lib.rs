@@ -1,6 +1,9 @@
 use wasm_bindgen::prelude::*;
 
 mod fluid;
+mod grid;
+
+use grid::Grid;
 
 #[wasm_bindgen]
 extern "C" {

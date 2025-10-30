@@ -1,3 +1,5 @@
+use crate::grid::Grid;
+
 enum Field {
     U,
     V,
@@ -11,19 +13,19 @@ trait FluidSimulation {
     }
     fn projection(&mut self);
     fn advection(&mut self);
-    fn interpolate(&mut self, x: usize, y: usize, field: Option<Field>) -> f32;
+    fn interpolate(&mut self, x: usize, y: usize, field: Field) -> f32;
     fn get_grid_indices_from_xy(&self, x: usize, y: usize, field: Option<Field>) -> (usize, usize);
     fn get_xy_from_grid_indices(&self, x: usize, y: usize, field: Option<Field>) -> (usize, usize);
 }
 
 pub struct Fluid {
-    pub u: Vec<Vec<f32>>,      // velocity in x direction
-    pub v: Vec<Vec<f32>>,      // velocity in y direction
-    pub b: Vec<Vec<u8>>,       // obstacles
-    pub s: Vec<Vec<f32>>,      // smoke (density)
-    pub next_u: Vec<Vec<f32>>, // velocity in x direction
-    pub next_v: Vec<Vec<f32>>, // velocity in y direction
-    pub next_s: Vec<Vec<f32>>, // smoke (density)
+    pub u: Grid<f32>,      // velocity in x direction
+    pub v: Grid<f32>,      // velocity in y direction
+    pub b: Grid<u8>,       // obstacles
+    pub s: Grid<f32>,      // smoke (density)
+    pub next_u: Grid<f32>, // velocity in x direction
+    pub next_v: Grid<f32>, // velocity in y direction
+    pub next_s: Grid<f32>, // smoke (density)
 
     pub square_size: f32,
     pub grid_width: usize,
@@ -57,14 +59,15 @@ impl Fluid {
         let delta_t = delta_t.unwrap_or(1_f32 / 30_f32);
         let overrelaxation_coefficient = overrelaxation_coefficient.unwrap_or(1.7);
 
-        let u = vec![vec![0.0; grid_height]; grid_width + 1];
-        let v = vec![vec![0.0; grid_height + 1]; grid_width];
-        let b = vec![vec![1; grid_height]; grid_width];
-        let s = vec![vec![0.0; b[0].len()]; b.len()];
+        let u = Grid::new(grid_width + 1, grid_height);
+        let v = Grid::new(grid_width, grid_height + 1);
+        let s = Grid::new(grid_width, grid_height);
+        let mut b = Grid::new(grid_width, grid_height);
+        b.fill(1);
 
-        let next_u = vec![vec![0.0; u[0].len()]; u.len()];
-        let next_v = vec![vec![0.0; v[0].len()]; v.len()];
-        let next_s = vec![vec![0.0; s[0].len()]; s.len()];
+        let next_u = Grid::new(u.width(), u.height());
+        let next_v = Grid::new(v.width(), v.height());
+        let next_s = Grid::new(s.width(), s.height());
 
         Fluid {
             u,
@@ -87,14 +90,14 @@ impl Fluid {
     }
 
     pub fn fill_edges_with_obstacles(&mut self) {
-        for i in 0..self.b.len() {
-            self.b[i][0] = 0;
-            *self.b[i].last_mut().unwrap() = 0;
+        for i in 0..self.b.width() {
+            self.b.set(i, 0, 0);
+            self.b.set(i, self.b.height() - 1, 0);
         }
 
-        for k in 0..self.b[0].len() {
-            self.b[0][k] = 0;
-            self.b.last_mut().unwrap()[k] = 0;
+        for k in 0..self.b.height() {
+            self.b.set(0, k, 0);
+            self.b.set(self.b.width() - 1, k, 0);
         }
     }
 }
@@ -102,7 +105,24 @@ impl Fluid {
 impl FluidSimulation for Fluid {
     fn projection(&mut self) {}
     fn advection(&mut self) {}
-    fn interpolate(&mut self, x: usize, y: usize, field: Option<Field>) -> f32 {}
+    fn interpolate(&mut self, x: usize, y: usize, field: Field) -> f32 {
+        let fieldArr = match field {
+            Field::U => &self.u,
+            Field::V => &self.v,
+            Field::S => &self.s,
+        };
+
+        let (i, k) = self.get_grid_indices_from_xy(x, y, Some(field));
+        let (gridX, gridY) = self.get_xy_from_grid_indices(i, k, Some(field));
+
+        let xx = x - gridX;
+        let yy = y - gridY;
+
+        let w_x = 1.0 - xx as f32 / self.square_size;
+        let w_y = 1.0 - yy as f32 / self.square_size;
+
+        let new_value_bot = w_x * fieldArr
+    }
 
     fn get_grid_indices_from_xy(&self, x: usize, y: usize, field: Option<Field>) -> (usize, usize) {
         let i = (x as f32
