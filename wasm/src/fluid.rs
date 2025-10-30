@@ -202,6 +202,12 @@ impl Fluid {
 
         self.next_s.set(i, k, next_val);
     }
+
+    pub fn clear(&mut self) {
+        self.u.fill(0.0);
+        self.v.fill(0.0);
+        self.s.fill(0.0);
+    }
 }
 
 impl FluidSimulation for Fluid {

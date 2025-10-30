@@ -1,3 +1,6 @@
+use std::cell::RefCell;
+use std::rc::Rc;
+
 use crate::fluid::{Fluid, FluidSimulation};
 use crate::util::gaussian;
 use wasm_bindgen::prelude::*;
@@ -8,8 +11,8 @@ pub struct Scene {
 
     mouse_radius: u8,
     subdivisions: u8,
-    is_mouse_down: bool,
-    last_time: f64,
+    is_mouse_down: Rc<RefCell<bool>>,
+    last_time: Rc<RefCell<f64>>,
     last_mouse_xy: (i32, i32),
 
     enable_playing: bool,
@@ -24,11 +27,11 @@ impl Scene {
             canvas,
             mouse_radius: 10,
             subdivisions: 40,
-            is_mouse_down: false,
+            is_mouse_down: Rc::new(RefCell::new(false)),
             enable_playing: false,
             show_smoke: false,
             show_velocity_colors: true,
-            last_time: -1.0,
+            last_time: Rc::new(RefCell::new(-1.0)),
             last_mouse_xy: (0, 0),
         }
     }
@@ -36,25 +39,24 @@ impl Scene {
     pub fn init(&mut self) {
         self.fluid.fill_edges_with_obstacles();
 
-        let cb = Closure::wrap(Box::new(|e: web_sys::PointerEvent| {
-            if !&self.enable_playing || !&self.is_mouse_down {
+        let mouse_move_cb = Closure::wrap(Box::new(|e: web_sys::PointerEvent| {
+            if !self.enable_playing || !*self.is_mouse_down.borrow() {
                 return;
             }
-
-            if self.last_time <= 0.0 {
-                self.last_time = e.time_stamp();
+            if *self.last_time.borrow() <= 0.0 {
+                *self.last_time.borrow_mut() = e.time_stamp();
                 self.last_mouse_xy = (e.offset_x(), e.offset_y());
                 return;
             }
 
             let fluid = &mut self.fluid;
 
-            let delta_t = e.time_stamp() - self.last_time;
+            let delta_t = e.time_stamp() - *self.last_time.borrow();
             if delta_t < fluid.delta_t as f64 * 1000.0 {
                 return;
             }
 
-            self.last_time = e.time_stamp();
+            *self.last_time.borrow_mut() = e.time_stamp();
 
             let delta_x = e.offset_x() - self.last_mouse_xy.0;
             let delta_y = e.offset_y() - self.last_mouse_xy.1;
@@ -87,7 +89,31 @@ impl Scene {
         }) as Box<dyn FnMut(_)>);
 
         self.canvas
-            .set_onpointermove(Some(cb.as_ref().unchecked_ref()));
+            .set_onpointermove(Some(mouse_move_cb.as_ref().unchecked_ref()));
+
+        self.canvas.set_onpointerdown(Some(
+            Closure::wrap(Box::new(|_e: web_sys::PointerEvent| {
+                *self.is_mouse_down.borrow_mut() = true;
+            }) as Box<dyn FnMut(_)>)
+            .as_ref()
+            .unchecked_ref(),
+        ));
+
+        self.canvas.set_onpointerup(Some(
+            Closure::wrap(Box::new(|_e: web_sys::PointerEvent| {
+                *self.is_mouse_down.borrow_mut() = false;
+                *self.last_time.borrow_mut() = -1.0;
+            }) as Box<dyn FnMut(_)>)
+            .as_ref()
+            .unchecked_ref(),
+        ));
+    }
+
+    pub fn draw_next_frame(&mut self) {}
+
+    pub fn clear(&mut self) {
+        self.fluid.clear();
+        self.draw_next_frame();
     }
 }
 
