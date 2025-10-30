@@ -27,8 +27,6 @@ export class Fluid {
   public minSquares: number;
   public nIterations: number;
   public deltaT: number;
-  public density: number;
-  public gravity: number;
   public overrelaxationCoefficient: number;
 
   public blockOffset: number;
@@ -42,16 +40,12 @@ export class Fluid {
     minSquares: number = 60,
     nIterations: number = 40,
     deltaT: number = 1 / 20,
-    density: number = 1000,
-    gravity: number = 9.81,
     overrelaxationCoefficient: number = 1.7,
   ) {
     this.canvas = canvas;
     this.minSquares = minSquares;
     this.nIterations = nIterations;
     this.deltaT = deltaT;
-    this.density = density;
-    this.gravity = gravity;
     this.overrelaxationCoefficient = overrelaxationCoefficient;
 
     const h = Math.min(this.canvas.height, this.canvas.width);
