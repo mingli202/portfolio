@@ -1,3 +1,21 @@
+enum Field {
+    U,
+    V,
+    S,
+}
+
+trait FluidSimulation {
+    fn simulate(&mut self) {
+        self.projection();
+        self.advection();
+    }
+    fn projection(&mut self);
+    fn advection(&mut self);
+    fn interpolate(&mut self, x: usize, y: usize, field: Option<Field>) -> f32;
+    fn get_grid_indices_from_xy(&self, x: usize, y: usize, field: Option<Field>) -> (usize, usize);
+    fn get_xy_from_grid_indices(&self, x: usize, y: usize, field: Option<Field>) -> (usize, usize);
+}
+
 pub struct Fluid {
     pub u: Vec<Vec<f32>>,      // velocity in x direction
     pub v: Vec<Vec<f32>>,      // velocity in y direction
@@ -78,5 +96,61 @@ impl Fluid {
             self.b[0][k] = 0;
             self.b.last_mut().unwrap()[k] = 0;
         }
+    }
+}
+
+impl FluidSimulation for Fluid {
+    fn projection(&mut self) {}
+    fn advection(&mut self) {}
+    fn interpolate(&mut self, x: usize, y: usize, field: Option<Field>) -> f32 {}
+
+    fn get_grid_indices_from_xy(&self, x: usize, y: usize, field: Option<Field>) -> (usize, usize) {
+        let i = (x as f32
+            - if let Some(f) = &field {
+                match f {
+                    Field::V | Field::S => self.square_size / 2.0,
+                    _ => 0.0,
+                }
+            } else {
+                0.0
+            })
+            / self.square_size;
+
+        let k = (y as f32
+            - if let Some(f) = &field {
+                match f {
+                    Field::U | Field::S => self.square_size / 2.0,
+                    _ => 0.0,
+                }
+            } else {
+                0.0
+            })
+            / self.square_size;
+
+        (i as usize, k as usize)
+    }
+
+    fn get_xy_from_grid_indices(&self, i: usize, k: usize, field: Option<Field>) -> (usize, usize) {
+        let x = i as f32 * self.square_size
+            + if let Some(f) = &field {
+                match f {
+                    Field::V | Field::S => self.square_size / 2.0,
+                    _ => 0.0,
+                }
+            } else {
+                0.0
+            };
+
+        let y = k as f32 * self.square_size
+            + if let Some(f) = &field {
+                match f {
+                    Field::U | Field::S => self.square_size / 2.0,
+                    _ => 0.0,
+                }
+            } else {
+                0.0
+            };
+
+        (x as usize, y as usize)
     }
 }
