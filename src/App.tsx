@@ -4,8 +4,14 @@ import Me from "./components/Me";
 import Projects from "./components/Projects";
 import SectionBreakLine from "./components/SectionBreakLine";
 import { projects, schoolExperience, workExperience } from "./data";
+import { greet } from "../wasm/pkg";
+import { useEffect } from "react";
 
 function App() {
+  useEffect(() => {
+    greet("wasm");
+  }, []);
+
   return (
     <>
       <div className="flex w-[min(90%,45rem)] flex-col text-base font-normal md:text-xl">
