@@ -151,6 +151,57 @@ impl Fluid {
     fn get_divergence(&self, i: usize, k: usize) -> f32 {
         self.u.get(i, k) - self.u.get(i + 1, k) + self.v.get(i, k) - self.v.get(i, k + 1)
     }
+
+    fn advect_u(&mut self, i: usize, k: usize) {
+        if self.b.get(i - 1, k) == 0 {
+            self.next_u.set(i, k, self.u.get(i, k));
+            return;
+        }
+
+        let (x, y) = self.get_xy_from_grid_indices(i, k, Some(&Field::U));
+
+        let u = self.u.get(i, k);
+        let v = self.interpolate(x, y, Field::V);
+
+        let previous_x = x as f32 - u * self.delta_t;
+        let previous_y = y as f32 - v * self.delta_t;
+
+        let next_val = self.interpolate(previous_x as usize, previous_y as usize, Field::U);
+
+        self.next_u.set(i, k, next_val);
+    }
+    fn advect_v(&mut self, i: usize, k: usize) {
+        if self.b.get(i, k - 1) == 0 {
+            self.next_v.set(i, k, self.v.get(i, k));
+            return;
+        }
+
+        let (x, y) = self.get_xy_from_grid_indices(i, k, Some(&Field::V));
+
+        let u = self.interpolate(x, y, Field::U);
+        let v = self.v.get(i, k);
+
+        let previous_x = x as f32 - u * self.delta_t;
+        let previous_y = y as f32 - v * self.delta_t;
+
+        let next_val = self.interpolate(previous_x as usize, previous_y as usize, Field::V);
+
+        self.next_v.set(i, k, next_val);
+    }
+
+    fn advect_s(&mut self, i: usize, k: usize) {
+        let (x, y) = self.get_xy_from_grid_indices(i, k, Some(&Field::S));
+
+        let u = self.interpolate(x, y, Field::U);
+        let v = self.interpolate(x, y, Field::V);
+
+        let previous_x = x as f32 - u * self.delta_t;
+        let previous_y = y as f32 - v * self.delta_t;
+
+        let next_val = self.interpolate(previous_x as usize, previous_y as usize, Field::S);
+
+        self.next_s.set(i, k, next_val);
+    }
 }
 
 impl FluidSimulation for Fluid {
@@ -159,7 +210,23 @@ impl FluidSimulation for Fluid {
             self.solve_divergence_for_all();
         }
     }
-    fn advection(&mut self) {}
+
+    fn advection(&mut self) {
+        for i in 0..self.b.width() {
+            for k in 0..self.b.height() {
+                if self.b.get(i, k) == 0 {
+                    self.next_u.set(i, k, self.u.get(i, k));
+                    self.next_v.set(i, k, self.v.get(i, k));
+                    self.next_s.set(i, k, self.s.get(i, k));
+                    continue;
+                }
+
+                self.advect_u(i, k);
+                self.advect_v(i, k);
+                self.advect_s(i, k);
+            }
+        }
+    }
 
     fn interpolate(&mut self, x: usize, y: usize, field: Field) -> f32 {
         let field_arr = match field {
