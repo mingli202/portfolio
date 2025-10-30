@@ -13,11 +13,9 @@ pub trait FluidSimulation {
     }
     fn projection(&mut self);
     fn advection(&mut self);
-    fn interpolate(&mut self, x: usize, y: usize, field: Field) -> f32;
-    fn get_grid_indices_from_xy(&self, x: usize, y: usize, field: Option<&Field>)
-        -> (usize, usize);
-    fn get_xy_from_grid_indices(&self, x: usize, y: usize, field: Option<&Field>)
-        -> (usize, usize);
+    fn interpolate(&mut self, x: f32, y: f32, field: Field) -> f32;
+    fn get_grid_indices_from_xy(&self, x: f32, y: f32, field: Option<&Field>) -> (i32, i32);
+    fn get_xy_from_grid_indices(&self, x: i32, y: i32, field: Option<&Field>) -> (f32, f32);
 }
 
 pub struct Fluid {
@@ -98,19 +96,24 @@ impl Fluid {
 
     pub fn fill_edges_with_obstacles(&mut self) {
         for i in 0..self.b.width() {
+            let i = i as i32;
             self.b.set(i, 0, 0);
-            self.b.set(i, self.b.height() - 1, 0);
+            self.b.set(i, self.b.height() as i32 - 1, 0);
         }
 
         for k in 0..self.b.height() {
+            let k = k as i32;
             self.b.set(0, k, 0);
-            self.b.set(self.b.width() - 1, k, 0);
+            self.b.set(self.b.width() as i32 - 1, k, 0);
         }
     }
 
     fn solve_divergence_for_all(&mut self) {
         for i in 0..self.b.width() {
             for k in 0..self.b.height() {
+                let i = i as i32;
+                let k = k as i32;
+
                 if self.b.get(i, k) == 0 {
                     self.u.set(i, k, 0.0);
                     self.v.set(i, k, 0.0);
@@ -128,7 +131,7 @@ impl Fluid {
         }
     }
 
-    fn solve_divergence(&mut self, i: usize, k: usize) {
+    fn solve_divergence(&mut self, i: i32, k: i32) {
         let b0 = self.b.get(i - 1, k);
         let b1 = self.b.get(i + 1, k);
         let b2 = self.b.get(i, k - 1);
@@ -148,11 +151,11 @@ impl Fluid {
         self.v.update(i, k + 1, |v| v - divergence * b3 as f32);
     }
 
-    fn get_divergence(&self, i: usize, k: usize) -> f32 {
+    fn get_divergence(&self, i: i32, k: i32) -> f32 {
         self.u.get(i, k) - self.u.get(i + 1, k) + self.v.get(i, k) - self.v.get(i, k + 1)
     }
 
-    fn advect_u(&mut self, i: usize, k: usize) {
+    fn advect_u(&mut self, i: i32, k: i32) {
         if self.b.get(i - 1, k) == 0 {
             self.next_u.set(i, k, self.u.get(i, k));
             return;
@@ -163,14 +166,14 @@ impl Fluid {
         let u = self.u.get(i, k);
         let v = self.interpolate(x, y, Field::V);
 
-        let previous_x = x as f32 - u * self.delta_t;
-        let previous_y = y as f32 - v * self.delta_t;
+        let previous_x = x - u * self.delta_t;
+        let previous_y = y - v * self.delta_t;
 
-        let next_val = self.interpolate(previous_x as usize, previous_y as usize, Field::U);
+        let next_val = self.interpolate(previous_x, previous_y, Field::U);
 
         self.next_u.set(i, k, next_val);
     }
-    fn advect_v(&mut self, i: usize, k: usize) {
+    fn advect_v(&mut self, i: i32, k: i32) {
         if self.b.get(i, k - 1) == 0 {
             self.next_v.set(i, k, self.v.get(i, k));
             return;
@@ -181,24 +184,24 @@ impl Fluid {
         let u = self.interpolate(x, y, Field::U);
         let v = self.v.get(i, k);
 
-        let previous_x = x as f32 - u * self.delta_t;
-        let previous_y = y as f32 - v * self.delta_t;
+        let previous_x = x - u * self.delta_t;
+        let previous_y = y - v * self.delta_t;
 
-        let next_val = self.interpolate(previous_x as usize, previous_y as usize, Field::V);
+        let next_val = self.interpolate(previous_x, previous_y, Field::V);
 
         self.next_v.set(i, k, next_val);
     }
 
-    fn advect_s(&mut self, i: usize, k: usize) {
+    fn advect_s(&mut self, i: i32, k: i32) {
         let (x, y) = self.get_xy_from_grid_indices(i, k, Some(&Field::S));
 
         let u = self.interpolate(x, y, Field::U);
         let v = self.interpolate(x, y, Field::V);
 
-        let previous_x = x as f32 - u * self.delta_t;
-        let previous_y = y as f32 - v * self.delta_t;
+        let previous_x = x - u * self.delta_t;
+        let previous_y = y - v * self.delta_t;
 
-        let next_val = self.interpolate(previous_x as usize, previous_y as usize, Field::S);
+        let next_val = self.interpolate(previous_x, previous_y, Field::S);
 
         self.next_s.set(i, k, next_val);
     }
@@ -214,6 +217,9 @@ impl FluidSimulation for Fluid {
     fn advection(&mut self) {
         for i in 0..self.b.width() {
             for k in 0..self.b.height() {
+                let i = i as i32;
+                let k = k as i32;
+
                 if self.b.get(i, k) == 0 {
                     self.next_u.set(i, k, self.u.get(i, k));
                     self.next_v.set(i, k, self.v.get(i, k));
@@ -228,7 +234,7 @@ impl FluidSimulation for Fluid {
         }
     }
 
-    fn interpolate(&mut self, x: usize, y: usize, field: Field) -> f32 {
+    fn interpolate(&mut self, x: f32, y: f32, field: Field) -> f32 {
         let field_arr = match field {
             Field::U => &self.u,
             Field::V => &self.v,
@@ -241,8 +247,8 @@ impl FluidSimulation for Fluid {
         let xx = x - grid_x;
         let yy = y - grid_y;
 
-        let w_x = 1.0 - xx as f32 / self.square_size;
-        let w_y = 1.0 - yy as f32 / self.square_size;
+        let w_x = 1.0 - xx / self.square_size;
+        let w_y = 1.0 - yy / self.square_size;
 
         let new_value_bot = w_x * field_arr.get(i, k) + (1.0 - w_x) * field_arr.get(i + 1, k);
         let new_value_top =
@@ -251,37 +257,23 @@ impl FluidSimulation for Fluid {
         w_y * new_value_bot + (1.0 - w_y) * new_value_top
     }
 
-    fn get_grid_indices_from_xy(
-        &self,
-        x: usize,
-        y: usize,
-        field: Option<&Field>,
-    ) -> (usize, usize) {
-        let i = (x as f32
-            - match field {
-                Some(Field::V | Field::S) => self.square_size / 2.0,
-                _ => 0.0,
-            }
-            + self.block_offset)
+    fn get_grid_indices_from_xy(&self, x: f32, y: f32, field: Option<&Field>) -> (i32, i32) {
+        let i = (x - match field {
+            Some(Field::V | Field::S) => self.square_size / 2.0,
+            _ => 0.0,
+        } + self.block_offset)
             / self.square_size;
 
-        let k = (y as f32
-            - match field {
-                Some(Field::U | Field::S) => self.square_size / 2.0,
-                _ => 0.0,
-            }
-            + self.block_offset)
+        let k = (y - match field {
+            Some(Field::U | Field::S) => self.square_size / 2.0,
+            _ => 0.0,
+        } + self.block_offset)
             / self.square_size;
 
-        (i as usize, k as usize)
+        (i as i32, k as i32)
     }
 
-    fn get_xy_from_grid_indices(
-        &self,
-        i: usize,
-        k: usize,
-        field: Option<&Field>,
-    ) -> (usize, usize) {
+    fn get_xy_from_grid_indices(&self, i: i32, k: i32, field: Option<&Field>) -> (f32, f32) {
         let x = i as f32 * self.square_size
             + match field {
                 Some(Field::V | Field::S) => self.square_size / 2.0,
@@ -296,6 +288,6 @@ impl FluidSimulation for Fluid {
             }
             - self.block_offset;
 
-        (x as usize, y as usize)
+        (x, y)
     }
 }

@@ -17,30 +17,36 @@ impl<T: Default + Copy> Grid<T> {
         self.grid[0].len()
     }
 
-    pub fn has(&self, i: usize, k: usize) -> bool {
-        i >= 0 && i < self.grid.len() && k >= 0 && k < self.grid[0].len()
+    pub fn has(&self, i: i32, k: i32) -> bool {
+        i >= 0 && i < self.grid.len() as i32 && k >= 0 && k < self.grid[0].len() as i32
     }
 
-    pub fn get(&self, i: usize, k: usize) -> T {
+    pub fn get(&self, i: i32, k: i32) -> T {
         if !self.has(i, k) {
             T::default()
         } else {
+            let i = i as usize;
+            let k = k as usize;
             self.grid[i][k]
         }
     }
 
-    pub fn set(&mut self, i: usize, k: usize, value: T) {
+    pub fn set(&mut self, i: i32, k: i32, value: T) {
         if !self.has(i, k) {
             return;
         }
+        let i = i as usize;
+        let k = k as usize;
 
         self.grid[i][k] = value;
     }
 
-    pub fn update<F: Fn(T) -> T>(&mut self, i: usize, k: usize, f: F) {
+    pub fn update<F: Fn(T) -> T>(&mut self, i: i32, k: i32, f: F) {
         if !self.has(i, k) {
             return;
         }
+        let i = i as usize;
+        let k = k as usize;
 
         let value = f(self.grid[i][k]);
 
