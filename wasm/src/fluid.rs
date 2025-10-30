@@ -194,14 +194,16 @@ impl FluidSimulation for Fluid {
             - match field {
                 Some(Field::V | Field::S) => self.square_size / 2.0,
                 _ => 0.0,
-            })
+            }
+            + self.block_offset)
             / self.square_size;
 
         let k = (y as f32
             - match field {
                 Some(Field::U | Field::S) => self.square_size / 2.0,
                 _ => 0.0,
-            })
+            }
+            + self.block_offset)
             / self.square_size;
 
         (i as usize, k as usize)
@@ -217,13 +219,15 @@ impl FluidSimulation for Fluid {
             + match field {
                 Some(Field::V | Field::S) => self.square_size / 2.0,
                 _ => 0.0,
-            };
+            }
+            - self.block_offset;
 
         let y = k as f32 * self.square_size
             + match field {
                 Some(Field::U | Field::S) => self.square_size / 2.0,
                 _ => 0.0,
-            };
+            }
+            - self.block_offset;
 
         (x as usize, y as usize)
     }
