@@ -12,7 +12,7 @@ pub trait FluidSimulation {
     }
     fn projection(&mut self);
     fn advection(&mut self);
-    fn interpolate(&mut self, x: f32, y: f32, field: Field) -> f32;
+    fn interpolate(&self, x: f32, y: f32, field: Field) -> f32;
     fn get_grid_indices_from_xy(&self, x: f32, y: f32, field: Option<&Field>) -> (i32, i32);
     fn get_xy_from_grid_indices(&self, x: i32, y: i32, field: Option<&Field>) -> (f32, f32);
 }
@@ -27,10 +27,6 @@ pub struct Fluid {
     pub next_s: Grid<f32>, // smoke (density)
 
     pub square_size: f32,
-    pub grid_width: usize,
-    pub grid_height: usize,
-
-    pub min_squares: usize,
     pub n_iterations: usize,
     pub delta_t: f32,
     pub overrelaxation_coefficient: f32,
@@ -82,9 +78,6 @@ impl Fluid {
             block_offset,
 
             square_size,
-            grid_width,
-            grid_height,
-            min_squares,
             n_iterations,
             delta_t,
             overrelaxation_coefficient,
@@ -241,7 +234,7 @@ impl FluidSimulation for Fluid {
         self.s.swap(&mut self.next_s);
     }
 
-    fn interpolate(&mut self, x: f32, y: f32, field: Field) -> f32 {
+    fn interpolate(&self, x: f32, y: f32, field: Field) -> f32 {
         let field_arr = match field {
             Field::U => &self.u,
             Field::V => &self.v,

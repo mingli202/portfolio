@@ -32,6 +32,7 @@ pub fn main() -> Result<(), JsValue> {
     let mut scene = scene::Scene::new(canvas, fluid);
 
     scene.init();
+    scene.play();
 
     Ok(())
 }

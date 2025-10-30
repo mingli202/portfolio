@@ -146,6 +146,7 @@ impl Scene {
 
     pub fn draw_next_frame(&mut self) {
         self.clear_canvas();
+        self.fluid.simulate();
         if self.show_velocity_colors {
             self.draw_velocity_colors();
         } else if self.show_smoke {
@@ -255,6 +256,7 @@ impl Scene {
 
 impl Drop for Scene {
     fn drop(&mut self) {
+        self.clear();
         self.canvas.set_onpointermove(None);
     }
 }
