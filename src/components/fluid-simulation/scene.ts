@@ -26,7 +26,7 @@ export class Scene {
   lineWidth: number = 1;
 
   start: DOMHighResTimeStamp = 0;
-  mouseRadius: number = 1;
+  mouseRadius: number = 2;
 
   subdivisions: number = 2;
   maxVelocity: number;
@@ -41,9 +41,8 @@ export class Scene {
     this.subdivisions = subdivisions;
 
     this.maxVelocity =
-      (Math.min(this.fluid.gridHeight, this.fluid.gridWidth) *
-        this.fluid.squareSize) /
-      2;
+      Math.min(this.fluid.gridHeight, this.fluid.gridWidth) *
+      this.fluid.squareSize;
 
     this.canvas.onpointerdown = () => {
       this.isMouseDown = true;
@@ -367,28 +366,16 @@ export class Scene {
             (deltaT / 1000)) *
           2;
 
-        this.fluid.v.set(
-          xx,
-          yy,
-          (val) => val + Math.min(deltaY * v, this.maxVelocity),
-        );
-
-        this.fluid.u.set(
-          xx,
-          yy,
-          (val) => val + Math.min(deltaX * v, this.maxVelocity),
-        );
-
-        this.fluid.s.set(
-          xx,
-          yy,
-          (val) => val + Math.min(norm * v, this.maxVelocity),
+        this.fluid.v.set(xx, yy, (val) => val + deltaY * v);
+        this.fluid.u.set(xx, yy, (val) => val + deltaX * v);
+        this.fluid.s.set(xx, yy, (val) =>
+          Math.min(val + norm * v, this.maxVelocity * 1.5),
         );
       }
     }
   }
 
-  public gaussian(x: number, y: number, sigma: number = 10) {
+  public gaussian(x: number, y: number, sigma: number = this.mouseRadius / 2) {
     return Math.exp(-(x * x + y * y) / (2 * sigma * sigma));
   }
 

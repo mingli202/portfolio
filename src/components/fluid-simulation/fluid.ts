@@ -39,7 +39,7 @@ export class Fluid {
     canvas: HTMLCanvasElement,
     minSquares: number = 60,
     nIterations: number = 40,
-    deltaT: number = 1 / 20,
+    deltaT: number = 1 / 60,
     overrelaxationCoefficient: number = 1.7,
   ) {
     this.canvas = canvas;
@@ -254,7 +254,11 @@ export class Fluid {
     const previousX = x - u * this.deltaT;
     const previousY = y - v * this.deltaT;
 
-    this.nextS.set(i, k, this.interpolate(previousX, previousY, Field.S));
+    this.nextS.set(
+      i,
+      k,
+      Math.max(this.interpolate(previousX, previousY, Field.S) - 2, 0),
+    );
   }
 
   public interpolate(x: number, y: number, field: Field) {
