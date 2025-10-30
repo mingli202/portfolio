@@ -20,7 +20,7 @@ function App() {
         <Projects />
       </div>
 
-      {/* <FluidSimulation /> */}
+      <FluidSimulation />
     </>
   );
 }

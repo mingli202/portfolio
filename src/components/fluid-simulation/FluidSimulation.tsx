@@ -12,7 +12,7 @@ export function FluidSimulation() {
     canvas.current.height = window.innerHeight;
 
     const fluid = new Fluid(canvas.current, 40);
-    const scene = new Scene(canvas.current, fluid, 3);
+    const scene = new Scene(canvas.current, fluid, 2);
 
     scene.drawNextFrame();
 

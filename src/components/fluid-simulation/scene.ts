@@ -16,7 +16,7 @@ export class Scene {
   enableMouseMove: boolean = false;
   enableProjection: boolean = true;
   enableAdvection: boolean = true;
-  enablePlaying: boolean = true;
+  enablePlaying: boolean = false;
 
   lastMousePosition: [number, number] = [-1, -1];
   lastTime: DOMHighResTimeStamp = 0;
@@ -40,7 +40,10 @@ export class Scene {
     this.fluid = fluid;
     this.subdivisions = subdivisions;
 
-    this.maxVelocity = 30 * this.fluid.squareSize;
+    this.maxVelocity =
+      (Math.min(this.fluid.gridHeight, this.fluid.gridWidth) *
+        this.fluid.squareSize) /
+      2;
 
     this.canvas.onpointerdown = () => {
       this.isMouseDown = true;
@@ -364,9 +367,23 @@ export class Scene {
             (deltaT / 1000)) *
           2;
 
-        this.fluid.v.set(xx, yy, (val) => val + deltaY * v);
-        this.fluid.u.set(xx, yy, (val) => val + deltaX * v);
-        this.fluid.s.set(xx, yy, (val) => val + norm * v);
+        this.fluid.v.set(
+          xx,
+          yy,
+          (val) => val + Math.min(deltaY * v, this.maxVelocity),
+        );
+
+        this.fluid.u.set(
+          xx,
+          yy,
+          (val) => val + Math.min(deltaX * v, this.maxVelocity),
+        );
+
+        this.fluid.s.set(
+          xx,
+          yy,
+          (val) => val + Math.min(norm * v, this.maxVelocity),
+        );
       }
     }
   }
@@ -471,6 +488,5 @@ export class Scene {
     this.canvas.onpointermove = null;
     this.canvas.onpointerdown = null;
     this.canvas.onpointerup = null;
-    this.enablePlaying = false;
   }
 }
