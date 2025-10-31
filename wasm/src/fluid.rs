@@ -1,3 +1,5 @@
+use wasm_bindgen::JsValue;
+
 use crate::grid::Grid;
 
 pub enum Field {
@@ -42,19 +44,20 @@ impl Fluid {
         delta_t: Option<f32>,
         overrelaxation_coefficient: Option<f32>,
     ) -> Fluid {
-        let min_squares = min_squares.unwrap_or(40);
+        let min_squares = min_squares.unwrap_or(10);
 
         let h = u32::min(canvas.width(), canvas.height());
 
         let square_size: f32 = h as f32 / min_squares as f32;
-        let grid_width = canvas.width() as usize / square_size as usize;
-        let grid_height = canvas.height() as usize / square_size as usize;
+
+        let grid_width = (canvas.width() as f32 / square_size).ceil() as usize;
+        let grid_height = (canvas.height() as f32 / square_size).ceil() as usize;
 
         let n_iterations = n_iterations.unwrap_or(40);
         let delta_t = delta_t.unwrap_or(1_f32 / 30_f32);
         let overrelaxation_coefficient = overrelaxation_coefficient.unwrap_or(1.7);
 
-        let n = 1;
+        let n = 0;
         let block_offset = square_size * n as f32;
 
         let u = Grid::new(grid_width + 1 + 2 * n, grid_height + 2 * n);

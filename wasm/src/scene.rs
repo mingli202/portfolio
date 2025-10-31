@@ -21,6 +21,7 @@ pub struct Scene {
     max_velocity: f32,
 
     enable_playing: bool,
+    enable_mouse_move: bool,
     show_smoke: bool,
     show_velocity_colors: bool,
 
@@ -37,10 +38,11 @@ impl Scene {
             fluid,
             canvas,
             mouse_radius: 10,
-            subdivisions: 40,
+            subdivisions: 1,
             max_velocity,
             is_mouse_down: Rc::new(RefCell::new(true)),
             enable_playing: true,
+            enable_mouse_move: false,
             show_smoke: false,
             show_velocity_colors: true,
             last_time: Rc::new(RefCell::new(-1.0)),
@@ -88,36 +90,40 @@ impl Scene {
         let ctx = self.get_ctx();
         let scale = self.fluid.square_size / self.subdivisions as f32;
 
-        for i in 0..self.fluid.b.width() {
-            for k in 0..self.fluid.b.height() {
-                let i = i as i32;
-                let k = k as i32;
+        for x in 0..self.fluid.b.width() {
+            for y in 0..self.fluid.b.height() {
+                for i in 0..self.subdivisions {
+                    for k in 0..self.subdivisions {
+                        let x = x as i32;
+                        let y = y as i32;
 
-                let (xx, yy) = self.fluid.get_xy_from_grid_indices(i, k, None);
+                        let (xx, yy) = self.fluid.get_xy_from_grid_indices(x, y, None);
 
-                let v = self.fluid.interpolate(
-                    xx + (i as f32 + 0.5) * scale,
-                    yy + (k as f32 + 0.5) * scale,
-                    Field::V,
-                );
-                let u = self.fluid.interpolate(
-                    xx + (i as f32 + 0.5) * scale,
-                    yy + (k as f32 + 0.5) * scale,
-                    Field::U,
-                );
+                        let v = self.fluid.interpolate(
+                            xx + (i as f32 + 0.5) * scale,
+                            yy + (k as f32 + 0.5) * scale,
+                            Field::V,
+                        );
+                        let u = self.fluid.interpolate(
+                            xx + (i as f32 + 0.5) * scale,
+                            yy + (k as f32 + 0.5) * scale,
+                            Field::U,
+                        );
 
-                let length = f32::sqrt(v * v + u * u);
+                        let length = f32::sqrt(v * v + u * u);
 
-                let hue =
-                    (240.0 - map(length, 0.0, self.max_velocity, 0.0, 240.0)).clamp(0.0, 360.0);
+                        let hue = (240.0 - map(length, 0.0, self.max_velocity, 0.0, 240.0))
+                            .clamp(0.0, 360.0);
 
-                ctx.set_fill_style_str(&format!("hsl({}, 100%, 50%)", hue));
-                ctx.fill_rect(
-                    xx as f64 + (i as f64 * scale as f64),
-                    yy as f64 + (k as f64 * scale as f64),
-                    scale as f64 + 1.0,
-                    scale as f64 + 1.0,
-                );
+                        ctx.set_fill_style_str(&format!("hsl({}, 100%, 50%)", hue));
+                        ctx.fill_rect(
+                            xx as f64 + (i as f64 * scale as f64),
+                            yy as f64 + (k as f64 * scale as f64),
+                            scale as f64 + 1.0,
+                            scale as f64 + 1.0,
+                        );
+                    }
+                }
             }
         }
     }
@@ -126,28 +132,32 @@ impl Scene {
         let ctx = self.get_ctx();
         let scale = self.fluid.square_size / self.subdivisions as f32;
 
-        for i in 0..self.fluid.s.width() {
-            for k in 0..self.fluid.s.height() {
-                let i = i as i32;
-                let k = k as i32;
+        for x in 0..self.fluid.s.width() {
+            for y in 0..self.fluid.s.height() {
+                for i in 0..self.subdivisions {
+                    for k in 0..self.subdivisions {
+                        let x = x as i32;
+                        let y = y as i32;
 
-                let (xx, yy) = self.fluid.get_xy_from_grid_indices(i, k, None);
+                        let (xx, yy) = self.fluid.get_xy_from_grid_indices(x, y, None);
 
-                let s = self.fluid.interpolate(
-                    xx + (i as f32 + 0.5) * scale,
-                    yy + (k as f32 + 0.5) * scale,
-                    Field::S,
-                );
+                        let s = self.fluid.interpolate(
+                            xx + (i as f32 + 0.5) * scale,
+                            yy + (k as f32 + 0.5) * scale,
+                            Field::S,
+                        );
 
-                let rgb_val = (s / self.max_velocity).clamp(0.0, 1.0) * 255.0;
+                        let rgb_val = (s / self.max_velocity).clamp(0.0, 1.0) * 255.0;
 
-                ctx.set_fill_style_str(&format!("rgb({rgb_val}, {rgb_val}, {rgb_val}, 1)"));
-                ctx.fill_rect(
-                    xx as f64 + (i as f64 * scale as f64),
-                    yy as f64 + (k as f64 * scale as f64),
-                    scale as f64 + 1.0,
-                    scale as f64 + 1.0,
-                );
+                        ctx.set_fill_style_str(&format!("rgb({rgb_val}, {rgb_val}, {rgb_val}, 1)"));
+                        ctx.fill_rect(
+                            xx as f64 + (i as f64 * scale as f64),
+                            yy as f64 + (k as f64 * scale as f64),
+                            scale as f64 + 1.0,
+                            scale as f64 + 1.0,
+                        );
+                    }
+                }
             }
         }
     }
@@ -168,67 +178,69 @@ impl Scene {
 
         s.fluid.fill_edges_with_obstacles();
 
-        let mouse_move_cb = Rc::new(Closure::wrap(Box::new(move |e: web_sys::PointerEvent| {
-            let s = Rc::clone(&self_ref);
-            let s = &mut s.borrow_mut();
-            let s = s.as_mut().unwrap();
+        if s.enable_mouse_move {
+            let mouse_move_cb = Rc::new(Closure::wrap(Box::new(move |e: web_sys::PointerEvent| {
+                let s = Rc::clone(&self_ref);
+                let s = &mut s.borrow_mut();
+                let s = s.as_mut().unwrap();
 
-            web_sys::console::log_1(&"mouse_move_cb".into());
+                // web_sys::console::log_1(&"mouse_move_cb".into());
 
-            if !s.enable_playing || !*s.is_mouse_down.borrow() {
-                return;
-            }
-            if *s.last_time.borrow() <= 0.0 {
-                *s.last_time.borrow_mut() = e.time_stamp();
-                s.last_mouse_xy = (e.offset_x(), e.offset_y());
-                return;
-            }
-
-            let fluid = &mut s.fluid;
-
-            let delta_t = e.time_stamp() - *s.last_time.borrow();
-            if delta_t < fluid.delta_t as f64 * 1000.0 {
-                return;
-            }
-
-            *s.last_time.borrow_mut() = e.time_stamp();
-
-            let delta_x = e.offset_x() - s.last_mouse_xy.0;
-            let delta_y = e.offset_y() - s.last_mouse_xy.1;
-            let norm = f64::sqrt((delta_x * delta_x + delta_y * delta_y) as f64);
-
-            s.last_mouse_xy = (e.offset_x(), e.offset_y());
-
-            let (x, y) =
-                fluid.get_grid_indices_from_xy(e.offset_x() as f32, e.offset_y() as f32, None);
-
-            if fluid.b.get(x, y) == 0 {
-                return;
-            }
-
-            for i in 0..s.mouse_radius {
-                for k in 0..s.mouse_radius {
-                    let i = i as i32;
-                    let k = k as i32;
-                    let mult = gaussian(i, k, s.mouse_radius as f64 / 2.0);
-
-                    fluid
-                        .u
-                        .update(x + i, y + k, |u| u + (mult * delta_x as f64) as f32);
-
-                    fluid
-                        .v
-                        .update(x + i, y + k, |v| v + (mult * delta_y as f64) as f32);
-
-                    fluid.s.update(x + i, y + k, |s| s + (mult * norm) as f32);
+                if !s.enable_playing || !*s.is_mouse_down.borrow() {
+                    return;
                 }
-            }
-        }) as Box<dyn FnMut(_)>));
+                if *s.last_time.borrow() <= 0.0 {
+                    *s.last_time.borrow_mut() = e.time_stamp();
+                    s.last_mouse_xy = (e.offset_x(), e.offset_y());
+                    return;
+                }
 
-        s.mouse_move_cb.replace(Rc::clone(&mouse_move_cb));
+                let fluid = &mut s.fluid;
 
-        s.canvas
-            .set_onpointermove(Some((*mouse_move_cb).as_ref().unchecked_ref()));
+                let delta_t = e.time_stamp() - *s.last_time.borrow();
+                if delta_t < fluid.delta_t as f64 * 1000.0 {
+                    return;
+                }
+
+                *s.last_time.borrow_mut() = e.time_stamp();
+
+                let delta_x = e.offset_x() - s.last_mouse_xy.0;
+                let delta_y = e.offset_y() - s.last_mouse_xy.1;
+                let norm = f64::sqrt((delta_x * delta_x + delta_y * delta_y) as f64);
+
+                s.last_mouse_xy = (e.offset_x(), e.offset_y());
+
+                let (x, y) =
+                    fluid.get_grid_indices_from_xy(e.offset_x() as f32, e.offset_y() as f32, None);
+
+                if fluid.b.get(x, y) == 0 {
+                    return;
+                }
+
+                for i in 0..s.mouse_radius {
+                    for k in 0..s.mouse_radius {
+                        let i = i as i32;
+                        let k = k as i32;
+                        let mult = gaussian(i, k, s.mouse_radius as f64 / 2.0);
+
+                        fluid
+                            .u
+                            .update(x + i, y + k, |u| u + (mult * delta_x as f64) as f32);
+
+                        fluid
+                            .v
+                            .update(x + i, y + k, |v| v + (mult * delta_y as f64) as f32);
+
+                        fluid.s.update(x + i, y + k, |s| s + (mult * norm) as f32);
+                    }
+                }
+            }) as Box<dyn FnMut(_)>));
+
+            s.mouse_move_cb.replace(Rc::clone(&mouse_move_cb));
+
+            s.canvas
+                .set_onpointermove(Some((*mouse_move_cb).as_ref().unchecked_ref()));
+        }
 
         // self.canvas.set_onpointerdown(Some(
         //     Closure::wrap(Box::new(|_e: web_sys::PointerEvent| {
@@ -267,7 +279,7 @@ impl Scene {
                 s.draw_next_frame();
             }
 
-            web_sys::console::log_1(&JsValue::from(&format!("{now}")));
+            // web_sys::console::log_1(&JsValue::from(&format!("{now}")));
 
             let id = web_sys::window()
                 .unwrap()
