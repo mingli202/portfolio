@@ -9,6 +9,7 @@ publish = false
 crate-type = ["cdylib"]
 
 [dependencies]
+console_error_panic_hook = "0.1.7"
 wasm-bindgen = "0.2.105"
 
 [dependencies.web-sys]
