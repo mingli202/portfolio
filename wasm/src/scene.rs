@@ -5,6 +5,9 @@ use crate::fluid::{Field, Fluid, FluidSimulation};
 use crate::util::{gaussian, map};
 use wasm_bindgen::prelude::*;
 
+type AnimationFrameCb = Rc<RefCell<Option<Closure<dyn FnMut(f64)>>>>;
+type MouseMoveCb = Rc<Closure<dyn FnMut(web_sys::PointerEvent)>>;
+
 pub struct Scene {
     fluid: Fluid,
     canvas: web_sys::HtmlCanvasElement,
@@ -20,6 +23,10 @@ pub struct Scene {
     enable_playing: bool,
     show_smoke: bool,
     show_velocity_colors: bool,
+
+    animation_id: Option<i32>,
+    animation_cb: Option<AnimationFrameCb>,
+    mouse_move_cb: Option<MouseMoveCb>,
 }
 
 impl Scene {
@@ -32,116 +39,17 @@ impl Scene {
             mouse_radius: 10,
             subdivisions: 40,
             max_velocity,
-            is_mouse_down: Rc::new(RefCell::new(false)),
-            enable_playing: false,
+            is_mouse_down: Rc::new(RefCell::new(true)),
+            enable_playing: true,
             show_smoke: false,
             show_velocity_colors: true,
             last_time: Rc::new(RefCell::new(-1.0)),
             last_mouse_xy: (0, 0),
             then: 0.0,
+            animation_id: None,
+            animation_cb: None,
+            mouse_move_cb: None,
         }
-    }
-
-    pub fn init(&mut self) {
-        self.fluid.fill_edges_with_obstacles();
-
-        let mouse_move_cb = Closure::wrap(Box::new(|e: web_sys::PointerEvent| {
-            if !self.enable_playing || !*self.is_mouse_down.borrow() {
-                return;
-            }
-            if *self.last_time.borrow() <= 0.0 {
-                *self.last_time.borrow_mut() = e.time_stamp();
-                self.last_mouse_xy = (e.offset_x(), e.offset_y());
-                return;
-            }
-
-            let fluid = &mut self.fluid;
-
-            let delta_t = e.time_stamp() - *self.last_time.borrow();
-            if delta_t < fluid.delta_t as f64 * 1000.0 {
-                return;
-            }
-
-            *self.last_time.borrow_mut() = e.time_stamp();
-
-            let delta_x = e.offset_x() - self.last_mouse_xy.0;
-            let delta_y = e.offset_y() - self.last_mouse_xy.1;
-            let norm = f64::sqrt((delta_x * delta_x + delta_y * delta_y) as f64);
-
-            self.last_mouse_xy = (e.offset_x(), e.offset_y());
-
-            let (x, y) =
-                fluid.get_grid_indices_from_xy(e.offset_x() as f32, e.offset_y() as f32, None);
-
-            if fluid.b.get(x, y) == 0 {
-                return;
-            }
-
-            for i in 0..self.mouse_radius {
-                for k in 0..self.mouse_radius {
-                    let i = i as i32;
-                    let k = k as i32;
-                    let mult = gaussian(i, k, self.mouse_radius as f64 / 2.0);
-
-                    fluid
-                        .u
-                        .update(x + i, y + k, |u| u + (mult * delta_x as f64) as f32);
-
-                    fluid
-                        .v
-                        .update(x + i, y + k, |v| v + (mult * delta_y as f64) as f32);
-
-                    fluid.s.update(x + i, y + k, |s| s + (mult * norm) as f32);
-                }
-            }
-        }) as Box<dyn FnMut(_)>);
-
-        self.canvas
-            .set_onpointermove(Some(mouse_move_cb.as_ref().unchecked_ref()));
-
-        self.canvas.set_onpointerdown(Some(
-            Closure::wrap(Box::new(|_e: web_sys::PointerEvent| {
-                *self.is_mouse_down.borrow_mut() = true;
-            }) as Box<dyn FnMut(_)>)
-            .as_ref()
-            .unchecked_ref(),
-        ));
-
-        self.canvas.set_onpointerup(Some(
-            Closure::wrap(Box::new(|_e: web_sys::PointerEvent| {
-                *self.is_mouse_down.borrow_mut() = false;
-                *self.last_time.borrow_mut() = -1.0;
-            }) as Box<dyn FnMut(_)>)
-            .as_ref()
-            .unchecked_ref(),
-        ));
-    }
-
-    pub fn play(&mut self) {
-        let f: Rc<RefCell<Option<Closure<dyn FnMut(_)>>>> = Rc::new(RefCell::new(None));
-        let g = Rc::clone(&f);
-
-        *g.borrow_mut() = Some(Closure::wrap(Box::new(move |now: f64| {
-            if !self.enable_playing {
-                return;
-            }
-
-            let _ = web_sys::window()
-                .unwrap()
-                .request_animation_frame(f.borrow().as_ref().unwrap().as_ref().unchecked_ref());
-
-            let delta = now - self.then;
-            if delta < self.fluid.delta_t as f64 * 1000.0 {
-                return;
-            }
-
-            self.then = now;
-            self.draw_next_frame();
-        }) as Box<dyn FnMut(_)>));
-
-        let _ = web_sys::window()
-            .unwrap()
-            .request_animation_frame(g.borrow().as_ref().unwrap().as_ref().unchecked_ref());
     }
 
     pub fn draw_next_frame(&mut self) {
@@ -251,6 +159,157 @@ impl Scene {
             .unwrap()
             .dyn_into::<web_sys::CanvasRenderingContext2d>()
             .unwrap()
+    }
+
+    pub fn init(self_ref: Rc<RefCell<Option<Self>>>) {
+        let s = Rc::clone(&self_ref);
+        let s = &mut s.borrow_mut();
+        let s = s.as_mut().unwrap();
+
+        s.fluid.fill_edges_with_obstacles();
+
+        let mouse_move_cb = Rc::new(Closure::wrap(Box::new(move |e: web_sys::PointerEvent| {
+            let s = Rc::clone(&self_ref);
+            let s = &mut s.borrow_mut();
+            let s = s.as_mut().unwrap();
+
+            web_sys::console::log_1(&"mouse_move_cb".into());
+
+            if !s.enable_playing || !*s.is_mouse_down.borrow() {
+                return;
+            }
+            if *s.last_time.borrow() <= 0.0 {
+                *s.last_time.borrow_mut() = e.time_stamp();
+                s.last_mouse_xy = (e.offset_x(), e.offset_y());
+                return;
+            }
+
+            let fluid = &mut s.fluid;
+
+            let delta_t = e.time_stamp() - *s.last_time.borrow();
+            if delta_t < fluid.delta_t as f64 * 1000.0 {
+                return;
+            }
+
+            *s.last_time.borrow_mut() = e.time_stamp();
+
+            let delta_x = e.offset_x() - s.last_mouse_xy.0;
+            let delta_y = e.offset_y() - s.last_mouse_xy.1;
+            let norm = f64::sqrt((delta_x * delta_x + delta_y * delta_y) as f64);
+
+            s.last_mouse_xy = (e.offset_x(), e.offset_y());
+
+            let (x, y) =
+                fluid.get_grid_indices_from_xy(e.offset_x() as f32, e.offset_y() as f32, None);
+
+            if fluid.b.get(x, y) == 0 {
+                return;
+            }
+
+            for i in 0..s.mouse_radius {
+                for k in 0..s.mouse_radius {
+                    let i = i as i32;
+                    let k = k as i32;
+                    let mult = gaussian(i, k, s.mouse_radius as f64 / 2.0);
+
+                    fluid
+                        .u
+                        .update(x + i, y + k, |u| u + (mult * delta_x as f64) as f32);
+
+                    fluid
+                        .v
+                        .update(x + i, y + k, |v| v + (mult * delta_y as f64) as f32);
+
+                    fluid.s.update(x + i, y + k, |s| s + (mult * norm) as f32);
+                }
+            }
+        }) as Box<dyn FnMut(_)>));
+
+        s.mouse_move_cb.replace(Rc::clone(&mouse_move_cb));
+
+        s.canvas
+            .set_onpointermove(Some((*mouse_move_cb).as_ref().unchecked_ref()));
+
+        // self.canvas.set_onpointerdown(Some(
+        //     Closure::wrap(Box::new(|_e: web_sys::PointerEvent| {
+        //         *self.is_mouse_down.borrow_mut() = true;
+        //     }) as Box<dyn FnMut(_)>)
+        //     .as_ref()
+        //     .unchecked_ref(),
+        // ));
+        //
+        // self.canvas.set_onpointerup(Some(
+        //     Closure::wrap(Box::new(|_e: web_sys::PointerEvent| {
+        //         *self.is_mouse_down.borrow_mut() = false;
+        //         *self.last_time.borrow_mut() = -1.0;
+        //     }) as Box<dyn FnMut(_)>)
+        //     .as_ref()
+        //     .unchecked_ref(),
+        // ));
+    }
+
+    pub fn play(self_ref: Rc<RefCell<Option<Self>>>) {
+        let f: AnimationFrameCb = Rc::new(RefCell::new(None));
+        let g = Rc::clone(&f);
+        let s = Rc::clone(&self_ref);
+
+        *g.borrow_mut() = Some(Closure::wrap(Box::new(move |now: f64| {
+            let s = &mut s.borrow_mut();
+            let s = s.as_mut().unwrap();
+
+            if !s.enable_playing {
+                return;
+            }
+
+            let delta = now - s.then;
+            if delta > s.fluid.delta_t as f64 * 1000.0 {
+                s.then = now;
+                s.draw_next_frame();
+            }
+
+            web_sys::console::log_1(&JsValue::from(&format!("{now}")));
+
+            let id = web_sys::window()
+                .unwrap()
+                .request_animation_frame(f.borrow().as_ref().unwrap().as_ref().unchecked_ref())
+                .expect("recusrive request_animation_frame error");
+            s.animation_id.replace(id);
+        }) as Box<dyn FnMut(f64)>));
+
+        self_ref
+            .borrow_mut()
+            .as_mut()
+            .unwrap()
+            .animation_cb
+            .replace(Rc::clone(&g));
+
+        let id = web_sys::window()
+            .unwrap()
+            .request_animation_frame(g.borrow().as_ref().unwrap().as_ref().unchecked_ref())
+            .expect("first request_animation_frame error");
+
+        self_ref
+            .borrow_mut()
+            .as_mut()
+            .unwrap()
+            .animation_id
+            .replace(id);
+    }
+
+    pub fn stop(self_ref: Rc<RefCell<Option<Self>>>) {
+        let id = self_ref.borrow_mut().as_mut().unwrap().animation_id.take();
+        if let Some(id) = id {
+            web_sys::window()
+                .unwrap()
+                .cancel_animation_frame(id)
+                .expect("cancel_animation_frame error");
+        }
+        self_ref.borrow_mut().as_mut().unwrap().animation_cb.take();
+    }
+
+    pub fn toggle_playing(self_ref: Rc<RefCell<Option<Self>>>) {
+        let enable_playing = self_ref.borrow().as_ref().unwrap().enable_playing;
+        self_ref.borrow_mut().as_mut().unwrap().enable_playing = !enable_playing;
     }
 }
 
