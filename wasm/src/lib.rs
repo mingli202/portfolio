@@ -14,6 +14,8 @@ thread_local! {
 
 #[wasm_bindgen]
 pub fn main() {
+    console_error_panic_hook::set_once();
+
     SCENE.with(move |s| {
         let document = web_sys::window().unwrap().document().unwrap();
         let canvas = document

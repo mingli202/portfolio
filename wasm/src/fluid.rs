@@ -14,26 +14,26 @@ pub trait FluidSimulation {
     }
     fn projection(&mut self);
     fn advection(&mut self);
-    fn interpolate(&self, x: f32, y: f32, field: Field) -> f32;
-    fn get_grid_indices_from_xy(&self, x: f32, y: f32, field: Option<&Field>) -> (i32, i32);
-    fn get_xy_from_grid_indices(&self, x: i32, y: i32, field: Option<&Field>) -> (f32, f32);
+    fn interpolate(&self, x: f64, y: f64, field: Field) -> f64;
+    fn get_grid_indices_from_xy(&self, x: f64, y: f64, field: Option<&Field>) -> (i32, i32);
+    fn get_xy_from_grid_indices(&self, x: i32, y: i32, field: Option<&Field>) -> (f64, f64);
 }
 
 pub struct Fluid {
-    pub u: Grid<f32>,      // velocity in x direction
-    pub v: Grid<f32>,      // velocity in y direction
+    pub u: Grid<f64>,      // velocity in x direction
+    pub v: Grid<f64>,      // velocity in y direction
     pub b: Grid<u8>,       // obstacles
-    pub s: Grid<f32>,      // smoke (density)
-    pub next_u: Grid<f32>, // velocity in x direction
-    pub next_v: Grid<f32>, // velocity in y direction
-    pub next_s: Grid<f32>, // smoke (density)
+    pub s: Grid<f64>,      // smoke (density)
+    pub next_u: Grid<f64>, // velocity in x direction
+    pub next_v: Grid<f64>, // velocity in y direction
+    pub next_s: Grid<f64>, // smoke (density)
 
-    pub square_size: f32,
+    pub square_size: f64,
     pub n_iterations: usize,
-    pub delta_t: f32,
-    pub overrelaxation_coefficient: f32,
+    pub delta_t: f64,
+    pub overrelaxation_coefficient: f64,
 
-    pub block_offset: f32,
+    pub block_offset: f64,
 }
 
 impl Fluid {
@@ -41,24 +41,24 @@ impl Fluid {
         canvas: &web_sys::HtmlCanvasElement,
         min_squares: Option<usize>,
         n_iterations: Option<usize>,
-        delta_t: Option<f32>,
-        overrelaxation_coefficient: Option<f32>,
+        delta_t: Option<f64>,
+        overrelaxation_coefficient: Option<f64>,
     ) -> Fluid {
-        let min_squares = min_squares.unwrap_or(10);
+        let min_squares = min_squares.unwrap_or(40);
 
         let h = u32::min(canvas.width(), canvas.height());
 
-        let square_size: f32 = h as f32 / min_squares as f32;
+        let square_size: f64 = h as f64 / min_squares as f64;
 
-        let grid_width = (canvas.width() as f32 / square_size).ceil() as usize;
-        let grid_height = (canvas.height() as f32 / square_size).ceil() as usize;
+        let grid_width = (canvas.width() as f64 / square_size).ceil() as usize;
+        let grid_height = (canvas.height() as f64 / square_size).ceil() as usize;
 
         let n_iterations = n_iterations.unwrap_or(40);
-        let delta_t = delta_t.unwrap_or(1_f32 / 30_f32);
+        let delta_t = delta_t.unwrap_or(1_f64 / 30_f64);
         let overrelaxation_coefficient = overrelaxation_coefficient.unwrap_or(1.7);
 
         let n = 0;
-        let block_offset = square_size * n as f32;
+        let block_offset = square_size * n as f64;
 
         let u = Grid::new(grid_width + 1 + 2 * n, grid_height + 2 * n);
         let v = Grid::new(grid_width + 2 * n, grid_height + 1 + 2 * n);
@@ -136,15 +136,15 @@ impl Fluid {
             return;
         }
 
-        let divergence = (self.get_divergence(i, k) * self.overrelaxation_coefficient) / b as f32;
+        let divergence = (self.get_divergence(i, k) * self.overrelaxation_coefficient) / b as f64;
 
-        self.u.update(i, k, |v| v + divergence * b0 as f32);
-        self.u.update(i + 1, k, |v| v - divergence * b1 as f32);
-        self.v.update(i, k, |v| v + divergence * b2 as f32);
-        self.v.update(i, k + 1, |v| v - divergence * b3 as f32);
+        self.u.update(i, k, |v| v + divergence * b0 as f64);
+        self.u.update(i + 1, k, |v| v - divergence * b1 as f64);
+        self.v.update(i, k, |v| v + divergence * b2 as f64);
+        self.v.update(i, k + 1, |v| v - divergence * b3 as f64);
     }
 
-    fn get_divergence(&self, i: i32, k: i32) -> f32 {
+    fn get_divergence(&self, i: i32, k: i32) -> f64 {
         self.u.get(i, k) - self.u.get(i + 1, k) + self.v.get(i, k) - self.v.get(i, k + 1)
     }
 
@@ -237,7 +237,7 @@ impl FluidSimulation for Fluid {
         self.s.swap(&mut self.next_s);
     }
 
-    fn interpolate(&self, x: f32, y: f32, field: Field) -> f32 {
+    fn interpolate(&self, x: f64, y: f64, field: Field) -> f64 {
         let field_arr = match field {
             Field::U => &self.u,
             Field::V => &self.v,
@@ -260,7 +260,7 @@ impl FluidSimulation for Fluid {
         w_y * new_value_bot + (1.0 - w_y) * new_value_top
     }
 
-    fn get_grid_indices_from_xy(&self, x: f32, y: f32, field: Option<&Field>) -> (i32, i32) {
+    fn get_grid_indices_from_xy(&self, x: f64, y: f64, field: Option<&Field>) -> (i32, i32) {
         let i = (x - match field {
             Some(Field::V | Field::S) => self.square_size / 2.0,
             _ => 0.0,
@@ -276,15 +276,15 @@ impl FluidSimulation for Fluid {
         (i as i32, k as i32)
     }
 
-    fn get_xy_from_grid_indices(&self, i: i32, k: i32, field: Option<&Field>) -> (f32, f32) {
-        let x = i as f32 * self.square_size
+    fn get_xy_from_grid_indices(&self, i: i32, k: i32, field: Option<&Field>) -> (f64, f64) {
+        let x = i as f64 * self.square_size
             + match field {
                 Some(Field::V | Field::S) => self.square_size / 2.0,
                 _ => 0.0,
             }
             - self.block_offset;
 
-        let y = k as f32 * self.square_size
+        let y = k as f64 * self.square_size
             + match field {
                 Some(Field::U | Field::S) => self.square_size / 2.0,
                 _ => 0.0,

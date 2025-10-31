@@ -18,7 +18,7 @@ pub struct Scene {
     last_time: f64,
     last_mouse_xy: (i32, i32),
     then: f64,
-    max_velocity: f32,
+    max_velocity: f64,
 
     enable_playing: bool,
     enable_mouse_move: bool,
@@ -32,7 +32,7 @@ pub struct Scene {
 
 impl Scene {
     pub fn new(canvas: web_sys::HtmlCanvasElement, fluid: Fluid) -> Scene {
-        let max_velocity = f32::min(canvas.width() as f32, canvas.height() as f32);
+        let max_velocity = f64::min(canvas.width() as f64, canvas.height() as f64);
 
         Scene {
             fluid,
@@ -88,7 +88,7 @@ impl Scene {
 
     pub fn draw_velocity_colors(&self) {
         let ctx = self.get_ctx();
-        let scale = self.fluid.square_size / self.subdivisions as f32;
+        let scale = self.fluid.square_size / self.subdivisions as f64;
 
         for x in 0..self.fluid.b.width() {
             for y in 0..self.fluid.b.height() {
@@ -96,21 +96,23 @@ impl Scene {
                     for k in 0..self.subdivisions {
                         let x = x as i32;
                         let y = y as i32;
+                        let i = i as f64;
+                        let k = k as f64;
 
                         let (xx, yy) = self.fluid.get_xy_from_grid_indices(x, y, None);
 
                         let v = self.fluid.interpolate(
-                            xx + (i as f32 + 0.5) * scale,
-                            yy + (k as f32 + 0.5) * scale,
+                            xx + (i + 0.5) * scale,
+                            yy + (k + 0.5) * scale,
                             Field::V,
                         );
                         let u = self.fluid.interpolate(
-                            xx + (i as f32 + 0.5) * scale,
-                            yy + (k as f32 + 0.5) * scale,
+                            xx + (i + 0.5) * scale,
+                            yy + (k + 0.5) * scale,
                             Field::U,
                         );
 
-                        let length = f32::sqrt(v * v + u * u);
+                        let length = f64::sqrt(v * v + u * u);
                         // web_sys::console::log_1(&JsValue::from(&format!("length: {length}")));
                         web_sys::console::log_1(&JsValue::from(&format!(
                             "v: {v}, u: {u}, length: {length}"
@@ -120,12 +122,7 @@ impl Scene {
                             .clamp(0.0, 240.0);
 
                         ctx.set_fill_style_str(&format!("hsl({}, 100%, 50%)", hue));
-                        ctx.fill_rect(
-                            xx as f64 + (i as f64 * scale as f64),
-                            yy as f64 + (k as f64 * scale as f64),
-                            scale as f64 + 1.0,
-                            scale as f64 + 1.0,
-                        );
+                        ctx.fill_rect(xx + (i * scale), yy + (k * scale), scale + 1.0, scale + 1.0);
                     }
                 }
             }
@@ -134,7 +131,7 @@ impl Scene {
 
     pub fn draw_smoke(&self) {
         let ctx = self.get_ctx();
-        let scale = self.fluid.square_size / self.subdivisions as f32;
+        let scale = self.fluid.square_size / self.subdivisions as f64;
 
         for x in 0..self.fluid.s.width() {
             for y in 0..self.fluid.s.height() {
@@ -142,24 +139,21 @@ impl Scene {
                     for k in 0..self.subdivisions {
                         let x = x as i32;
                         let y = y as i32;
+                        let i = i as f64;
+                        let k = k as f64;
 
                         let (xx, yy) = self.fluid.get_xy_from_grid_indices(x, y, None);
 
                         let s = self.fluid.interpolate(
-                            xx + (i as f32 + 0.5) * scale,
-                            yy + (k as f32 + 0.5) * scale,
+                            xx + (i + 0.5) * scale,
+                            yy + (k + 0.5) * scale,
                             Field::S,
                         );
 
                         let rgb_val = (s / self.max_velocity).clamp(0.0, 1.0) * 255.0;
 
                         ctx.set_fill_style_str(&format!("rgb({rgb_val}, {rgb_val}, {rgb_val}, 1)"));
-                        ctx.fill_rect(
-                            xx as f64 + (i as f64 * scale as f64),
-                            yy as f64 + (k as f64 * scale as f64),
-                            scale as f64 + 1.0,
-                            scale as f64 + 1.0,
-                        );
+                        ctx.fill_rect(xx + (i * scale), yy + (k * scale), scale + 1.0, scale + 1.0);
                     }
                 }
             }
@@ -214,8 +208,8 @@ impl Scene {
                     s.last_mouse_xy = (e.offset_x(), e.offset_y());
 
                     let (x, y) = fluid.get_grid_indices_from_xy(
-                        e.offset_x() as f32,
-                        e.offset_y() as f32,
+                        e.offset_x() as f64,
+                        e.offset_y() as f64,
                         None,
                     );
 
@@ -252,16 +246,12 @@ impl Scene {
                                 continue;
                             }
 
-                            fluid
-                                .u
-                                .update(xx, yy, |u| u + (mult * delta_x as f64) as f32);
+                            fluid.u.update(xx, yy, |u| u + mult * delta_x as f64);
 
-                            fluid
-                                .v
-                                .update(xx, yy, |v| v + (mult * delta_y as f64) as f32);
+                            fluid.v.update(xx, yy, |v| v + mult * delta_y as f64);
 
                             fluid.s.update(xx, yy, |sm| {
-                                sm + f32::min((mult * norm) as f32, s.max_velocity * 1.5)
+                                sm + f64::min(mult * norm, s.max_velocity * 1.5)
                             });
                         }
                     }
@@ -315,7 +305,7 @@ impl Scene {
             }
 
             let delta = now - s.then;
-            if delta > s.fluid.delta_t as f64 * 1000.0 {
+            if delta > s.fluid.delta_t * 1000.0 {
                 s.then = now;
                 s.draw_next_frame();
             }
