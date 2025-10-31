@@ -14,8 +14,8 @@ pub struct Scene {
 
     mouse_radius: u8,
     subdivisions: u8,
-    is_mouse_down: Rc<RefCell<bool>>,
-    last_time: Rc<RefCell<f64>>,
+    is_mouse_down: bool,
+    last_time: f64,
     last_mouse_xy: (i32, i32),
     then: f64,
     max_velocity: f32,
@@ -37,15 +37,15 @@ impl Scene {
         Scene {
             fluid,
             canvas,
-            mouse_radius: 10,
+            mouse_radius: 0,
             subdivisions: 1,
             max_velocity,
-            is_mouse_down: Rc::new(RefCell::new(true)),
+            is_mouse_down: true,
             enable_playing: true,
-            enable_mouse_move: false,
+            enable_mouse_move: true,
             show_smoke: false,
             show_velocity_colors: true,
-            last_time: Rc::new(RefCell::new(-1.0)),
+            last_time: -1.0,
             last_mouse_xy: (0, 0),
             then: 0.0,
             animation_id: None,
@@ -111,9 +111,13 @@ impl Scene {
                         );
 
                         let length = f32::sqrt(v * v + u * u);
+                        // web_sys::console::log_1(&JsValue::from(&format!("length: {length}")));
+                        web_sys::console::log_1(&JsValue::from(&format!(
+                            "v: {v}, u: {u}, length: {length}"
+                        )));
 
                         let hue = (240.0 - map(length, 0.0, self.max_velocity, 0.0, 240.0))
-                            .clamp(0.0, 360.0);
+                            .clamp(0.0, 240.0);
 
                         ctx.set_fill_style_str(&format!("hsl({}, 100%, 50%)", hue));
                         ctx.fill_rect(
@@ -173,72 +177,109 @@ impl Scene {
 
     pub fn init(self_ref: Rc<RefCell<Option<Self>>>) {
         let s = Rc::clone(&self_ref);
-        let s = &mut s.borrow_mut();
-        let s = s.as_mut().unwrap();
 
-        s.fluid.fill_edges_with_obstacles();
+        s.borrow_mut()
+            .as_mut()
+            .unwrap()
+            .fluid
+            .fill_edges_with_obstacles();
 
-        if s.enable_mouse_move {
+        if s.borrow().as_ref().unwrap().enable_mouse_move {
             let mouse_move_cb = Rc::new(Closure::wrap(Box::new(move |e: web_sys::PointerEvent| {
                 let s = Rc::clone(&self_ref);
-                let s = &mut s.borrow_mut();
-                let s = s.as_mut().unwrap();
 
-                // web_sys::console::log_1(&"mouse_move_cb".into());
+                if let Ok(s) = s.try_borrow_mut().as_mut() {
+                    let s = s.as_mut().unwrap();
 
-                if !s.enable_playing || !*s.is_mouse_down.borrow() {
-                    return;
-                }
-                if *s.last_time.borrow() <= 0.0 {
-                    *s.last_time.borrow_mut() = e.time_stamp();
+                    if !s.enable_playing || !s.is_mouse_down {
+                        return;
+                    }
+                    if s.last_time <= 0.0 {
+                        s.last_time = e.time_stamp();
+                        s.last_mouse_xy = (e.offset_x(), e.offset_y());
+                        return;
+                    }
+
+                    let fluid = &mut s.fluid;
+
+                    let delta_t = e.time_stamp() - s.last_time;
+
+                    s.last_time = e.time_stamp();
+
+                    let delta_x = e.offset_x() - s.last_mouse_xy.0;
+                    let delta_y = e.offset_y() - s.last_mouse_xy.1;
+
+                    let norm = f64::sqrt((delta_x * delta_x + delta_y * delta_y) as f64);
+
                     s.last_mouse_xy = (e.offset_x(), e.offset_y());
-                    return;
-                }
 
-                let fluid = &mut s.fluid;
+                    let (x, y) = fluid.get_grid_indices_from_xy(
+                        e.offset_x() as f32,
+                        e.offset_y() as f32,
+                        None,
+                    );
 
-                let delta_t = e.time_stamp() - *s.last_time.borrow();
-                if delta_t < fluid.delta_t as f64 * 1000.0 {
-                    return;
-                }
+                    if fluid.b.get(x, y) == 0 {
+                        return;
+                    }
 
-                *s.last_time.borrow_mut() = e.time_stamp();
+                    for i in 0..(s.mouse_radius * 2 + 1) {
+                        for k in 0..(s.mouse_radius * 2 + 1) {
+                            let xx = x - (s.mouse_radius + i) as i32;
+                            let yy = y - (s.mouse_radius + k) as i32;
 
-                let delta_x = e.offset_x() - s.last_mouse_xy.0;
-                let delta_y = e.offset_y() - s.last_mouse_xy.1;
-                let norm = f64::sqrt((delta_x * delta_x + delta_y * delta_y) as f64);
+                            let i = i as i32;
+                            let k = k as i32;
+                            let mult = gaussian(
+                                i - s.mouse_radius as i32,
+                                k - s.mouse_radius as i32,
+                                (s.mouse_radius + 1) as f64 / 2.0,
+                            ) * 2.0
+                                * 1000.0
+                                / delta_t;
 
-                s.last_mouse_xy = (e.offset_x(), e.offset_y());
+                            web_sys::console::log_1(&JsValue::from(&format!(
+                                "mult: {}, delta_t: {}, {}",
+                                mult,
+                                delta_t,
+                                (s.mouse_radius + 1) as f64 / 2.0
+                            )));
 
-                let (x, y) =
-                    fluid.get_grid_indices_from_xy(e.offset_x() as f32, e.offset_y() as f32, None);
+                            if fluid.b.get(xx, yy) == 0
+                                || fluid.b.get(xx - 1, yy) == 0
+                                || fluid.b.get(xx, yy - 1) == 0
+                            {
+                                continue;
+                            }
 
-                if fluid.b.get(x, y) == 0 {
-                    return;
-                }
+                            fluid
+                                .u
+                                .update(xx, yy, |u| u + (mult * delta_x as f64) as f32);
 
-                for i in 0..s.mouse_radius {
-                    for k in 0..s.mouse_radius {
-                        let i = i as i32;
-                        let k = k as i32;
-                        let mult = gaussian(i, k, s.mouse_radius as f64 / 2.0);
+                            fluid
+                                .v
+                                .update(xx, yy, |v| v + (mult * delta_y as f64) as f32);
 
-                        fluid
-                            .u
-                            .update(x + i, y + k, |u| u + (mult * delta_x as f64) as f32);
-
-                        fluid
-                            .v
-                            .update(x + i, y + k, |v| v + (mult * delta_y as f64) as f32);
-
-                        fluid.s.update(x + i, y + k, |s| s + (mult * norm) as f32);
+                            fluid.s.update(xx, yy, |sm| {
+                                sm + f32::min((mult * norm) as f32, s.max_velocity * 1.5)
+                            });
+                        }
                     }
                 }
+
+                drop(s);
             }) as Box<dyn FnMut(_)>));
 
-            s.mouse_move_cb.replace(Rc::clone(&mouse_move_cb));
+            s.borrow_mut()
+                .as_mut()
+                .unwrap()
+                .mouse_move_cb
+                .replace(Rc::clone(&mouse_move_cb));
 
-            s.canvas
+            s.borrow_mut()
+                .as_mut()
+                .unwrap()
+                .canvas
                 .set_onpointermove(Some((*mouse_move_cb).as_ref().unchecked_ref()));
         }
 
