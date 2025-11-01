@@ -9,7 +9,7 @@ type AnimationFrameCb = Rc<RefCell<Option<Closure<dyn FnMut(f64)>>>>;
 type MouseEventCb = Rc<Closure<dyn FnMut(web_sys::PointerEvent)>>;
 
 pub struct Scene {
-    fluid: Fluid,
+    pub fluid: Fluid,
     canvas: web_sys::HtmlCanvasElement,
 
     mouse_radius: u8,
@@ -22,8 +22,13 @@ pub struct Scene {
 
     enable_playing: bool,
     enable_mouse_move: bool,
+
     show_smoke: bool,
     show_velocity_colors: bool,
+    show_obstacles: bool,
+    show_gridlines: bool,
+    show_center_velocity: bool,
+    show_edge_velocity: bool,
 
     animation_id: Option<i32>,
 
@@ -54,16 +59,36 @@ impl Scene {
             animation_cb: None,
             mouse_move_cb: None,
             mouse_down_cb: None,
+            show_obstacles: false,
+            show_gridlines: true,
+            show_center_velocity: false,
+            show_edge_velocity: false,
         }
     }
 
     pub fn draw_next_frame(&mut self) {
         self.clear_canvas();
         self.fluid.simulate();
-        if self.show_velocity_colors {
-            self.draw_velocity_colors();
-        } else if self.show_smoke {
-            self.draw_smoke();
+
+        let ctx = self.get_ctx();
+        let scale = self.fluid.square_size / self.subdivisions as f64;
+
+        for x in 0..self.fluid.b.width() {
+            for y in 0..self.fluid.b.height() {
+                for i in 0..self.subdivisions {
+                    for k in 0..self.subdivisions {
+                        if self.show_velocity_colors {
+                            self.draw_velocity_colors(&ctx, scale, x, y, i, k);
+                        } else if self.show_smoke {
+                            self.draw_smoke(&ctx, scale, x, y, i, k);
+                        }
+                    }
+                }
+            }
+        }
+
+        if self.show_gridlines {
+            self.draw_gridlines(&ctx);
         }
     }
 
@@ -89,77 +114,95 @@ impl Scene {
         );
     }
 
-    pub fn draw_velocity_colors(&self) {
-        let ctx = self.get_ctx();
-        let scale = self.fluid.square_size / self.subdivisions as f64;
+    pub fn draw_velocity_colors(
+        &self,
+        ctx: &web_sys::CanvasRenderingContext2d,
+        scale: f64,
+        x: usize,
+        y: usize,
+        i: u8,
+        k: u8,
+    ) {
+        let x = x as i32;
+        let y = y as i32;
+        let i = i as f64;
+        let k = k as f64;
 
-        for x in 0..self.fluid.b.width() {
-            for y in 0..self.fluid.b.height() {
-                for i in 0..self.subdivisions {
-                    for k in 0..self.subdivisions {
-                        let x = x as i32;
-                        let y = y as i32;
-                        let i = i as f64;
-                        let k = k as f64;
+        let (xx, yy) = self.fluid.get_xy_from_grid_indices(x, y, None);
 
-                        let (xx, yy) = self.fluid.get_xy_from_grid_indices(x, y, None);
+        let v = self
+            .fluid
+            .interpolate(xx + (i + 0.5) * scale, yy + (k + 0.5) * scale, Field::V);
+        let u = self
+            .fluid
+            .interpolate(xx + (i + 0.5) * scale, yy + (k + 0.5) * scale, Field::U);
 
-                        let v = self.fluid.interpolate(
-                            xx + (i + 0.5) * scale,
-                            yy + (k + 0.5) * scale,
-                            Field::V,
-                        );
-                        let u = self.fluid.interpolate(
-                            xx + (i + 0.5) * scale,
-                            yy + (k + 0.5) * scale,
-                            Field::U,
-                        );
+        let length = f64::sqrt(v * v + u * u);
+        // web_sys::console::log_1(&JsValue::from(&format!("length: {length}")));
+        // web_sys::console::log_1(&JsValue::from(&format!(
+        //     "v: {v}, u: {u}, length: {length}"
+        // )));
 
-                        let length = f64::sqrt(v * v + u * u);
-                        // web_sys::console::log_1(&JsValue::from(&format!("length: {length}")));
-                        // web_sys::console::log_1(&JsValue::from(&format!(
-                        //     "v: {v}, u: {u}, length: {length}"
-                        // )));
+        let hue = (240.0 - map(length, 0.0, self.max_velocity, 0.0, 240.0)).clamp(0.0, 240.0);
 
-                        let hue = (240.0 - map(length, 0.0, self.max_velocity, 0.0, 240.0))
-                            .clamp(0.0, 240.0);
-
-                        ctx.set_fill_style_str(&format!("hsl({}, 100%, 50%)", hue));
-                        ctx.fill_rect(xx + (i * scale), yy + (k * scale), scale + 1.0, scale + 1.0);
-                    }
-                }
-            }
-        }
+        ctx.set_fill_style_str(&format!("hsl({}, 100%, 50%)", hue));
+        ctx.fill_rect(xx + (i * scale), yy + (k * scale), scale + 1.0, scale + 1.0);
     }
 
-    pub fn draw_smoke(&self) {
-        let ctx = self.get_ctx();
-        let scale = self.fluid.square_size / self.subdivisions as f64;
+    pub fn draw_smoke(
+        &self,
+        ctx: &web_sys::CanvasRenderingContext2d,
+        scale: f64,
+        x: usize,
+        y: usize,
+        i: u8,
+        k: u8,
+    ) {
+        let x = x as i32;
+        let y = y as i32;
+        let i = i as f64;
+        let k = k as f64;
 
-        for x in 0..self.fluid.s.width() {
-            for y in 0..self.fluid.s.height() {
-                for i in 0..self.subdivisions {
-                    for k in 0..self.subdivisions {
-                        let x = x as i32;
-                        let y = y as i32;
-                        let i = i as f64;
-                        let k = k as f64;
+        let (xx, yy) = self.fluid.get_xy_from_grid_indices(x, y, None);
 
-                        let (xx, yy) = self.fluid.get_xy_from_grid_indices(x, y, None);
+        let s = self
+            .fluid
+            .interpolate(xx + (i + 0.5) * scale, yy + (k + 0.5) * scale, Field::S);
 
-                        let s = self.fluid.interpolate(
-                            xx + (i + 0.5) * scale,
-                            yy + (k + 0.5) * scale,
-                            Field::S,
-                        );
+        let rgb_val = (s / self.max_velocity).clamp(0.0, 1.0) * 255.0;
 
-                        let rgb_val = (s / self.max_velocity).clamp(0.0, 1.0) * 255.0;
+        ctx.set_fill_style_str(&format!("rgb({rgb_val}, {rgb_val}, {rgb_val}, 1)"));
+        ctx.fill_rect(xx + (i * scale), yy + (k * scale), scale + 1.0, scale + 1.0);
+    }
 
-                        ctx.set_fill_style_str(&format!("rgb({rgb_val}, {rgb_val}, {rgb_val}, 1)"));
-                        ctx.fill_rect(xx + (i * scale), yy + (k * scale), scale + 1.0, scale + 1.0);
-                    }
-                }
-            }
+    pub fn draw_gridlines(&self, ctx: &web_sys::CanvasRenderingContext2d) {
+        ctx.set_stroke_style_str("#555");
+        ctx.set_line_width(1.0);
+
+        for x in 0..=self.fluid.grid_width {
+            ctx.begin_path();
+            ctx.move_to(
+                x as f64 * self.fluid.square_size - self.fluid.block_offset,
+                0.0,
+            );
+            ctx.line_to(
+                x as f64 * self.fluid.square_size - self.fluid.block_offset,
+                self.canvas.height() as f64,
+            );
+            ctx.stroke();
+        }
+
+        for y in 0..=self.fluid.grid_height {
+            ctx.begin_path();
+            ctx.move_to(
+                0.0,
+                y as f64 * self.fluid.square_size - self.fluid.block_offset,
+            );
+            ctx.line_to(
+                self.canvas.width() as f64,
+                y as f64 * self.fluid.square_size - self.fluid.block_offset,
+            );
+            ctx.stroke();
         }
     }
 
@@ -231,18 +274,22 @@ impl Scene {
                             let mult = gaussian(
                                 i - s.mouse_radius as i32,
                                 k - s.mouse_radius as i32,
-                                (s.mouse_radius + 1) as f64 / 2.0,
+                                (s.mouse_radius + 1) as f64,
                             ) * 2.0
                                 * 1000.0
                                 / delta_t;
 
                             web_sys::console::log_1(&JsValue::from(&format!(
-                                "mult: {}, delta_t: {}, {}, delta_x: {}, delta_y: {}",
+                                "mult: {}, delta_t: {}, {}, delta_x: {}, delta_y: {}, u: {}, v: {}, new u: {}, new v: {}",
                                 mult,
                                 delta_t,
                                 (s.mouse_radius + 1) as f64 / 2.0,
                                 delta_x,
-                                delta_y
+                                delta_y,
+                                fluid.u.get(xx, yy),
+                                fluid.v.get(xx, yy),
+                                fluid.u.get(xx, yy) + mult * delta_x as f64,
+                                fluid.v.get(xx, yy) + mult * delta_y as f64
                             )));
 
                             if fluid.b.get(xx, yy) == 0
@@ -266,16 +313,12 @@ impl Scene {
                 drop(s);
             }) as Box<dyn FnMut(_)>));
 
-            s0.borrow_mut()
-                .as_mut()
-                .unwrap()
-                .mouse_move_cb
-                .replace(Rc::clone(&mouse_move_cb));
+            let s = &mut s0.borrow_mut();
+            let s = s.as_mut().unwrap();
 
-            s0.borrow_mut()
-                .as_mut()
-                .unwrap()
-                .canvas
+            s.mouse_move_cb.replace(Rc::clone(&mouse_move_cb));
+
+            s.canvas
                 .set_onpointermove(Some((*mouse_move_cb).as_ref().unchecked_ref()));
         }
 
@@ -298,22 +341,15 @@ impl Scene {
             }
         }) as Box<dyn FnMut(_)>));
 
-        s0.borrow_mut()
-            .as_mut()
-            .unwrap()
-            .mouse_down_cb
-            .replace(Rc::clone(&mouse_down_cb));
+        let s = &mut s0.borrow_mut();
+        let s = s.as_mut().unwrap();
 
-        s0.borrow_mut()
-            .as_mut()
-            .unwrap()
-            .canvas
+        s.mouse_down_cb.replace(Rc::clone(&mouse_down_cb));
+
+        s.canvas
             .set_onpointerdown(Some((*mouse_down_cb).as_ref().unchecked_ref()));
 
-        s0.borrow_mut()
-            .as_mut()
-            .unwrap()
-            .canvas
+        s.canvas
             .set_onpointerup(Some((*mouse_down_cb).as_ref().unchecked_ref()));
     }
 
@@ -376,10 +412,10 @@ impl Scene {
         self_ref.borrow_mut().as_mut().unwrap().animation_cb.take();
     }
 
-    // pub fn toggle_playing(self_ref: Rc<RefCell<Option<Self>>>) {
-    //     let enable_playing = self_ref.borrow().as_ref().unwrap().enable_playing;
-    //     self_ref.borrow_mut().as_mut().unwrap().enable_playing = !enable_playing;
-    // }
+    pub fn toggle_playing(self_ref: Rc<RefCell<Option<Self>>>) {
+        let enable_playing = self_ref.borrow().as_ref().unwrap().enable_playing;
+        self_ref.borrow_mut().as_mut().unwrap().enable_playing = !enable_playing;
+    }
 }
 
 impl Drop for Scene {
