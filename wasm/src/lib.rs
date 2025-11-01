@@ -3,6 +3,7 @@ mod grid;
 mod scene;
 mod util;
 
+use self::fluid::FluidSimulation;
 use self::scene::Scene;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -93,5 +94,29 @@ pub fn print_fluid_info() {
             "{:#?}",
             scene.borrow().as_ref().unwrap().fluid
         )));
+    });
+}
+
+#[wasm_bindgen]
+pub fn run_projection() {
+    SCENE.with(move |scene| {
+        if scene.borrow().is_none() {
+            return;
+        }
+
+        scene.borrow_mut().as_mut().unwrap().fluid.projection();
+        scene.borrow_mut().as_mut().unwrap().draw_next_frame();
+    });
+}
+
+#[wasm_bindgen]
+pub fn run_advection() {
+    SCENE.with(move |scene| {
+        if scene.borrow().is_none() {
+            return;
+        }
+
+        scene.borrow_mut().as_mut().unwrap().fluid.advection();
+        scene.borrow_mut().as_mut().unwrap().draw_next_frame();
     });
 }

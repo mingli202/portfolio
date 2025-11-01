@@ -22,13 +22,15 @@ pub struct Scene {
 
     enable_playing: bool,
     enable_mouse_move: bool,
+    enable_projection: bool,
+    enable_advection: bool,
 
     show_smoke: bool,
     show_velocity_colors: bool,
     show_obstacles: bool,
     show_gridlines: bool,
-    show_center_velocity: bool,
-    show_edge_velocity: bool,
+    show_center_velocities: bool,
+    show_edge_velocities: bool,
 
     animation_id: Option<i32>,
 
@@ -48,10 +50,6 @@ impl Scene {
             subdivisions: 1,
             max_velocity,
             is_mouse_down: false,
-            enable_playing: true,
-            enable_mouse_move: true,
-            show_smoke: false,
-            show_velocity_colors: true,
             last_time: -1.0,
             last_mouse_xy: (0, 0),
             then: 0.0,
@@ -59,16 +57,38 @@ impl Scene {
             animation_cb: None,
             mouse_move_cb: None,
             mouse_down_cb: None,
+
+            enable_playing: true,
+            enable_mouse_move: true,
+            enable_projection: false,
+            enable_advection: false,
+
             show_obstacles: false,
             show_gridlines: true,
-            show_center_velocity: false,
-            show_edge_velocity: false,
+            show_center_velocities: true,
+            show_edge_velocities: false,
+            show_smoke: false,
+            show_velocity_colors: true,
         }
+    }
+
+    fn get_ctx(&self) -> web_sys::CanvasRenderingContext2d {
+        self.canvas
+            .get_context("2d")
+            .unwrap()
+            .unwrap()
+            .dyn_into::<web_sys::CanvasRenderingContext2d>()
+            .unwrap()
     }
 
     pub fn draw_next_frame(&mut self) {
         self.clear_canvas();
-        self.fluid.simulate();
+        if self.enable_projection {
+            self.fluid.projection();
+        }
+        if self.enable_advection {
+            self.fluid.advection();
+        }
 
         let ctx = self.get_ctx();
         let scale = self.fluid.square_size / self.subdivisions as f64;
@@ -81,6 +101,10 @@ impl Scene {
                             self.draw_velocity_colors(&ctx, scale, x, y, i, k);
                         } else if self.show_smoke {
                             self.draw_smoke(&ctx, scale, x, y, i, k);
+                        }
+
+                        if self.show_center_velocities {
+                            self.draw_center_velocities(&ctx, scale, x, y, i, k);
                         }
                     }
                 }
@@ -206,13 +230,40 @@ impl Scene {
         }
     }
 
-    fn get_ctx(&self) -> web_sys::CanvasRenderingContext2d {
-        self.canvas
-            .get_context("2d")
-            .unwrap()
-            .unwrap()
-            .dyn_into::<web_sys::CanvasRenderingContext2d>()
-            .unwrap()
+    pub fn draw_center_velocities(
+        &self,
+        ctx: &web_sys::CanvasRenderingContext2d,
+        scale: f64,
+        x: usize,
+        y: usize,
+        i: u8,
+        k: u8,
+    ) {
+        let x = x as i32;
+        let y = y as i32;
+        let i = i as f64;
+        let k = k as f64;
+
+        let (xx, yy) = self.fluid.get_xy_from_grid_indices(x, y, None);
+
+        let x = xx + (i + 0.5) * scale;
+        let y = yy + (k + 0.5) * scale;
+
+        let v = self.fluid.interpolate(x, y, Field::V) * self.fluid.delta_t;
+        let u = self.fluid.interpolate(x, y, Field::U) * self.fluid.delta_t;
+
+        ctx.set_stroke_style_str("#08f");
+        ctx.set_fill_style_str("#08f");
+
+        ctx.arc(x, y, 2.0, 0.0, 2.0 * std::f64::consts::PI)
+            .expect("arc error");
+        ctx.fill();
+
+        ctx.begin_path();
+        ctx.move_to(x, y);
+        ctx.line_to(x + v, y + u);
+        ctx.close_path();
+        ctx.stroke();
     }
 
     pub fn init(self_ref: Rc<RefCell<Option<Self>>>) {
