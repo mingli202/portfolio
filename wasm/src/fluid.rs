@@ -11,10 +11,6 @@ pub enum Field {
     S,
 }
 pub trait FluidSimulation {
-    fn simulate(&mut self) {
-        self.projection();
-        self.advection();
-    }
     fn projection(&mut self);
     fn advection(&mut self);
     fn interpolate(&self, x: f64, y: f64, field: Field) -> f64;
@@ -50,7 +46,7 @@ impl Fluid {
         delta_t: Option<f64>,
         overrelaxation_coefficient: Option<f64>,
     ) -> Fluid {
-        let min_squares = min_squares.unwrap_or(40);
+        let min_squares = min_squares.unwrap_or(50);
 
         let h = u32::min(canvas.width(), canvas.height());
 

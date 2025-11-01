@@ -12,7 +12,7 @@ pub struct Scene {
     pub fluid: Fluid,
     canvas: web_sys::HtmlCanvasElement,
 
-    mouse_radius: u8,
+    mouse_radius: i32,
     subdivisions: u8,
     is_mouse_down: bool,
     last_time: f64,
@@ -39,12 +39,15 @@ pub struct Scene {
 
 impl Scene {
     pub fn new(canvas: web_sys::HtmlCanvasElement, fluid: Fluid) -> Scene {
-        let max_velocity = f64::min(canvas.width() as f64, canvas.height() as f64);
+        let max_velocity =
+            f64::min(canvas.width() as f64, canvas.height() as f64) * fluid.square_size;
+
+        let mouse_radius = 100.0 / fluid.square_size;
 
         Scene {
             fluid,
             canvas,
-            mouse_radius: 2,
+            mouse_radius: 0,
             subdivisions: 2,
             max_velocity,
             is_mouse_down: false,
@@ -64,7 +67,7 @@ impl Scene {
             show_gridlines: false,
             show_center_velocities: false,
             show_smoke: true,
-            show_velocity_colors: false,
+            show_velocity_colors: true,
         }
     }
 
@@ -311,8 +314,8 @@ impl Scene {
 
                     for i in 0..(s.mouse_radius * 2 + 1) {
                         for k in 0..(s.mouse_radius * 2 + 1) {
-                            let xx = x - (s.mouse_radius - i) as i32;
-                            let yy = y - (s.mouse_radius - k) as i32;
+                            let xx = x - s.mouse_radius + i;
+                            let yy = y - s.mouse_radius + k;
 
                             if fluid.b.get(xx, yy) == 0
                                 || fluid.b.get(xx - 1, yy) == 0
@@ -321,13 +324,8 @@ impl Scene {
                                 continue;
                             }
 
-                            let i = i as i32;
-                            let k = k as i32;
-                            let mult = gaussian(
-                                i - s.mouse_radius as i32,
-                                k - s.mouse_radius as i32,
-                                (s.mouse_radius + 1) as f64 / 4.0,
-                            ) * 2.0
+                            let mult = gaussian(i - s.mouse_radius, k - s.mouse_radius, 0.1)
+                                * 2.0
                                 * 1000.0
                                 / delta_t;
 
@@ -336,7 +334,7 @@ impl Scene {
                             fluid.v.update(xx, yy, |v| v + mult * delta_y as f64);
 
                             fluid.s.update(xx, yy, |sm| {
-                                f64::min(sm + mult * norm, s.max_velocity * 1.5)
+                                f64::min(sm + mult * norm, s.max_velocity * 10.0)
                             });
                         }
                     }
