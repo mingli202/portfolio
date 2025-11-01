@@ -280,22 +280,29 @@ impl Scene {
         }
 
         let mouse_down_cb = Rc::new(Closure::wrap(Box::new(move |_e: web_sys::PointerEvent| {
-            let is_mouse_down = s1.borrow().as_ref().unwrap().is_mouse_down;
-
             web_sys::console::log_1(&JsValue::from("mouse down"));
 
             if let Ok(s) = s1.try_borrow_mut().as_mut() {
+                let s = s.as_mut().unwrap();
+
+                s.is_mouse_down = !s.is_mouse_down;
+
                 web_sys::console::log_1(&JsValue::from(&format!(
                     "set mouse down to {}",
-                    !is_mouse_down
+                    s.is_mouse_down
                 )));
 
-                s.as_mut().unwrap().is_mouse_down = !is_mouse_down;
-                if is_mouse_down {
-                    s1.borrow_mut().as_mut().unwrap().last_time = -1.0;
+                if !s.is_mouse_down {
+                    s.last_time = -1.0;
                 }
             }
         }) as Box<dyn FnMut(_)>));
+
+        s0.borrow_mut()
+            .as_mut()
+            .unwrap()
+            .mouse_down_cb
+            .replace(Rc::clone(&mouse_down_cb));
 
         s0.borrow_mut()
             .as_mut()
