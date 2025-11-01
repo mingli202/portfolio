@@ -1,7 +1,10 @@
+use std::process::exit;
+
 use wasm_bindgen::JsValue;
 
 use crate::grid::Grid;
 
+#[derive(Debug, Clone)]
 pub enum Field {
     U,
     V,
@@ -19,6 +22,7 @@ pub trait FluidSimulation {
     fn get_xy_from_grid_indices(&self, x: i32, y: i32, field: Option<&Field>) -> (f64, f64);
 }
 
+#[derive(Debug, Clone)]
 pub struct Fluid {
     pub u: Grid<f64>,      // velocity in x direction
     pub v: Grid<f64>,      // velocity in y direction
@@ -252,6 +256,13 @@ impl FluidSimulation for Fluid {
 
         let w_x = 1.0 - xx / self.square_size;
         let w_y = 1.0 - yy / self.square_size;
+
+        if i.checked_add(1).is_none() {
+            web_sys::console::log_1(&JsValue::from(&format!("x: {}, y: {}", x, y)));
+            web_sys::console::log_1(&JsValue::from(&format!("i: {}", i)));
+            web_sys::console::log_1(&JsValue::from(&format!("k: {:#?}", self)));
+            exit(1);
+        }
 
         let new_value_bot = w_x * field_arr.get(i, k) + (1.0 - w_x) * field_arr.get(i + 1, k);
         let new_value_top =

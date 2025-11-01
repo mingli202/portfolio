@@ -1,3 +1,4 @@
+#[derive(Debug, Clone)]
 pub struct Grid<T> {
     grid: Vec<Vec<T>>,
 }
