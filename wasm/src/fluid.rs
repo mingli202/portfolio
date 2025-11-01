@@ -262,13 +262,6 @@ impl FluidSimulation for Fluid {
         let w_x = 1.0 - xx / self.square_size;
         let w_y = 1.0 - yy / self.square_size;
 
-        if i.checked_add(1).is_none() {
-            web_sys::console::log_1(&JsValue::from(&format!("x: {}, y: {}", x, y)));
-            web_sys::console::log_1(&JsValue::from(&format!("i: {}", i)));
-            web_sys::console::log_1(&JsValue::from(&format!("k: {:#?}", self)));
-            exit(1);
-        }
-
         let new_value_bot = w_x * field_arr.get(i, k) + (1.0 - w_x) * field_arr.get(i + 1, k);
         let new_value_top =
             w_x * field_arr.get(i, k + 1) + (1.0 - w_x) * field_arr.get(i + 1, k + 1);
