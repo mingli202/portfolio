@@ -328,13 +328,13 @@ export class Scene {
 
     const deltaT = e.timeStamp - this.lastTime;
 
-    if (deltaT < this.fluid.deltaT * 1000) {
-      return;
-    }
     this.lastTime = e.timeStamp;
 
     const deltaX = e.offsetX - this.lastMousePosition[0];
     const deltaY = e.offsetY - this.lastMousePosition[1];
+
+    console.log(deltaX, deltaY);
+
     const norm = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
     this.lastMousePosition = [e.offsetX, e.offsetY];
@@ -366,6 +366,10 @@ export class Scene {
             (deltaT / 1000)) *
           2;
 
+        console.log(
+          `v: ${v}, deltaT: ${deltaT}, deltaX: ${deltaX}, deltaY: ${deltaY}`,
+        );
+
         this.fluid.v.set(xx, yy, (val) => val + deltaY * v);
         this.fluid.u.set(xx, yy, (val) => val + deltaX * v);
         this.fluid.s.set(xx, yy, (val) =>
@@ -375,7 +379,11 @@ export class Scene {
     }
   }
 
-  public gaussian(x: number, y: number, sigma: number = this.mouseRadius / 2) {
+  public gaussian(
+    x: number,
+    y: number,
+    sigma: number = (this.mouseRadius + 1) / 2,
+  ) {
     return Math.exp(-(x * x + y * y) / (2 * sigma * sigma));
   }
 
@@ -409,12 +417,7 @@ export class Scene {
 
           ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
 
-          ctx.fillRect(
-            xx + i * scale,
-            yy + k * scale,
-            this.fluid.squareSize,
-            this.fluid.squareSize,
-          );
+          ctx.fillRect(xx + i * scale, yy + k * scale, scale + 1, scale + 1);
         }
       }
     });
@@ -422,7 +425,6 @@ export class Scene {
 
   public drawSmoke() {
     const ctx = this.canvas.getContext("2d")!;
-    ctx.lineWidth = this.lineWidth;
 
     const scale = this.fluid.squareSize / this.subdivisions;
 
@@ -432,8 +434,8 @@ export class Scene {
           const [xx, yy] = this.fluid.getCanvasPointFromGridPoint([x, y]);
 
           const v = this.fluid.interpolate(
-            xx + i * scale,
-            yy + k * scale,
+            xx + (i + 1 / 2) * scale,
+            yy + (k + 1 / 2) * scale,
             Field.S,
           );
 
