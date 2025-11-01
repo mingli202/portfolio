@@ -36,6 +36,8 @@ pub struct Fluid {
     pub n_iterations: usize,
     pub delta_t: f64,
     pub overrelaxation_coefficient: f64,
+    pub grid_width: usize,
+    pub grid_height: usize,
 
     pub block_offset: f64,
 }
@@ -48,7 +50,7 @@ impl Fluid {
         delta_t: Option<f64>,
         overrelaxation_coefficient: Option<f64>,
     ) -> Fluid {
-        let min_squares = min_squares.unwrap_or(40);
+        let min_squares = min_squares.unwrap_or(10);
 
         let h = u32::min(canvas.width(), canvas.height());
 
@@ -67,8 +69,7 @@ impl Fluid {
         let u = Grid::new(grid_width + 1 + 2 * n, grid_height + 2 * n);
         let v = Grid::new(grid_width + 2 * n, grid_height + 1 + 2 * n);
         let s = Grid::new(grid_width + 2 * n, grid_height + 2 * n);
-        let mut b = Grid::new(grid_width + 2 * n, grid_height + 2 * n);
-        b.fill(1);
+        let b = Grid::new(grid_width + 2 * n, grid_height + 2 * n);
 
         let next_u = Grid::new(u.width(), u.height());
         let next_v = Grid::new(v.width(), v.height());
@@ -83,6 +84,8 @@ impl Fluid {
             next_v,
             next_s,
             block_offset,
+            grid_width,
+            grid_height,
 
             square_size,
             n_iterations,
@@ -92,6 +95,8 @@ impl Fluid {
     }
 
     pub fn fill_edges_with_obstacles(&mut self) {
+        self.b.fill(1);
+
         for i in 0..self.b.width() {
             let i = i as i32;
             self.b.set(i, 0, 0);

@@ -50,6 +50,28 @@ pub fn play() {
 }
 
 #[wasm_bindgen]
+pub fn next_frame() {
+    SCENE.with(move |scene| {
+        if scene.borrow().is_none() {
+            return;
+        }
+
+        scene.borrow_mut().as_mut().unwrap().draw_next_frame();
+    });
+}
+
+#[wasm_bindgen]
+pub fn toggle_playing() {
+    SCENE.with(move |scene| {
+        if scene.borrow().is_none() {
+            return;
+        }
+
+        Scene::toggle_playing(Rc::clone(scene));
+    });
+}
+
+#[wasm_bindgen]
 pub fn stop() {
     SCENE.with(move |scene| {
         if scene.borrow().is_none() {
@@ -57,5 +79,19 @@ pub fn stop() {
         }
 
         Scene::stop(Rc::clone(scene));
+    });
+}
+
+#[wasm_bindgen]
+pub fn print_fluid_info() {
+    SCENE.with(move |scene| {
+        if scene.borrow().is_none() {
+            return;
+        }
+
+        web_sys::console::log_1(&JsValue::from(&format!(
+            "{:#?}",
+            scene.borrow().as_ref().unwrap().fluid
+        )));
     });
 }

@@ -1,4 +1,6 @@
-#[derive(Debug, Clone)]
+use std::fmt::{Debug, Formatter};
+
+#[derive(Clone)]
 pub struct Grid<T> {
     grid: Vec<Vec<T>>,
 }
@@ -64,5 +66,19 @@ impl<T: Default + Copy> Grid<T> {
 
     pub fn swap(&mut self, other: &mut Grid<T>) {
         std::mem::swap(&mut self.grid, &mut other.grid);
+    }
+}
+
+impl<T: Debug> Debug for Grid<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "[")?;
+        for k in 0..self.grid[0].len() {
+            write!(f, "[")?;
+            for i in 0..self.grid.len() {
+                write!(f, "{:?},", self.grid[i][k])?;
+            }
+            writeln!(f, "]")?;
+        }
+        write!(f, "]")
     }
 }
