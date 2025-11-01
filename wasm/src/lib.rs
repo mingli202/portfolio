@@ -120,3 +120,14 @@ pub fn run_advection() {
         scene.borrow_mut().as_mut().unwrap().draw_next_frame();
     });
 }
+
+#[wasm_bindgen]
+pub fn clear_scene() {
+    SCENE.with(move |scene| {
+        if scene.borrow().is_none() {
+            return;
+        }
+
+        scene.borrow_mut().as_mut().unwrap().clear();
+    });
+}

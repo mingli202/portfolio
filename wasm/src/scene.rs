@@ -213,6 +213,7 @@ impl Scene {
                 x as f64 * self.fluid.square_size - self.fluid.block_offset,
                 self.canvas.height() as f64,
             );
+            ctx.close_path();
             ctx.stroke();
         }
 
@@ -226,6 +227,7 @@ impl Scene {
                 self.canvas.width() as f64,
                 y as f64 * self.fluid.square_size - self.fluid.block_offset,
             );
+            ctx.close_path();
             ctx.stroke();
         }
     }
@@ -373,7 +375,7 @@ impl Scene {
                 .set_onpointermove(Some((*mouse_move_cb).as_ref().unchecked_ref()));
         }
 
-        let mouse_down_cb = Rc::new(Closure::wrap(Box::new(move |_e: web_sys::PointerEvent| {
+        let mouse_down_cb = Rc::new(Closure::wrap(Box::new(move |e: web_sys::PointerEvent| {
             web_sys::console::log_1(&JsValue::from("mouse down"));
 
             if let Ok(s) = s1.try_borrow_mut().as_mut() {
@@ -389,6 +391,16 @@ impl Scene {
                 if !s.is_mouse_down {
                     s.last_time = -1.0;
                 }
+
+                let x = e.offset_x() as f64;
+                let y = e.offset_y() as f64;
+
+                let (xx, yy) = s.fluid.get_grid_indices_from_xy(x, y, None);
+
+                web_sys::console::log_1(&JsValue::from(&format!(
+                    "x: {}, y: {}, xx: {}, yy: {}",
+                    x, y, xx, yy
+                )));
             }
         }) as Box<dyn FnMut(_)>));
 
