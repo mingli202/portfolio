@@ -110,7 +110,7 @@ impl Fluid {
         }
     }
 
-    fn solve_divergence_for_all(&mut self) {
+    pub fn solve_divergence_for_all(&mut self) {
         for i in 0..self.b.width() {
             for k in 0..self.b.height() {
                 let i = i as i32;
@@ -146,6 +146,10 @@ impl Fluid {
         }
 
         let divergence = (self.get_divergence(i, k) * self.overrelaxation_coefficient) / b as f64;
+        web_sys::console::log_1(&JsValue::from(&format!(
+            "divergence at ({}, {}): {}, b0: {}, b1: {}, b2: {}, b3: {}",
+            i, k, divergence, b0, b1, b2, b3
+        )));
 
         self.u.update(i, k, |v| v + divergence * b0 as f64);
         self.u.update(i + 1, k, |v| v - divergence * b1 as f64);
@@ -154,7 +158,7 @@ impl Fluid {
     }
 
     fn get_divergence(&self, i: i32, k: i32) -> f64 {
-        self.u.get(i, k) - self.u.get(i + 1, k) + self.v.get(i, k) - self.v.get(i, k + 1)
+        self.u.get(i + 1, k) - self.u.get(i, k) + self.v.get(i, k + 1) - self.v.get(i, k)
     }
 
     fn advect_u(&mut self, i: i32, k: i32) {
