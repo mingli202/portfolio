@@ -6,7 +6,7 @@ use crate::util::{gaussian, map};
 use wasm_bindgen::prelude::*;
 
 type AnimationFrameCb = Rc<RefCell<Option<Closure<dyn FnMut(f64)>>>>;
-type MouseMoveCb = Rc<Closure<dyn FnMut(web_sys::PointerEvent)>>;
+type MouseEventCb = Rc<Closure<dyn FnMut(web_sys::PointerEvent)>>;
 
 pub struct Scene {
     fluid: Fluid,
@@ -26,8 +26,10 @@ pub struct Scene {
     show_velocity_colors: bool,
 
     animation_id: Option<i32>,
+
     animation_cb: Option<AnimationFrameCb>,
-    mouse_move_cb: Option<MouseMoveCb>,
+    mouse_move_cb: Option<MouseEventCb>,
+    mouse_down_cb: Option<MouseEventCb>,
 }
 
 impl Scene {
@@ -40,7 +42,7 @@ impl Scene {
             mouse_radius: 0,
             subdivisions: 1,
             max_velocity,
-            is_mouse_down: true,
+            is_mouse_down: false,
             enable_playing: true,
             enable_mouse_move: true,
             show_smoke: false,
@@ -51,6 +53,7 @@ impl Scene {
             animation_id: None,
             animation_cb: None,
             mouse_move_cb: None,
+            mouse_down_cb: None,
         }
     }
 
@@ -114,9 +117,9 @@ impl Scene {
 
                         let length = f64::sqrt(v * v + u * u);
                         // web_sys::console::log_1(&JsValue::from(&format!("length: {length}")));
-                        web_sys::console::log_1(&JsValue::from(&format!(
-                            "v: {v}, u: {u}, length: {length}"
-                        )));
+                        // web_sys::console::log_1(&JsValue::from(&format!(
+                        //     "v: {v}, u: {u}, length: {length}"
+                        // )));
 
                         let hue = (240.0 - map(length, 0.0, self.max_velocity, 0.0, 240.0))
                             .clamp(0.0, 240.0);
@@ -170,15 +173,16 @@ impl Scene {
     }
 
     pub fn init(self_ref: Rc<RefCell<Option<Self>>>) {
-        let s = Rc::clone(&self_ref);
+        let s0 = Rc::clone(&self_ref);
+        let s1 = Rc::clone(&self_ref);
 
-        s.borrow_mut()
+        s0.borrow_mut()
             .as_mut()
             .unwrap()
             .fluid
             .fill_edges_with_obstacles();
 
-        if s.borrow().as_ref().unwrap().enable_mouse_move {
+        if s0.borrow().as_ref().unwrap().enable_mouse_move {
             let mouse_move_cb = Rc::new(Closure::wrap(Box::new(move |e: web_sys::PointerEvent| {
                 let s = Rc::clone(&self_ref);
 
@@ -233,10 +237,12 @@ impl Scene {
                                 / delta_t;
 
                             web_sys::console::log_1(&JsValue::from(&format!(
-                                "mult: {}, delta_t: {}, {}",
+                                "mult: {}, delta_t: {}, {}, delta_x: {}, delta_y: {}",
                                 mult,
                                 delta_t,
-                                (s.mouse_radius + 1) as f64 / 2.0
+                                (s.mouse_radius + 1) as f64 / 2.0,
+                                delta_x,
+                                delta_y
                             )));
 
                             if fluid.b.get(xx, yy) == 0
@@ -260,35 +266,48 @@ impl Scene {
                 drop(s);
             }) as Box<dyn FnMut(_)>));
 
-            s.borrow_mut()
+            s0.borrow_mut()
                 .as_mut()
                 .unwrap()
                 .mouse_move_cb
                 .replace(Rc::clone(&mouse_move_cb));
 
-            s.borrow_mut()
+            s0.borrow_mut()
                 .as_mut()
                 .unwrap()
                 .canvas
                 .set_onpointermove(Some((*mouse_move_cb).as_ref().unchecked_ref()));
         }
 
-        // self.canvas.set_onpointerdown(Some(
-        //     Closure::wrap(Box::new(|_e: web_sys::PointerEvent| {
-        //         *self.is_mouse_down.borrow_mut() = true;
-        //     }) as Box<dyn FnMut(_)>)
-        //     .as_ref()
-        //     .unchecked_ref(),
-        // ));
-        //
-        // self.canvas.set_onpointerup(Some(
-        //     Closure::wrap(Box::new(|_e: web_sys::PointerEvent| {
-        //         *self.is_mouse_down.borrow_mut() = false;
-        //         *self.last_time.borrow_mut() = -1.0;
-        //     }) as Box<dyn FnMut(_)>)
-        //     .as_ref()
-        //     .unchecked_ref(),
-        // ));
+        let mouse_down_cb = Rc::new(Closure::wrap(Box::new(move |_e: web_sys::PointerEvent| {
+            let is_mouse_down = s1.borrow().as_ref().unwrap().is_mouse_down;
+
+            web_sys::console::log_1(&JsValue::from("mouse down"));
+
+            if let Ok(s) = s1.try_borrow_mut().as_mut() {
+                web_sys::console::log_1(&JsValue::from(&format!(
+                    "set mouse down to {}",
+                    !is_mouse_down
+                )));
+
+                s.as_mut().unwrap().is_mouse_down = !is_mouse_down;
+                if is_mouse_down {
+                    s1.borrow_mut().as_mut().unwrap().last_time = -1.0;
+                }
+            }
+        }) as Box<dyn FnMut(_)>));
+
+        s0.borrow_mut()
+            .as_mut()
+            .unwrap()
+            .canvas
+            .set_onpointerdown(Some((*mouse_down_cb).as_ref().unchecked_ref()));
+
+        s0.borrow_mut()
+            .as_mut()
+            .unwrap()
+            .canvas
+            .set_onpointerup(Some((*mouse_down_cb).as_ref().unchecked_ref()));
     }
 
     pub fn play(self_ref: Rc<RefCell<Option<Self>>>) {
@@ -350,10 +369,10 @@ impl Scene {
         self_ref.borrow_mut().as_mut().unwrap().animation_cb.take();
     }
 
-    pub fn toggle_playing(self_ref: Rc<RefCell<Option<Self>>>) {
-        let enable_playing = self_ref.borrow().as_ref().unwrap().enable_playing;
-        self_ref.borrow_mut().as_mut().unwrap().enable_playing = !enable_playing;
-    }
+    // pub fn toggle_playing(self_ref: Rc<RefCell<Option<Self>>>) {
+    //     let enable_playing = self_ref.borrow().as_ref().unwrap().enable_playing;
+    //     self_ref.borrow_mut().as_mut().unwrap().enable_playing = !enable_playing;
+    // }
 }
 
 impl Drop for Scene {
