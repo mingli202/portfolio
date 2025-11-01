@@ -42,12 +42,12 @@ impl Scene {
         let max_velocity =
             f64::min(canvas.width() as f64, canvas.height() as f64) * fluid.square_size;
 
-        let mouse_radius = 100.0 / fluid.square_size;
+        let mouse_radius = 50.0 / fluid.square_size;
 
         Scene {
             fluid,
             canvas,
-            mouse_radius: 0,
+            mouse_radius: mouse_radius as i32,
             subdivisions: 2,
             max_velocity,
             is_mouse_down: false,
@@ -67,7 +67,7 @@ impl Scene {
             show_gridlines: false,
             show_center_velocities: false,
             show_smoke: true,
-            show_velocity_colors: true,
+            show_velocity_colors: false,
         }
     }
 
@@ -330,9 +330,7 @@ impl Scene {
                                 / delta_t;
 
                             fluid.u.update(xx, yy, |u| u + mult * delta_x as f64);
-
                             fluid.v.update(xx, yy, |v| v + mult * delta_y as f64);
-
                             fluid.s.update(xx, yy, |sm| {
                                 f64::min(sm + mult * norm, s.max_velocity * 10.0)
                             });

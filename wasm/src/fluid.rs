@@ -59,7 +59,7 @@ impl Fluid {
         let delta_t = delta_t.unwrap_or(1_f64 / 30_f64);
         let overrelaxation_coefficient = overrelaxation_coefficient.unwrap_or(1.7);
 
-        let n = 0;
+        let n = 1;
         let block_offset = square_size * n as f64;
 
         let u = Grid::new(grid_width + 1 + 2 * n, grid_height + 2 * n);
