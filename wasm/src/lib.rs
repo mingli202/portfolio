@@ -131,3 +131,20 @@ pub fn clear_scene() {
         scene.borrow_mut().as_mut().unwrap().clear();
     });
 }
+
+#[wasm_bindgen]
+pub fn run_solve_divergence_for_all() {
+    SCENE.with(move |scene| {
+        if scene.borrow().is_none() {
+            return;
+        }
+
+        scene
+            .borrow_mut()
+            .as_mut()
+            .unwrap()
+            .fluid
+            .solve_divergence_for_all();
+        scene.borrow_mut().as_mut().unwrap().draw_next_frame();
+    });
+}

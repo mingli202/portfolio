@@ -50,7 +50,7 @@ impl Fluid {
         delta_t: Option<f64>,
         overrelaxation_coefficient: Option<f64>,
     ) -> Fluid {
-        let min_squares = min_squares.unwrap_or(10);
+        let min_squares = min_squares.unwrap_or(40);
 
         let h = u32::min(canvas.width(), canvas.height());
 
@@ -146,10 +146,6 @@ impl Fluid {
         }
 
         let divergence = (self.get_divergence(i, k) * self.overrelaxation_coefficient) / b as f64;
-        web_sys::console::log_1(&JsValue::from(&format!(
-            "divergence at ({}, {}): {}, b0: {}, b1: {}, b2: {}, b3: {}",
-            i, k, divergence, b0, b1, b2, b3
-        )));
 
         self.u.update(i, k, |v| v + divergence * b0 as f64);
         self.u.update(i + 1, k, |v| v - divergence * b1 as f64);
@@ -179,6 +175,7 @@ impl Fluid {
 
         self.next_u.set(i, k, next_val);
     }
+
     fn advect_v(&mut self, i: i32, k: i32) {
         if self.b.get(i, k - 1) == 0 {
             self.next_v.set(i, k, self.v.get(i, k));
@@ -207,7 +204,10 @@ impl Fluid {
         let previous_x = x - u * self.delta_t;
         let previous_y = y - v * self.delta_t;
 
-        let next_val = self.interpolate(previous_x, previous_y, Field::S);
+        let next_val = f64::max(
+            self.interpolate(previous_x, previous_y, Field::S) - 1.0,
+            0.0,
+        );
 
         self.next_s.set(i, k, next_val);
     }

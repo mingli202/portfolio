@@ -27,10 +27,8 @@ pub struct Scene {
 
     show_smoke: bool,
     show_velocity_colors: bool,
-    show_obstacles: bool,
     show_gridlines: bool,
     show_center_velocities: bool,
-    show_edge_velocities: bool,
 
     animation_id: Option<i32>,
 
@@ -46,8 +44,8 @@ impl Scene {
         Scene {
             fluid,
             canvas,
-            mouse_radius: 0,
-            subdivisions: 1,
+            mouse_radius: 2,
+            subdivisions: 2,
             max_velocity,
             is_mouse_down: false,
             last_time: -1.0,
@@ -60,15 +58,13 @@ impl Scene {
 
             enable_playing: true,
             enable_mouse_move: true,
-            enable_projection: false,
-            enable_advection: false,
+            enable_projection: true,
+            enable_advection: true,
 
-            show_obstacles: false,
-            show_gridlines: true,
-            show_center_velocities: true,
-            show_edge_velocities: false,
-            show_smoke: false,
-            show_velocity_colors: true,
+            show_gridlines: false,
+            show_center_velocities: false,
+            show_smoke: true,
+            show_velocity_colors: false,
         }
     }
 
@@ -162,10 +158,6 @@ impl Scene {
             .interpolate(xx + (i + 0.5) * scale, yy + (k + 0.5) * scale, Field::U);
 
         let length = f64::sqrt(v * v + u * u);
-        // web_sys::console::log_1(&JsValue::from(&format!("length: {length}")));
-        // web_sys::console::log_1(&JsValue::from(&format!(
-        //     "v: {v}, u: {u}, length: {length}"
-        // )));
 
         let hue = (240.0 - map(length, 0.0, self.max_velocity, 0.0, 240.0)).clamp(0.0, 240.0);
 
@@ -263,7 +255,7 @@ impl Scene {
 
         ctx.begin_path();
         ctx.move_to(x, y);
-        ctx.line_to(x + v, y + u);
+        ctx.line_to(x + u, y + v);
         ctx.close_path();
         ctx.stroke();
     }
@@ -319,31 +311,8 @@ impl Scene {
 
                     for i in 0..(s.mouse_radius * 2 + 1) {
                         for k in 0..(s.mouse_radius * 2 + 1) {
-                            let xx = x - (s.mouse_radius + i) as i32;
-                            let yy = y - (s.mouse_radius + k) as i32;
-
-                            let i = i as i32;
-                            let k = k as i32;
-                            let mult = gaussian(
-                                i - s.mouse_radius as i32,
-                                k - s.mouse_radius as i32,
-                                (s.mouse_radius + 1) as f64,
-                            ) * 2.0
-                                * 1000.0
-                                / delta_t;
-
-                            web_sys::console::log_1(&JsValue::from(&format!(
-                                "mult: {}, delta_t: {}, {}, delta_x: {}, delta_y: {}, u: {}, v: {}, new u: {}, new v: {}",
-                                mult,
-                                delta_t,
-                                (s.mouse_radius + 1) as f64 / 2.0,
-                                delta_x,
-                                delta_y,
-                                fluid.u.get(xx, yy),
-                                fluid.v.get(xx, yy),
-                                fluid.u.get(xx, yy) + mult * delta_x as f64,
-                                fluid.v.get(xx, yy) + mult * delta_y as f64
-                            )));
+                            let xx = x - (s.mouse_radius - i) as i32;
+                            let yy = y - (s.mouse_radius - k) as i32;
 
                             if fluid.b.get(xx, yy) == 0
                                 || fluid.b.get(xx - 1, yy) == 0
@@ -352,12 +321,22 @@ impl Scene {
                                 continue;
                             }
 
+                            let i = i as i32;
+                            let k = k as i32;
+                            let mult = gaussian(
+                                i - s.mouse_radius as i32,
+                                k - s.mouse_radius as i32,
+                                (s.mouse_radius + 1) as f64 / 4.0,
+                            ) * 2.0
+                                * 1000.0
+                                / delta_t;
+
                             fluid.u.update(xx, yy, |u| u + mult * delta_x as f64);
 
                             fluid.v.update(xx, yy, |v| v + mult * delta_y as f64);
 
                             fluid.s.update(xx, yy, |sm| {
-                                sm + f64::min(mult * norm, s.max_velocity * 1.5)
+                                f64::min(sm + mult * norm, s.max_velocity * 1.5)
                             });
                         }
                     }
@@ -375,32 +354,15 @@ impl Scene {
                 .set_onpointermove(Some((*mouse_move_cb).as_ref().unchecked_ref()));
         }
 
-        let mouse_down_cb = Rc::new(Closure::wrap(Box::new(move |e: web_sys::PointerEvent| {
-            web_sys::console::log_1(&JsValue::from("mouse down"));
-
+        let mouse_down_cb = Rc::new(Closure::wrap(Box::new(move |_e: web_sys::PointerEvent| {
             if let Ok(s) = s1.try_borrow_mut().as_mut() {
                 let s = s.as_mut().unwrap();
 
                 s.is_mouse_down = !s.is_mouse_down;
 
-                web_sys::console::log_1(&JsValue::from(&format!(
-                    "set mouse down to {}",
-                    s.is_mouse_down
-                )));
-
                 if !s.is_mouse_down {
                     s.last_time = -1.0;
                 }
-
-                let x = e.offset_x() as f64;
-                let y = e.offset_y() as f64;
-
-                let (xx, yy) = s.fluid.get_grid_indices_from_xy(x, y, None);
-
-                web_sys::console::log_1(&JsValue::from(&format!(
-                    "x: {}, y: {}, xx: {}, yy: {}",
-                    x, y, xx, yy
-                )));
             }
         }) as Box<dyn FnMut(_)>));
 
@@ -434,8 +396,6 @@ impl Scene {
                 s.then = now;
                 s.draw_next_frame();
             }
-
-            // web_sys::console::log_1(&JsValue::from(&format!("{now}")));
 
             let id = web_sys::window()
                 .unwrap()
