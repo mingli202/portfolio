@@ -11,6 +11,16 @@ export function FluidSimulation() {
   const [scene, setScene] = useState<Scene>();
 
   useEffect(() => {
+    if (/Mobi|Android/i.test(navigator.userAgent)) {
+      const ctx = canvas.current.getContext("2d");
+
+      if (!ctx) return;
+      ctx.fillStyle = "#211c32";
+      ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+
+      return;
+    }
+
     if (!useWasm) {
       canvas.current.width = window.innerWidth;
       canvas.current.height = window.innerHeight;
@@ -35,7 +45,7 @@ export function FluidSimulation() {
   return (
     <>
       <canvas
-        className="fixed top-0 left-0 -z-10 h-screen w-screen bg-black"
+        className="bg-background fixed top-0 left-0 -z-10 h-screen w-screen"
         ref={canvas}
       />
       {/* <div className="fixed top-0 left-0 -z-9 h-screen w-screen bg-black/0 backdrop-blur-md" /> */}
