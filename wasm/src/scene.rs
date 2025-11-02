@@ -585,10 +585,12 @@ impl Scene {
         s.animation_cb.take();
         s.mouse_move_cb.take();
         s.mouse_down_cb.take();
+        s.touch_move_cb.take();
 
         window.set_onpointermove(None);
         window.set_onpointerdown(None);
         window.set_onpointerup(None);
+        window.set_ontouchmove(None);
     }
 
     pub fn toggle_playing(self_ref: Rc<RefCell<Option<Self>>>) {
