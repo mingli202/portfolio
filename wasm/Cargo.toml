@@ -26,5 +26,8 @@ features = [
 	'console',
 	'Performance',
 	'Navigator',
+	'Touch',
+	'TouchEvent',
+	'TouchList',
 ]
 version = "0.3.82"

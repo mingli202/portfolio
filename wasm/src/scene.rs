@@ -7,6 +7,7 @@ use wasm_bindgen::prelude::*;
 
 type AnimationFrameCb = Rc<RefCell<Option<Closure<dyn FnMut(f64)>>>>;
 type MouseEventCb = Rc<Closure<dyn FnMut(web_sys::PointerEvent)>>;
+type TouchEventCb = Rc<Closure<dyn FnMut(web_sys::TouchEvent)>>;
 
 pub struct Scene {
     pub fluid: Fluid,
@@ -35,6 +36,7 @@ pub struct Scene {
     animation_cb: Option<AnimationFrameCb>,
     mouse_move_cb: Option<MouseEventCb>,
     mouse_down_cb: Option<MouseEventCb>,
+    touch_move_cb: Option<TouchEventCb>,
 }
 
 impl Scene {
@@ -58,6 +60,7 @@ impl Scene {
             animation_cb: None,
             mouse_move_cb: None,
             mouse_down_cb: None,
+            touch_move_cb: None,
 
             enable_playing: true,
             enable_mouse_move: true,
@@ -289,6 +292,7 @@ impl Scene {
     pub fn init(self_ref: Rc<RefCell<Option<Self>>>) {
         let s0 = Rc::clone(&self_ref);
         let s1 = Rc::clone(&self_ref);
+        let s2 = Rc::clone(&self_ref);
 
         s0.borrow_mut()
             .as_mut()
@@ -367,14 +371,98 @@ impl Scene {
                 drop(s);
             }) as Box<dyn FnMut(_)>));
 
+            let touch_move_cb = Rc::new(Closure::wrap(Box::new(move |e: web_sys::TouchEvent| {
+                let s = Rc::clone(&s2);
+
+                if let Ok(s) = s.try_borrow_mut().as_mut() {
+                    let s = s.as_mut().unwrap();
+
+                    if !s.enable_playing {
+                        return;
+                    }
+                    let changed_touches = e.changed_touches();
+                    let last_touch = changed_touches.get(changed_touches.length() - 1);
+
+                    drop(changed_touches);
+
+                    if last_touch.is_none() {
+                        drop(last_touch);
+                        return;
+                    }
+
+                    let touch = last_touch.unwrap();
+
+                    if s.last_time <= 0.0 {
+                        s.last_time = e.time_stamp();
+                        s.last_mouse_xy = (touch.client_x(), touch.client_y());
+                        return;
+                    }
+
+                    let fluid = &mut s.fluid;
+
+                    let delta_t = e.time_stamp() - s.last_time;
+
+                    s.last_time = e.time_stamp();
+
+                    let delta_x = touch.client_x() - s.last_mouse_xy.0;
+                    let delta_y = touch.client_y() - s.last_mouse_xy.1;
+
+                    let norm = f64::sqrt((delta_x * delta_x + delta_y * delta_y) as f64);
+
+                    s.last_mouse_xy = (touch.client_x(), touch.client_y());
+
+                    let (x, y) = fluid.get_grid_indices_from_xy(
+                        touch.client_x() as f64,
+                        touch.client_y() as f64,
+                        None,
+                    );
+
+                    if fluid.b.get(x, y) == 0 {
+                        return;
+                    }
+
+                    for i in 0..(s.mouse_radius * 2 + 1) {
+                        for k in 0..(s.mouse_radius * 2 + 1) {
+                            let xx = x - s.mouse_radius + i;
+                            let yy = y - s.mouse_radius + k;
+
+                            if fluid.b.get(xx, yy) == 0
+                                || fluid.b.get(xx - 1, yy) == 0
+                                || fluid.b.get(xx, yy - 1) == 0
+                            {
+                                continue;
+                            }
+
+                            let mult = gaussian(
+                                i - s.mouse_radius,
+                                k - s.mouse_radius,
+                                s.mouse_radius as f64 / 2.0,
+                            ) * 2.0
+                                * 1000.0
+                                / delta_t;
+
+                            fluid.u.update(xx, yy, |u| u + mult * delta_x as f64);
+                            fluid.v.update(xx, yy, |v| v + mult * delta_y as f64);
+                            fluid.s.update(xx, yy, |sm| {
+                                f64::min(sm + mult * norm * 3.0, s.max_velocity * 3.0)
+                            });
+                        }
+                    }
+                    drop(touch)
+                }
+
+                drop(s);
+            }) as Box<dyn FnMut(_)>));
+
             let s = &mut s0.borrow_mut();
             let s = s.as_mut().unwrap();
 
             s.mouse_move_cb.replace(Rc::clone(&mouse_move_cb));
+            s.touch_move_cb.replace(Rc::clone(&touch_move_cb));
 
-            web_sys::window()
-                .unwrap()
-                .set_onpointermove(Some((*mouse_move_cb).as_ref().unchecked_ref()));
+            let window = web_sys::window().unwrap();
+            window.set_onpointermove(Some((*mouse_move_cb).as_ref().unchecked_ref()));
+            window.set_ontouchmove(Some((*touch_move_cb).as_ref().unchecked_ref()));
         }
 
         let mouse_down_cb = Rc::new(Closure::wrap(Box::new(move |e: web_sys::PointerEvent| {
