@@ -33,15 +33,14 @@ export function FluidSimulation() {
       setScene(scene);
     } else {
       main();
-      // next_frame();
       play();
-      window.play = play;
-      window.nextFrame = next_frame;
-      window.printFluidInfo = print_fluid_info;
-      window.clearScene = clear_scene;
-      window.runProjection = run_projection;
-      window.runAdvection = run_advection;
-      window.runSolveDivergenceForAll = run_solve_divergence_for_all;
+      // window.play = play;
+      // window.nextFrame = next_frame;
+      // window.printFluidInfo = print_fluid_info;
+      // window.clearScene = clear_scene;
+      // window.runProjection = run_projection;
+      // window.runAdvection = run_advection;
+      // window.runSolveDivergenceForAll = run_solve_divergence_for_all;
     }
 
     return () => {
@@ -53,7 +52,7 @@ export function FluidSimulation() {
   return (
     <>
       <canvas
-        className="fixed top-0 left-0 z-10 h-screen w-screen bg-black"
+        className="fixed top-0 left-0 -z-10 h-screen w-screen bg-black"
         ref={canvas}
       />
       {!useWasm && scene && <HelperMenu scene={scene} />}
