@@ -5,6 +5,7 @@ mod util;
 
 use self::fluid::FluidSimulation;
 use self::scene::Scene;
+use self::util::is_mobile;
 use std::cell::RefCell;
 use std::rc::Rc;
 use wasm_bindgen::prelude::*;
@@ -16,6 +17,10 @@ thread_local! {
 #[wasm_bindgen]
 pub fn main() {
     console_error_panic_hook::set_once();
+
+    if is_mobile() {
+        return;
+    }
 
     SCENE.with(move |s| {
         let document = web_sys::window().unwrap().document().unwrap();
@@ -41,6 +46,9 @@ pub fn main() {
 
 #[wasm_bindgen]
 pub fn play() {
+    if is_mobile() {
+        return;
+    }
     SCENE.with(move |scene| {
         if scene.borrow().is_none() {
             return;
@@ -74,6 +82,9 @@ pub fn toggle_playing() {
 
 #[wasm_bindgen]
 pub fn stop() {
+    if is_mobile() {
+        return;
+    }
     SCENE.with(move |scene| {
         if scene.borrow().is_none() {
             return;
