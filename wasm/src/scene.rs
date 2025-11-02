@@ -48,7 +48,7 @@ impl Scene {
             fluid,
             canvas,
             mouse_radius: mouse_radius as i32,
-            subdivisions: 2,
+            subdivisions: 1,
             max_velocity,
             is_mouse_down: false,
             last_time: -1.0,
@@ -280,12 +280,12 @@ impl Scene {
                 if let Ok(s) = s.try_borrow_mut().as_mut() {
                     let s = s.as_mut().unwrap();
 
-                    if !s.enable_playing || !s.is_mouse_down {
+                    if !s.enable_playing {
                         return;
                     }
                     if s.last_time <= 0.0 {
                         s.last_time = e.time_stamp();
-                        s.last_mouse_xy = (e.offset_x(), e.offset_y());
+                        s.last_mouse_xy = (e.client_x(), e.client_y());
                         return;
                     }
 
@@ -295,16 +295,16 @@ impl Scene {
 
                     s.last_time = e.time_stamp();
 
-                    let delta_x = e.offset_x() - s.last_mouse_xy.0;
-                    let delta_y = e.offset_y() - s.last_mouse_xy.1;
+                    let delta_x = e.client_x() - s.last_mouse_xy.0;
+                    let delta_y = e.client_y() - s.last_mouse_xy.1;
 
                     let norm = f64::sqrt((delta_x * delta_x + delta_y * delta_y) as f64);
 
-                    s.last_mouse_xy = (e.offset_x(), e.offset_y());
+                    s.last_mouse_xy = (e.client_x(), e.client_y());
 
                     let (x, y) = fluid.get_grid_indices_from_xy(
-                        e.offset_x() as f64,
-                        e.offset_y() as f64,
+                        e.client_x() as f64,
+                        e.client_y() as f64,
                         None,
                     );
 
@@ -324,15 +324,18 @@ impl Scene {
                                 continue;
                             }
 
-                            let mult = gaussian(i - s.mouse_radius, k - s.mouse_radius, 0.1)
-                                * 2.0
+                            let mult = gaussian(
+                                i - s.mouse_radius,
+                                k - s.mouse_radius,
+                                s.mouse_radius as f64 / 2.0,
+                            ) * 2.0
                                 * 1000.0
                                 / delta_t;
 
                             fluid.u.update(xx, yy, |u| u + mult * delta_x as f64);
                             fluid.v.update(xx, yy, |v| v + mult * delta_y as f64);
                             fluid.s.update(xx, yy, |sm| {
-                                f64::min(sm + mult * norm, s.max_velocity * 10.0)
+                                f64::min(sm + mult * norm * 3.0, s.max_velocity * 3.0)
                             });
                         }
                     }
@@ -346,11 +349,12 @@ impl Scene {
 
             s.mouse_move_cb.replace(Rc::clone(&mouse_move_cb));
 
-            s.canvas
+            web_sys::window()
+                .unwrap()
                 .set_onpointermove(Some((*mouse_move_cb).as_ref().unchecked_ref()));
         }
 
-        let mouse_down_cb = Rc::new(Closure::wrap(Box::new(move |_e: web_sys::PointerEvent| {
+        let mouse_down_cb = Rc::new(Closure::wrap(Box::new(move |e: web_sys::PointerEvent| {
             if let Ok(s) = s1.try_borrow_mut().as_mut() {
                 let s = s.as_mut().unwrap();
 
@@ -358,6 +362,38 @@ impl Scene {
 
                 if !s.is_mouse_down {
                     s.last_time = -1.0;
+                } else {
+                    let fluid = &mut s.fluid;
+
+                    let (x, y) = fluid.get_grid_indices_from_xy(
+                        e.client_x() as f64,
+                        e.client_y() as f64,
+                        None,
+                    );
+
+                    for i in 0..(s.mouse_radius * 2 + 1) {
+                        for k in 0..(s.mouse_radius * 2 + 1) {
+                            let xx = x - s.mouse_radius + i;
+                            let yy = y - s.mouse_radius + k;
+
+                            if fluid.b.get(xx, yy) == 0
+                                || fluid.b.get(xx - 1, yy) == 0
+                                || fluid.b.get(xx, yy - 1) == 0
+                            {
+                                continue;
+                            }
+
+                            let mult = gaussian(
+                                i - s.mouse_radius,
+                                k - s.mouse_radius,
+                                s.mouse_radius as f64 / 2.0,
+                            );
+
+                            fluid
+                                .s
+                                .update(xx, yy, |sm| sm + mult * s.max_velocity * 1.5);
+                        }
+                    }
                 }
             }
         }) as Box<dyn FnMut(_)>));
@@ -367,10 +403,12 @@ impl Scene {
 
         s.mouse_down_cb.replace(Rc::clone(&mouse_down_cb));
 
-        s.canvas
+        web_sys::window()
+            .unwrap()
             .set_onpointerdown(Some((*mouse_down_cb).as_ref().unchecked_ref()));
 
-        s.canvas
+        web_sys::window()
+            .unwrap()
             .set_onpointerup(Some((*mouse_down_cb).as_ref().unchecked_ref()));
     }
 
@@ -380,24 +418,25 @@ impl Scene {
         let s = Rc::clone(&self_ref);
 
         *g.borrow_mut() = Some(Closure::wrap(Box::new(move |now: f64| {
-            let s = &mut s.borrow_mut();
-            let s = s.as_mut().unwrap();
+            if let Ok(s) = s.try_borrow_mut().as_mut() {
+                let s = s.as_mut().unwrap();
 
-            if !s.enable_playing {
-                return;
+                if !s.enable_playing {
+                    return;
+                }
+
+                let delta = now - s.then;
+                if delta > s.fluid.delta_t * 1000.0 {
+                    s.then = now;
+                    s.draw_next_frame();
+                }
+
+                let id = web_sys::window()
+                    .unwrap()
+                    .request_animation_frame(f.borrow().as_ref().unwrap().as_ref().unchecked_ref())
+                    .expect("recusrive request_animation_frame error");
+                s.animation_id.replace(id);
             }
-
-            let delta = now - s.then;
-            if delta > s.fluid.delta_t * 1000.0 {
-                s.then = now;
-                s.draw_next_frame();
-            }
-
-            let id = web_sys::window()
-                .unwrap()
-                .request_animation_frame(f.borrow().as_ref().unwrap().as_ref().unchecked_ref())
-                .expect("recusrive request_animation_frame error");
-            s.animation_id.replace(id);
         }) as Box<dyn FnMut(f64)>));
 
         self_ref

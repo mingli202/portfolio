@@ -46,7 +46,7 @@ impl Fluid {
         delta_t: Option<f64>,
         overrelaxation_coefficient: Option<f64>,
     ) -> Fluid {
-        let min_squares = min_squares.unwrap_or(50);
+        let min_squares = min_squares.unwrap_or(100);
 
         let h = u32::min(canvas.width(), canvas.height());
 
@@ -201,7 +201,7 @@ impl Fluid {
         let previous_y = y - v * self.delta_t;
 
         let next_val = f64::max(
-            self.interpolate(previous_x, previous_y, Field::S) - 1.0,
+            self.interpolate(previous_x, previous_y, Field::S) / 1.1 - 0.1,
             0.0,
         );
 
