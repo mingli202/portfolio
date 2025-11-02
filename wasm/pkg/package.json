@@ -1,0 +1,20 @@
+{
+  "name": "wasm",
+  "type": "module",
+  "collaborators": [
+    "mingli202 <vincentmingli@gmail.com>"
+  ],
+  "version": "0.1.0",
+  "files": [
+    "wasm_bg.wasm",
+    "wasm.js",
+    "wasm_bg.js",
+    "wasm.d.ts"
+  ],
+  "main": "wasm.js",
+  "types": "wasm.d.ts",
+  "sideEffects": [
+    "./wasm.js",
+    "./snippets/*"
+  ]
+}
