@@ -483,25 +483,28 @@ impl Scene {
     }
 
     pub fn stop(self_ref: Rc<RefCell<Option<Self>>>) {
-        let id = self_ref.borrow_mut().as_mut().unwrap().animation_id.take();
+        let s = &mut self_ref.borrow_mut();
+        let s = s.as_mut().unwrap();
+
+        let id = s.animation_id.take();
+        let window = web_sys::window().unwrap();
+
         if let Some(id) = id {
-            web_sys::window()
-                .unwrap()
+            window
                 .cancel_animation_frame(id)
                 .expect("cancel_animation_frame error");
         }
-        self_ref.borrow_mut().as_mut().unwrap().animation_cb.take();
+        s.animation_cb.take();
+        s.mouse_move_cb.take();
+        s.mouse_down_cb.take();
+
+        window.set_onpointermove(None);
+        window.set_onpointerdown(None);
+        window.set_onpointerup(None);
     }
 
     pub fn toggle_playing(self_ref: Rc<RefCell<Option<Self>>>) {
         let enable_playing = self_ref.borrow().as_ref().unwrap().enable_playing;
         self_ref.borrow_mut().as_mut().unwrap().enable_playing = !enable_playing;
-    }
-}
-
-impl Drop for Scene {
-    fn drop(&mut self) {
-        self.clear();
-        self.canvas.set_onpointermove(None);
     }
 }
