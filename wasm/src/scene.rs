@@ -2,7 +2,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::fluid::{Field, Fluid, FluidSimulation};
-use crate::util::{gaussian, map};
+use crate::util::{gaussian, is_mobile, map};
 use wasm_bindgen::prelude::*;
 
 type AnimationFrameCb = Rc<RefCell<Option<Closure<dyn FnMut(f64)>>>>;
@@ -42,7 +42,7 @@ impl Scene {
         let max_velocity =
             f64::min(canvas.width() as f64, canvas.height() as f64) * fluid.square_size;
 
-        let mouse_radius = 50.0 / fluid.square_size;
+        let mouse_radius = if is_mobile() { 30.0 } else { 50.0 } / fluid.square_size;
 
         Scene {
             fluid,

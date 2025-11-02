@@ -1,4 +1,5 @@
 use crate::grid::Grid;
+use crate::util::is_mobile;
 
 #[derive(Debug, Clone)]
 pub enum Field {
@@ -42,11 +43,11 @@ impl Fluid {
         delta_t: Option<f64>,
         overrelaxation_coefficient: Option<f64>,
     ) -> Fluid {
-        let min_squares = min_squares.unwrap_or(100);
+        let max_squares = min_squares.unwrap_or(if is_mobile() { 50 } else { 100 });
 
         let h = u32::max(canvas.width(), canvas.height());
 
-        let square_size: f64 = h as f64 / min_squares as f64;
+        let square_size: f64 = h as f64 / max_squares as f64;
 
         let grid_width = (canvas.width() as f64 / square_size).ceil() as usize;
         let grid_height = (canvas.height() as f64 / square_size).ceil() as usize;

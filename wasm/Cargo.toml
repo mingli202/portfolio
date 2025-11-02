@@ -25,5 +25,6 @@ features = [
 	'EventListener',
 	'console',
 	'Performance',
+	'Navigator',
 ]
 version = "0.3.82"
