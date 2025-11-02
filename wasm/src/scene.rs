@@ -188,9 +188,32 @@ impl Scene {
             .fluid
             .interpolate(xx + (i + 0.5) * scale, yy + (k + 0.5) * scale, Field::S);
 
-        let rgb_val = (s / self.max_velocity).clamp(0.0, 1.0) * 255.0;
+        let hue = map(
+            (s / self.max_velocity).clamp(0.0, 1.0),
+            0.0,
+            1.0,
+            253.64,
+            249.0,
+        );
 
-        ctx.set_fill_style_str(&format!("rgb({rgb_val}, {rgb_val}, {rgb_val}, 1)"));
+        let saturation = map(
+            (s / self.max_velocity).clamp(0.0, 1.0),
+            0.0,
+            1.0,
+            28.2,
+            100.0,
+        );
+        let lightness = map(
+            (s / self.max_velocity).clamp(0.0, 1.0),
+            0.0,
+            1.0,
+            15.20,
+            80.0,
+        );
+
+        let hsl = format!("hsl({:.2}, {:.2}%, {:.2}%)", hue, saturation, lightness);
+
+        ctx.set_fill_style_str(&hsl);
         ctx.fill_rect(xx + (i * scale), yy + (k * scale), scale + 1.0, scale + 1.0);
     }
 
