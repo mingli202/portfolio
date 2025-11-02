@@ -1,7 +1,3 @@
-use std::process::exit;
-
-use wasm_bindgen::JsValue;
-
 use crate::grid::Grid;
 
 #[derive(Debug, Clone)]
@@ -48,7 +44,7 @@ impl Fluid {
     ) -> Fluid {
         let min_squares = min_squares.unwrap_or(100);
 
-        let h = u32::min(canvas.width(), canvas.height());
+        let h = u32::max(canvas.width(), canvas.height());
 
         let square_size: f64 = h as f64 / min_squares as f64;
 
