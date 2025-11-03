@@ -42,7 +42,7 @@ impl Fluid {
         delta_t: Option<f64>,
         overrelaxation_coefficient: Option<f64>,
     ) -> Fluid {
-        let max_squares = min_squares.unwrap_or(120);
+        let max_squares = min_squares.unwrap_or(100);
 
         let h = u32::max(canvas.width(), canvas.height());
 
