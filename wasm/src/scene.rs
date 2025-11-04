@@ -7,6 +7,7 @@ use wasm_bindgen::prelude::*;
 
 type AnimationFrameCb = Rc<RefCell<Option<Closure<dyn FnMut(f64)>>>>;
 type MouseEventCb = Rc<Closure<dyn FnMut(web_sys::PointerEvent)>>;
+type ResizeEventCb = Rc<Closure<dyn FnMut(web_sys::Event)>>;
 
 pub struct Scene {
     pub fluid: Fluid,
@@ -35,6 +36,7 @@ pub struct Scene {
     animation_cb: Option<AnimationFrameCb>,
     mouse_move_cb: Option<MouseEventCb>,
     mouse_down_cb: Option<MouseEventCb>,
+    resize_cb: Option<ResizeEventCb>,
 }
 
 impl Scene {
@@ -58,6 +60,7 @@ impl Scene {
             animation_cb: None,
             mouse_move_cb: None,
             mouse_down_cb: None,
+            resize_cb: None,
 
             enable_playing: true,
             enable_mouse_move: true,
@@ -289,6 +292,7 @@ impl Scene {
     pub fn init(self_ref: Rc<RefCell<Option<Self>>>) {
         let s0 = Rc::clone(&self_ref);
         let s1 = Rc::clone(&self_ref);
+        let s2 = Rc::clone(&self_ref);
 
         s0.borrow_mut()
             .as_mut()
@@ -433,6 +437,33 @@ impl Scene {
         web_sys::window()
             .unwrap()
             .set_onpointerup(Some((*mouse_down_cb).as_ref().unchecked_ref()));
+
+        let resize_cb = Rc::new(Closure::wrap(Box::new(move |e: web_sys::Event| {
+            if let Ok(s) = s2.try_borrow_mut().as_mut() {
+                let s = s.as_mut().unwrap();
+
+                let width = web_sys::window()
+                    .unwrap()
+                    .inner_width()
+                    .unwrap()
+                    .as_f64()
+                    .unwrap();
+                let height = web_sys::window()
+                    .unwrap()
+                    .inner_height()
+                    .unwrap()
+                    .as_f64()
+                    .unwrap();
+
+                s.fluid.resize(width, height);
+            }
+        }) as Box<dyn FnMut(_)>));
+
+        s.resize_cb.replace(Rc::clone(&resize_cb));
+
+        web_sys::window()
+            .unwrap()
+            .set_onresize(Some((*resize_cb).as_ref().unchecked_ref()));
     }
 
     pub fn play(self_ref: Rc<RefCell<Option<Self>>>) {

@@ -214,13 +214,13 @@ impl Fluid {
         self.s.fill(0.0);
     }
 
-    pub fn resize(&mut self, width: u32, height: u32) {
-        let h = u32::max(width, height);
-        let square_size: f64 = h as f64 / self.max_squares as f64;
+    pub fn resize(&mut self, width: f64, height: f64) {
+        let h = f64::max(width, height);
+        let square_size: f64 = h / self.max_squares as f64;
         self.square_size = square_size;
 
-        let grid_width = (width as f64 / square_size).ceil() as usize;
-        let grid_height = (height as f64 / square_size).ceil() as usize;
+        let grid_width = (width / square_size).ceil() as usize;
+        let grid_height = (height / square_size).ceil() as usize;
 
         self.grid_width = grid_width;
         self.grid_height = grid_height;
