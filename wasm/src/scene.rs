@@ -30,9 +30,9 @@ pub struct Scene {
     show_velocity_colors: bool,
     show_gridlines: bool,
     show_center_velocities: bool,
+    ready: bool,
 
     animation_id: Option<i32>,
-
     animation_cb: Option<AnimationFrameCb>,
     mouse_move_cb: Option<MouseEventCb>,
     mouse_down_cb: Option<MouseEventCb>,
@@ -56,6 +56,7 @@ impl Scene {
             last_time: -1.0,
             last_mouse_xy: (0, 0),
             then: 0.0,
+            ready: false,
             animation_id: None,
             animation_cb: None,
             mouse_move_cb: None,
@@ -187,9 +188,12 @@ impl Scene {
 
         let (xx, yy) = self.fluid.get_xy_from_grid_indices(x, y, None);
 
-        let s = self
-            .fluid
-            .interpolate(xx + (i + 0.5) * scale, yy + (k + 0.5) * scale, Field::S);
+        let s = if self.ready {
+            self.fluid
+                .interpolate(xx + (i + 0.5) * scale, yy + (k + 0.5) * scale, Field::S)
+        } else {
+            0.0
+        };
 
         let hue = map(
             (s / self.max_velocity).clamp(0.0, 1.0),
@@ -289,6 +293,43 @@ impl Scene {
         ctx.stroke();
     }
 
+    pub fn adjust_to_device_performance(&mut self) {
+        let window = web_sys::window().unwrap();
+
+        let now = window.performance().unwrap().now();
+        self.draw_next_frame();
+        let then = window.performance().unwrap().now();
+
+        let mut elapsed = (then - now) / 800.0;
+
+        while elapsed > self.fluid.delta_t {
+            let scale = (elapsed / self.fluid.delta_t).sqrt();
+            let lower_count = self.fluid.max_squares as f64 / scale;
+            self.fluid.max_squares = lower_count as usize;
+
+            web_sys::console::log_1(
+                &format!(
+                    "time to next frame: {}, lowering to {}",
+                    elapsed, self.fluid.max_squares
+                )
+                .into(),
+            );
+
+            self.fluid
+                .resize(self.canvas.width() as f64, self.canvas.height() as f64);
+
+            let now = window.performance().unwrap().now();
+            self.draw_next_frame();
+            let then = window.performance().unwrap().now();
+
+            elapsed = (then - now) / 800.0;
+        }
+
+        self.mouse_radius = self.fluid.max_squares as i32 / 20;
+
+        self.ready = true;
+    }
+
     pub fn init(self_ref: Rc<RefCell<Option<Self>>>) {
         let s0 = Rc::clone(&self_ref);
         let s1 = Rc::clone(&self_ref);
@@ -300,6 +341,11 @@ impl Scene {
             .fluid
             .fill_edges_with_obstacles();
 
+        s0.borrow_mut()
+            .as_mut()
+            .unwrap()
+            .adjust_to_device_performance();
+
         if s0.borrow().as_ref().unwrap().enable_mouse_move {
             let mouse_move_cb = Rc::new(Closure::wrap(Box::new(move |e: web_sys::PointerEvent| {
                 let s = Rc::clone(&self_ref);
@@ -307,7 +353,7 @@ impl Scene {
                 if let Ok(s) = s.try_borrow_mut().as_mut() {
                     let s = s.as_mut().unwrap();
 
-                    if !s.enable_playing {
+                    if !s.enable_playing || !s.ready {
                         return;
                     }
                     if s.last_time <= 0.0 {
@@ -384,6 +430,10 @@ impl Scene {
         let mouse_down_cb = Rc::new(Closure::wrap(Box::new(move |e: web_sys::PointerEvent| {
             if let Ok(s) = s1.try_borrow_mut().as_mut() {
                 let s = s.as_mut().unwrap();
+
+                if !s.ready {
+                    return;
+                }
 
                 s.is_mouse_down = !s.is_mouse_down;
 
