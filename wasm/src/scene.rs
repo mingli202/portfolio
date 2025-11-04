@@ -44,12 +44,12 @@ impl Scene {
         let max_velocity =
             f64::min(canvas.width() as f64, canvas.height() as f64) * fluid.square_size;
 
-        let mouse_radius = 50.0 / fluid.square_size;
+        let mouse_radius = fluid.max_squares as i32 / 20;
 
         Scene {
             fluid,
             canvas,
-            mouse_radius: mouse_radius as i32,
+            mouse_radius,
             subdivisions: 1,
             max_velocity,
             is_mouse_down: false,
@@ -448,12 +448,16 @@ impl Scene {
                     .unwrap()
                     .as_f64()
                     .unwrap();
+
                 let height = web_sys::window()
                     .unwrap()
                     .inner_height()
                     .unwrap()
                     .as_f64()
                     .unwrap();
+
+                s.canvas.set_width(width as u32);
+                s.canvas.set_height(height as u32);
 
                 s.fluid.resize(width, height);
             }
