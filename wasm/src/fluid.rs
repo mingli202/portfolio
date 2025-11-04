@@ -24,12 +24,14 @@ pub struct Fluid {
     pub next_v: Grid<f64>, // velocity in y direction
     pub next_s: Grid<f64>, // smoke (density)
 
+    pub n: usize,
     pub square_size: f64,
     pub n_iterations: usize,
     pub delta_t: f64,
     pub overrelaxation_coefficient: f64,
     pub grid_width: usize,
     pub grid_height: usize,
+    pub max_squares: usize,
 
     pub block_offset: f64,
 }
@@ -78,6 +80,8 @@ impl Fluid {
             block_offset,
             grid_width,
             grid_height,
+            max_squares,
+            n,
 
             square_size,
             n_iterations,
@@ -208,6 +212,33 @@ impl Fluid {
         self.u.fill(0.0);
         self.v.fill(0.0);
         self.s.fill(0.0);
+    }
+
+    pub fn resize(&mut self, width: u32, height: u32) {
+        let h = u32::max(width, height);
+        let square_size: f64 = h as f64 / self.max_squares as f64;
+        self.square_size = square_size;
+
+        let grid_width = (width as f64 / square_size).ceil() as usize;
+        let grid_height = (height as f64 / square_size).ceil() as usize;
+
+        self.grid_width = grid_width;
+        self.grid_height = grid_height;
+
+        self.u
+            .resize(grid_width + 2 * self.n + 1, grid_height + 2 * self.n);
+        self.v
+            .resize(grid_width + 2 * self.n, grid_height + 2 * self.n + 1);
+        self.s
+            .resize(grid_width + 2 * self.n, grid_height + 2 * self.n);
+        self.b
+            .resize(grid_width + 2 * self.n, grid_height + 2 * self.n);
+
+        self.next_u.resize(self.u.width(), self.u.height());
+        self.next_v.resize(self.v.width(), self.v.height());
+        self.next_s.resize(self.s.width(), self.s.height());
+
+        self.fill_edges_with_obstacles();
     }
 }
 

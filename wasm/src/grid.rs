@@ -67,6 +67,14 @@ impl<T: Default + Copy> Grid<T> {
     pub fn swap(&mut self, other: &mut Grid<T>) {
         std::mem::swap(&mut self.grid, &mut other.grid);
     }
+
+    pub fn resize(&mut self, width: usize, height: usize) {
+        self.grid.resize(width, vec![T::default(); self.height()]);
+
+        for i in 0..self.grid.len() {
+            self.grid[i].resize(height, T::default());
+        }
+    }
 }
 
 impl<T: Debug> Debug for Grid<T> {
