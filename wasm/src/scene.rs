@@ -438,7 +438,7 @@ impl Scene {
             .unwrap()
             .set_onpointerup(Some((*mouse_down_cb).as_ref().unchecked_ref()));
 
-        let resize_cb = Rc::new(Closure::wrap(Box::new(move |e: web_sys::Event| {
+        let resize_cb = Rc::new(Closure::wrap(Box::new(move |_e: web_sys::Event| {
             if let Ok(s) = s2.try_borrow_mut().as_mut() {
                 let s = s.as_mut().unwrap();
 
