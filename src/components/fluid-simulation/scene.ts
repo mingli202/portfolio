@@ -16,7 +16,7 @@ export class Scene {
   enableMouseMove: boolean = false;
   enableProjection: boolean = true;
   enableAdvection: boolean = true;
-  enablePlaying: boolean = true;
+  enablePlaying: boolean = false;
 
   lastMousePosition: [number, number] = [-1, -1];
   lastTime: DOMHighResTimeStamp = 0;
@@ -26,7 +26,7 @@ export class Scene {
   lineWidth: number = 1;
 
   start: DOMHighResTimeStamp = 0;
-  mouseRadius: number = 1;
+  mouseRadius: number = 2;
 
   subdivisions: number = 2;
   maxVelocity: number;
@@ -40,7 +40,9 @@ export class Scene {
     this.fluid = fluid;
     this.subdivisions = subdivisions;
 
-    this.maxVelocity = 30 * this.fluid.squareSize;
+    this.maxVelocity =
+      Math.min(this.fluid.gridHeight, this.fluid.gridWidth) *
+      this.fluid.squareSize;
 
     this.canvas.onpointerdown = () => {
       this.isMouseDown = true;
@@ -326,13 +328,13 @@ export class Scene {
 
     const deltaT = e.timeStamp - this.lastTime;
 
-    if (deltaT < this.fluid.deltaT * 1000) {
-      return;
-    }
     this.lastTime = e.timeStamp;
 
     const deltaX = e.offsetX - this.lastMousePosition[0];
     const deltaY = e.offsetY - this.lastMousePosition[1];
+
+    console.log(deltaX, deltaY);
+
     const norm = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
     this.lastMousePosition = [e.offsetX, e.offsetY];
@@ -364,14 +366,24 @@ export class Scene {
             (deltaT / 1000)) *
           2;
 
+        console.log(
+          `v: ${v}, deltaT: ${deltaT}, deltaX: ${deltaX}, deltaY: ${deltaY}`,
+        );
+
         this.fluid.v.set(xx, yy, (val) => val + deltaY * v);
         this.fluid.u.set(xx, yy, (val) => val + deltaX * v);
-        this.fluid.s.set(xx, yy, (val) => val + norm * v);
+        this.fluid.s.set(xx, yy, (val) =>
+          Math.min(val + norm * v, this.maxVelocity * 1.5),
+        );
       }
     }
   }
 
-  public gaussian(x: number, y: number, sigma: number = 10) {
+  public gaussian(
+    x: number,
+    y: number,
+    sigma: number = (this.mouseRadius + 1) / 2,
+  ) {
     return Math.exp(-(x * x + y * y) / (2 * sigma * sigma));
   }
 
@@ -405,12 +417,7 @@ export class Scene {
 
           ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
 
-          ctx.fillRect(
-            xx + i * scale,
-            yy + k * scale,
-            this.fluid.squareSize,
-            this.fluid.squareSize,
-          );
+          ctx.fillRect(xx + i * scale, yy + k * scale, scale + 1, scale + 1);
         }
       }
     });
@@ -418,7 +425,6 @@ export class Scene {
 
   public drawSmoke() {
     const ctx = this.canvas.getContext("2d")!;
-    ctx.lineWidth = this.lineWidth;
 
     const scale = this.fluid.squareSize / this.subdivisions;
 
@@ -428,8 +434,8 @@ export class Scene {
           const [xx, yy] = this.fluid.getCanvasPointFromGridPoint([x, y]);
 
           const v = this.fluid.interpolate(
-            xx + i * scale,
-            yy + k * scale,
+            xx + (i + 1 / 2) * scale,
+            yy + (k + 1 / 2) * scale,
             Field.S,
           );
 
@@ -465,5 +471,11 @@ export class Scene {
   public clear() {
     this.fluid.clear();
     this.drawNextFrame();
+  }
+
+  public destroy() {
+    this.canvas.onpointermove = null;
+    this.canvas.onpointerdown = null;
+    this.canvas.onpointerup = null;
   }
 }

@@ -1,0 +1,33 @@
+[package]
+name = "wasm"
+version = "0.1.0"
+edition = "2024"
+authors = ["mingli202 <vincentmingli@gmail.com>"]
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+console_error_panic_hook = "0.1.7"
+wasm-bindgen = "0.2.105"
+
+[dependencies.web-sys]
+features = [
+	'CanvasRenderingContext2d',
+	'Document',
+	'Element',
+	'HtmlCanvasElement',
+	'Window',
+	'EventTarget',
+	'PointerEvent',
+	'HtmlElement',
+	'EventListener',
+	'console',
+	'Performance',
+	'Navigator',
+	'Touch',
+	'TouchEvent',
+	'TouchList',
+]
+version = "0.3.82"

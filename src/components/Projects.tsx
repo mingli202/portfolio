@@ -7,10 +7,7 @@ import cn from "../lib/cn";
 
 export default function Projects() {
   return (
-    <div
-      className="flex flex-col gap-3 p-2 md:gap-4 md:p-4"
-      style={{ viewTransitionName: "match-element" }}
-    >
+    <div className="flex flex-col gap-3 p-2 md:gap-4 md:p-4">
       {projects.map((item, index) => (
         <Project {...item} key={index} />
       ))}
@@ -39,9 +36,10 @@ function Project(project: ProjectItem) {
   return (
     <div
       className={cn(
-        "ring-secondary flex flex-col gap-3 rounded-[calc(1rem+0.75rem)] p-3 ring-2 md:gap-4 md:rounded-[2rem] md:p-4",
+        "ring-secondary bg-background/10 relative flex flex-col gap-3 rounded-[calc(1rem+0.75rem)] p-3 ring-2 backdrop-blur-md md:gap-4 md:rounded-[2rem] md:p-4",
         "hover:ring-primary transition",
       )}
+      style={{ viewTransitionName: "match-element" }}
     >
       <div
         className="relative aspect-video w-full overflow-hidden rounded-2xl"

@@ -27,8 +27,6 @@ export class Fluid {
   public minSquares: number;
   public nIterations: number;
   public deltaT: number;
-  public density: number;
-  public gravity: number;
   public overrelaxationCoefficient: number;
 
   public blockOffset: number;
@@ -41,17 +39,13 @@ export class Fluid {
     canvas: HTMLCanvasElement,
     minSquares: number = 60,
     nIterations: number = 40,
-    deltaT: number = 1 / 20,
-    density: number = 1000,
-    gravity: number = 9.81,
+    deltaT: number = 1 / 60,
     overrelaxationCoefficient: number = 1.7,
   ) {
     this.canvas = canvas;
     this.minSquares = minSquares;
     this.nIterations = nIterations;
     this.deltaT = deltaT;
-    this.density = density;
-    this.gravity = gravity;
     this.overrelaxationCoefficient = overrelaxationCoefficient;
 
     const h = Math.min(this.canvas.height, this.canvas.width);
@@ -260,7 +254,11 @@ export class Fluid {
     const previousX = x - u * this.deltaT;
     const previousY = y - v * this.deltaT;
 
-    this.nextS.set(i, k, this.interpolate(previousX, previousY, Field.S));
+    this.nextS.set(
+      i,
+      k,
+      Math.max(this.interpolate(previousX, previousY, Field.S) - 2, 0),
+    );
   }
 
   public interpolate(x: number, y: number, field: Field) {
