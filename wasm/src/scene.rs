@@ -122,16 +122,16 @@ impl Scene {
 
         let then = web_sys::window().unwrap().performance().unwrap().now();
         let elapsed = then - now;
-        if elapsed > self.fluid.delta_t * 1000.0 {
-            web_sys::console::log_1(
-                &format!(
-                    "frame took {}ms (should be lower than {})",
-                    elapsed,
-                    self.fluid.delta_t * 1000.0
-                )
-                .into(),
-            );
-        }
+        // if elapsed > self.fluid.delta_t * 1000.0 {
+        //     web_sys::console::log_1(
+        //         &format!(
+        //             "frame took {}ms (should be lower than {})",
+        //             elapsed,
+        //             self.fluid.delta_t * 1000.0
+        //         )
+        //         .into(),
+        //     );
+        // }
 
         elapsed / 1000.0
     }
@@ -314,8 +314,12 @@ impl Scene {
         let mut elapsed = self.draw_next_frame();
 
         while elapsed > self.fluid.delta_t {
-            let lower_count =
-                Self::get_n(elapsed * 2.0, self.fluid.max_squares, self.fluid.delta_t);
+            let lower_count = Self::get_n(
+                elapsed,
+                self.fluid.max_squares,
+                self.fluid.delta_t,
+                self.subdivisions,
+            );
 
             web_sys::console::log_1(
                 &format!(
@@ -340,11 +344,16 @@ impl Scene {
         self.ready = true;
     }
 
-    fn get_n(measured_delta_t: f64, current_n: usize, fluid_delta_t: f64) -> usize {
-        f64::sqrt(
-            (fluid_delta_t / measured_delta_t)
-                * (current_n.pow(2) as f64 * (41.0 - 1.0 / 400.0) / (41.0 + 1.0 / 400.0)),
-        ) as usize
+    fn get_n(
+        measured_delta_t: f64,
+        current_n: usize,
+        fluid_delta_t: f64,
+        subdivisions: u8,
+    ) -> usize {
+        (f64::sqrt(
+            (fluid_delta_t / measured_delta_t) * (40.0 + subdivisions.pow(2) as f64 - 1.0 / 400.0)
+                / (40.0 + subdivisions.pow(2) as f64 + 1.0 / 400.0),
+        ) * current_n as f64) as usize
     }
 
     pub fn init(self_ref: Rc<RefCell<Option<Self>>>) {

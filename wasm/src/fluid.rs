@@ -54,7 +54,7 @@ impl Fluid {
         let grid_height = (canvas.height() as f64 / square_size).ceil() as usize;
 
         let n_iterations = n_iterations.unwrap_or(40);
-        let delta_t = delta_t.unwrap_or(1_f64 / 30_f64);
+        let delta_t = delta_t.unwrap_or(1_f64 / 60_f64);
         let overrelaxation_coefficient = overrelaxation_coefficient.unwrap_or(1.7);
 
         let n = 1;
