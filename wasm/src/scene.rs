@@ -84,7 +84,9 @@ impl Scene {
             .unwrap()
     }
 
-    pub fn draw_next_frame(&mut self) {
+    pub fn draw_next_frame(&mut self) -> f64 {
+        let now = web_sys::window().unwrap().performance().unwrap().now();
+
         self.clear_canvas();
         if self.enable_projection {
             self.fluid.projection();
@@ -117,6 +119,21 @@ impl Scene {
         if self.show_gridlines {
             self.draw_gridlines(&ctx);
         }
+
+        let then = web_sys::window().unwrap().performance().unwrap().now();
+        let elapsed = then - now;
+        if elapsed > self.fluid.delta_t * 1000.0 {
+            web_sys::console::log_1(
+                &format!(
+                    "frame took {}ms (should be lower than {})",
+                    elapsed,
+                    self.fluid.delta_t * 1000.0
+                )
+                .into(),
+            );
+        }
+
+        elapsed / 1000.0
     }
 
     pub fn clear(&mut self) {
@@ -294,18 +311,11 @@ impl Scene {
     }
 
     pub fn adjust_to_device_performance(&mut self) {
-        let window = web_sys::window().unwrap();
-
-        let now = window.performance().unwrap().now();
-        self.draw_next_frame();
-        let then = window.performance().unwrap().now();
-
-        let mut elapsed = (then - now) / 800.0;
+        let mut elapsed = self.draw_next_frame();
 
         while elapsed > self.fluid.delta_t {
-            let scale = (elapsed / self.fluid.delta_t).sqrt();
-            let lower_count = self.fluid.max_squares as f64 / scale;
-            self.fluid.max_squares = lower_count as usize;
+            let lower_count =
+                Self::get_n(elapsed * 2.0, self.fluid.max_squares, self.fluid.delta_t);
 
             web_sys::console::log_1(
                 &format!(
@@ -315,19 +325,28 @@ impl Scene {
                 .into(),
             );
 
+            self.fluid.max_squares = lower_count;
+
             self.fluid
                 .resize(self.canvas.width() as f64, self.canvas.height() as f64);
 
-            let now = window.performance().unwrap().now();
-            self.draw_next_frame();
-            let then = window.performance().unwrap().now();
-
-            elapsed = (then - now) / 800.0;
+            elapsed = self.draw_next_frame();
         }
+
+        web_sys::console::log_1(&format!("final resolution: {}", self.fluid.max_squares).into());
 
         self.mouse_radius = self.fluid.max_squares as i32 / 20;
 
         self.ready = true;
+    }
+
+    fn get_n(measured_delta_t: f64, current_n: usize, fluid_delta_t: f64) -> usize {
+        let a = 41.0;
+        let b = 1.0 / 20.0;
+        let c = -(fluid_delta_t / measured_delta_t)
+            * (41.0 * current_n.pow(2) as f64 - current_n as f64 / 20.0);
+
+        ((-b + f64::sqrt(b * b - 4.0 * a * c)) / (2.0 * a)) as usize
     }
 
     pub fn init(self_ref: Rc<RefCell<Option<Self>>>) {
