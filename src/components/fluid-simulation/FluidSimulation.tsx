@@ -97,6 +97,12 @@ function Stats() {
         <Icon.Up style={{ rotate: show ? "180deg" : "0deg" }} />
         <p>{stats?.average_fps.toFixed(2) ?? 0} fps</p>
       </div>
+      {show && stats && (
+        <>
+          <p>Resolution: {stats.resolution}</p>
+          <p>Subdivisions: {stats.subdivisions}</p>
+        </>
+      )}
     </div>
   );
 }
