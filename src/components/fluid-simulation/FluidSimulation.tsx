@@ -10,6 +10,7 @@ export function FluidSimulation() {
 
   const canvas = useRef<HTMLCanvasElement>(null!);
   const [scene, setScene] = useState<Scene>();
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
     if (/Mobi|Android/i.test(navigator.userAgent)) {
@@ -21,6 +22,7 @@ export function FluidSimulation() {
 
       return;
     }
+    setShow(true);
 
     if (!useWasm) {
       canvas.current.width = window.innerWidth;
@@ -51,7 +53,7 @@ export function FluidSimulation() {
       />
       {/* <div className="fixed top-0 left-0 -z-9 h-screen w-screen bg-black/0 backdrop-blur-md" /> */}
       {!useWasm && scene && <HelperMenu scene={scene} />}
-      {useWasm && <Stats />}
+      {show && useWasm && <Stats />}
     </>
   );
 }
