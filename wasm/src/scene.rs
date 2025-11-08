@@ -341,12 +341,10 @@ impl Scene {
     }
 
     fn get_n(measured_delta_t: f64, current_n: usize, fluid_delta_t: f64) -> usize {
-        let a = 41.0;
-        let b = 1.0 / 20.0;
-        let c = -(fluid_delta_t / measured_delta_t)
-            * (41.0 * current_n.pow(2) as f64 - current_n as f64 / 20.0);
-
-        ((-b + f64::sqrt(b * b - 4.0 * a * c)) / (2.0 * a)) as usize
+        f64::sqrt(
+            (fluid_delta_t / measured_delta_t)
+                * (current_n.pow(2) as f64 * (41.0 - 1.0 / 400.0) / (41.0 + 1.0 / 400.0)),
+        ) as usize
     }
 
     pub fn init(self_ref: Rc<RefCell<Option<Self>>>) {
