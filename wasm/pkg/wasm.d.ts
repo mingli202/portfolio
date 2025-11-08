@@ -10,3 +10,12 @@ export function run_projection(): void;
 export function run_advection(): void;
 export function clear_scene(): void;
 export function run_solve_divergence_for_all(): void;
+export function get_stats(): FpsStats | undefined;
+export class FpsStats {
+  private constructor();
+  free(): void;
+  [Symbol.dispose](): void;
+  average_fps: number;
+  resolution: number;
+  subdivisions: number;
+}

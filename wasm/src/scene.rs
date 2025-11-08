@@ -2,7 +2,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::fluid::{Field, Fluid, FluidSimulation};
-use crate::util::{gaussian, map};
+use crate::util::{gaussian, map, RingBuffer};
 use wasm_bindgen::prelude::*;
 
 type AnimationFrameCb = Rc<RefCell<Option<Closure<dyn FnMut(f64)>>>>;
@@ -14,7 +14,7 @@ pub struct Scene {
     canvas: web_sys::HtmlCanvasElement,
 
     mouse_radius: i32,
-    subdivisions: u8,
+    pub subdivisions: u8,
     is_mouse_down: bool,
     last_time: f64,
     last_mouse_xy: (i32, i32),
@@ -37,6 +37,8 @@ pub struct Scene {
     mouse_move_cb: Option<MouseEventCb>,
     mouse_down_cb: Option<MouseEventCb>,
     resize_cb: Option<ResizeEventCb>,
+
+    time_to_next_frame_ring: RingBuffer,
 }
 
 impl Scene {
@@ -45,6 +47,7 @@ impl Scene {
             f64::min(canvas.width() as f64, canvas.height() as f64) * fluid.square_size;
 
         let mouse_radius = fluid.max_squares as i32 / 20;
+        let time_to_next_frame_ring = RingBuffer::new((1.0 / fluid.delta_t) as usize);
 
         Scene {
             fluid,
@@ -72,6 +75,8 @@ impl Scene {
             show_center_velocities: false,
             show_smoke: true,
             show_velocity_colors: false,
+
+            time_to_next_frame_ring,
         }
     }
 
@@ -132,6 +137,8 @@ impl Scene {
         //         .into(),
         //     );
         // }
+
+        self.time_to_next_frame_ring.push(elapsed);
 
         elapsed / 1000.0
     }
@@ -354,6 +361,10 @@ impl Scene {
             (fluid_delta_t / measured_delta_t) * (40.0 + subdivisions.pow(2) as f64 - 1.0 / 400.0)
                 / (40.0 + subdivisions.pow(2) as f64 + 1.0 / 400.0),
         ) * current_n as f64) as usize
+    }
+
+    pub fn get_average_fps(&self) -> f64 {
+        1000.0 / self.time_to_next_frame_ring.average()
     }
 
     pub fn init(self_ref: Rc<RefCell<Option<Self>>>) {

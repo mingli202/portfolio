@@ -37,6 +37,7 @@ import { PowerShell } from "./PowerShell";
 import { CSS } from "./CSS";
 import { Bash } from "./Bash";
 import { Java } from "./Java";
+import { Up } from "./Up";
 
 export type SvgProps = SVGProps<SVGSVGElement> & {
   title?: string;
@@ -149,6 +150,7 @@ export const Icon = {
   PowerShell,
   Bash,
   Java,
+  Up,
 } as const;
 
 export type Icon = RecordValues<typeof Icon>;

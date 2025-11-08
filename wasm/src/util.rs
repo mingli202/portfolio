@@ -15,3 +15,42 @@ pub fn is_mobile() -> bool {
 
     user_agent.contains("Mobi") || user_agent.contains("Android")
 }
+
+pub struct RingBuffer {
+    buf: Vec<f64>,
+    tail: usize,
+    sum: f64,
+    size: usize,
+    capacity: usize,
+}
+
+impl RingBuffer {
+    pub fn new(capacity: usize) -> RingBuffer {
+        RingBuffer {
+            buf: vec![0.0; capacity],
+            tail: 0,
+            sum: 0.0,
+            size: 0,
+            capacity,
+        }
+    }
+
+    pub fn push(&mut self, x: f64) {
+        let prev = self.buf[self.tail];
+        self.buf[self.tail] = x;
+
+        self.sum -= prev;
+        self.sum += x;
+
+        self.tail = (self.tail + 1) % self.buf.len();
+        self.size = self.capacity.min(self.size + 1);
+    }
+
+    pub fn average(&self) -> f64 {
+        if self.size == 0 {
+            return 0.0;
+        }
+
+        self.sum / self.size as f64
+    }
+}
