@@ -185,3 +185,40 @@ pub fn get_stats() -> Option<FpsStats> {
 
     stats
 }
+
+#[wasm_bindgen]
+pub fn set_stats(resolution: usize, subdivisions: u8) {
+    SCENE.with(|scene| {
+        if let Ok(scene) = scene.try_borrow_mut().as_mut() {
+            if let Some(scene) = scene.as_mut() {
+                scene.subdivisions = subdivisions;
+                scene.fluid.max_squares = resolution;
+                scene.mouse_radius = resolution as i32 / 20;
+                scene
+                    .fluid
+                    .resize(scene.canvas.width() as f64, scene.canvas.height() as f64);
+            }
+        }
+    })
+}
+
+#[wasm_bindgen]
+pub fn adjust_to_device_performance() -> Option<FpsStats> {
+    let mut stats = None;
+
+    SCENE.with(|scene| {
+        if let Ok(scene) = scene.try_borrow_mut().as_mut() {
+            if let Some(scene) = scene.as_mut() {
+                scene.adjust_to_device_performance();
+
+                stats = Some(FpsStats {
+                    average_fps: scene.get_average_fps().min(1.0 / scene.fluid.delta_t),
+                    resolution: scene.fluid.max_squares,
+                    subdivisions: scene.subdivisions,
+                });
+            }
+        }
+    });
+
+    stats
+}

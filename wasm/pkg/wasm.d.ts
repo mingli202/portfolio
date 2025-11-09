@@ -11,6 +11,8 @@ export function run_advection(): void;
 export function clear_scene(): void;
 export function run_solve_divergence_for_all(): void;
 export function get_stats(): FpsStats | undefined;
+export function set_stats(resolution: number, subdivisions: number): void;
+export function adjust_to_device_performance(): FpsStats | undefined;
 export class FpsStats {
   private constructor();
   free(): void;

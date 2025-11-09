@@ -11,9 +11,9 @@ type ResizeEventCb = Rc<Closure<dyn FnMut(web_sys::Event)>>;
 
 pub struct Scene {
     pub fluid: Fluid,
-    canvas: web_sys::HtmlCanvasElement,
+    pub canvas: web_sys::HtmlCanvasElement,
 
-    mouse_radius: i32,
+    pub mouse_radius: i32,
     pub subdivisions: u8,
     is_mouse_down: bool,
     last_time: f64,
@@ -326,6 +326,7 @@ impl Scene {
                 self.fluid.max_squares,
                 self.fluid.delta_t,
                 self.subdivisions,
+                self.fluid.n_iterations,
             );
 
             web_sys::console::log_1(
@@ -356,10 +357,12 @@ impl Scene {
         current_n: usize,
         fluid_delta_t: f64,
         subdivisions: u8,
+        n_iterations: usize,
     ) -> usize {
         (f64::sqrt(
-            (fluid_delta_t / measured_delta_t) * (40.0 + subdivisions.pow(2) as f64 - 1.0 / 400.0)
-                / (40.0 + subdivisions.pow(2) as f64 + 1.0 / 400.0),
+            (fluid_delta_t / measured_delta_t)
+                * (n_iterations as f64 + subdivisions.pow(2) as f64 - 1.0 / 400.0)
+                / (n_iterations as f64 + subdivisions.pow(2) as f64 + 1.0 / 400.0),
         ) * current_n as f64) as usize
     }
 
