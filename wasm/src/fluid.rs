@@ -54,8 +54,8 @@ impl Fluid {
         let grid_height = (canvas.height() as f64 / square_size).ceil() as usize;
 
         let n_iterations = n_iterations.unwrap_or(40);
-        let delta_t = delta_t.unwrap_or(1_f64 / 30_f64);
-        let overrelaxation_coefficient = overrelaxation_coefficient.unwrap_or(1.7);
+        let delta_t = delta_t.unwrap_or(1_f64 / 60_f64);
+        let overrelaxation_coefficient = overrelaxation_coefficient.unwrap_or(1.9);
 
         let n = 1;
         let block_offset = square_size * n as f64;
@@ -201,7 +201,7 @@ impl Fluid {
         let previous_y = y - v * self.delta_t;
 
         let next_val = f64::max(
-            self.interpolate(previous_x, previous_y, Field::S) / 1.1 - 0.1,
+            self.interpolate(previous_x, previous_y, Field::S) / 1.05 - 0.1,
             0.0,
         );
 

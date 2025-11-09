@@ -2,7 +2,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::fluid::{Field, Fluid, FluidSimulation};
-use crate::util::{gaussian, map};
+use crate::util::{gaussian, map, RingBuffer};
 use wasm_bindgen::prelude::*;
 
 type AnimationFrameCb = Rc<RefCell<Option<Closure<dyn FnMut(f64)>>>>;
@@ -11,10 +11,10 @@ type ResizeEventCb = Rc<Closure<dyn FnMut(web_sys::Event)>>;
 
 pub struct Scene {
     pub fluid: Fluid,
-    canvas: web_sys::HtmlCanvasElement,
+    pub canvas: web_sys::HtmlCanvasElement,
 
-    mouse_radius: i32,
-    subdivisions: u8,
+    pub mouse_radius: i32,
+    pub subdivisions: u8,
     is_mouse_down: bool,
     last_time: f64,
     last_mouse_xy: (i32, i32),
@@ -37,6 +37,8 @@ pub struct Scene {
     mouse_move_cb: Option<MouseEventCb>,
     mouse_down_cb: Option<MouseEventCb>,
     resize_cb: Option<ResizeEventCb>,
+
+    time_to_next_frame_ring: RingBuffer,
 }
 
 impl Scene {
@@ -45,6 +47,7 @@ impl Scene {
             f64::min(canvas.width() as f64, canvas.height() as f64) * fluid.square_size;
 
         let mouse_radius = fluid.max_squares as i32 / 20;
+        let time_to_next_frame_ring = RingBuffer::new((1.0 / fluid.delta_t) as usize);
 
         Scene {
             fluid,
@@ -72,6 +75,8 @@ impl Scene {
             show_center_velocities: false,
             show_smoke: true,
             show_velocity_colors: false,
+
+            time_to_next_frame_ring,
         }
     }
 
@@ -84,7 +89,9 @@ impl Scene {
             .unwrap()
     }
 
-    pub fn draw_next_frame(&mut self) {
+    pub fn draw_next_frame(&mut self) -> f64 {
+        let now = web_sys::window().unwrap().performance().unwrap().now();
+
         self.clear_canvas();
         if self.enable_projection {
             self.fluid.projection();
@@ -117,6 +124,23 @@ impl Scene {
         if self.show_gridlines {
             self.draw_gridlines(&ctx);
         }
+
+        let then = web_sys::window().unwrap().performance().unwrap().now();
+        let elapsed = then - now;
+        // if elapsed > self.fluid.delta_t * 1000.0 {
+        //     web_sys::console::log_1(
+        //         &format!(
+        //             "frame took {}ms (should be lower than {})",
+        //             elapsed,
+        //             self.fluid.delta_t * 1000.0
+        //         )
+        //         .into(),
+        //     );
+        // }
+
+        self.time_to_next_frame_ring.push(elapsed);
+
+        elapsed / 1000.0
     }
 
     pub fn clear(&mut self) {
@@ -294,18 +318,16 @@ impl Scene {
     }
 
     pub fn adjust_to_device_performance(&mut self) {
-        let window = web_sys::window().unwrap();
-
-        let now = window.performance().unwrap().now();
-        self.draw_next_frame();
-        let then = window.performance().unwrap().now();
-
-        let mut elapsed = (then - now) / 800.0;
+        let mut elapsed = self.draw_next_frame();
 
         while elapsed > self.fluid.delta_t {
-            let scale = (elapsed / self.fluid.delta_t).sqrt();
-            let lower_count = self.fluid.max_squares as f64 / scale;
-            self.fluid.max_squares = lower_count as usize;
+            let lower_count = Self::get_n(
+                elapsed,
+                self.fluid.max_squares,
+                self.fluid.delta_t,
+                self.subdivisions,
+                self.fluid.n_iterations,
+            );
 
             web_sys::console::log_1(
                 &format!(
@@ -315,19 +337,37 @@ impl Scene {
                 .into(),
             );
 
+            self.fluid.max_squares = lower_count;
+
             self.fluid
                 .resize(self.canvas.width() as f64, self.canvas.height() as f64);
 
-            let now = window.performance().unwrap().now();
-            self.draw_next_frame();
-            let then = window.performance().unwrap().now();
-
-            elapsed = (then - now) / 800.0;
+            elapsed = self.draw_next_frame();
         }
+
+        web_sys::console::log_1(&format!("final resolution: {}", self.fluid.max_squares).into());
 
         self.mouse_radius = self.fluid.max_squares as i32 / 20;
 
         self.ready = true;
+    }
+
+    fn get_n(
+        measured_delta_t: f64,
+        current_n: usize,
+        fluid_delta_t: f64,
+        subdivisions: u8,
+        n_iterations: usize,
+    ) -> usize {
+        (f64::sqrt(
+            (fluid_delta_t / measured_delta_t)
+                * (n_iterations as f64 + subdivisions.pow(2) as f64 - 1.0 / 400.0)
+                / (n_iterations as f64 + subdivisions.pow(2) as f64 + 1.0 / 400.0),
+        ) * current_n as f64) as usize
+    }
+
+    pub fn get_average_fps(&self) -> f64 {
+        1000.0 / self.time_to_next_frame_ring.average()
     }
 
     pub fn init(self_ref: Rc<RefCell<Option<Self>>>) {
