@@ -38,6 +38,7 @@ import { CSS } from "./CSS";
 import { Bash } from "./Bash";
 import { Java } from "./Java";
 import { Up } from "./Up";
+import { Raspberrypi } from "./Raspberrypi";
 
 export type SvgProps = SVGProps<SVGSVGElement> & {
   title?: string;
@@ -151,6 +152,7 @@ export const Icon = {
   Bash,
   Java,
   Up,
+  Raspberrypi,
 } as const;
 
 export type Icon = RecordValues<typeof Icon>;

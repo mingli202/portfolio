@@ -3,6 +3,22 @@ import type { ProjectItem } from "../types";
 
 export const projects: ProjectItem[] = [
   {
+    title: "Smart Courrier Robot",
+    subtitle: "Design Principles and Methods final project.",
+    description:
+      "Autonomous robot that can deliver packages to delivery locations using a line tracking algorithm. Built in a team of 6 for my ECSE 211 final project.",
+    startDate: "Nov 2025",
+    skills: ["Python", "Raspberrypi"],
+    links: [
+      {
+        type: Icon.Github,
+        url: "https://github.com/BagetTeam/bakers-pi-final",
+      },
+    ],
+    videoUrl: "https://www.youtube.com/embed/plpx3dQ-prg?si=VfcLF-GpSGkB6wLK",
+  },
+
+  {
     title: "Mathracer",
     subtitle: "Multiplayer math game website.",
     description:
