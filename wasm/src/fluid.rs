@@ -21,6 +21,7 @@ pub struct Fluid {
     pub v: Grid<f64>,      // velocity in y direction
     pub b: Grid<u8>,       // obstacles
     pub s: Grid<f64>,      // smoke (density)
+    pub p: Grid<f64>,      // curl_free
     pub next_u: Grid<f64>, // velocity in x direction
     pub next_v: Grid<f64>, // velocity in y direction
     pub next_s: Grid<f64>, // smoke (density)
@@ -65,6 +66,7 @@ impl Fluid {
         let v = Grid::new(grid_width + 2 * n, grid_height + 1 + 2 * n);
         let s = Grid::new(grid_width + 2 * n, grid_height + 2 * n);
         let b = Grid::new(grid_width + 2 * n, grid_height + 2 * n);
+        let p = Grid::new(grid_width + 2 * n, grid_height + 2 * n);
 
         let next_u = Grid::new(u.width(), u.height());
         let next_v = Grid::new(v.width(), v.height());
@@ -75,6 +77,7 @@ impl Fluid {
             v,
             b,
             s,
+            p,
             next_u,
             next_v,
             next_s,
@@ -142,7 +145,9 @@ impl Fluid {
             return;
         }
 
-        let divergence = (self.get_divergence(i, k) * self.overrelaxation_coefficient) / b as f64;
+        let d = self.get_divergence(i, k);
+
+        let divergence = (d * self.overrelaxation_coefficient) / b as f64;
 
         self.u.update(i, k, |v| v + divergence * b0 as f64);
         self.u.update(i + 1, k, |v| v - divergence * b1 as f64);
@@ -152,6 +157,12 @@ impl Fluid {
 
     fn get_divergence(&self, i: i32, k: i32) -> f64 {
         self.u.get(i + 1, k) - self.u.get(i, k) + self.v.get(i, k + 1) - self.v.get(i, k)
+    }
+
+    fn get_curl_free(&self, i: i32, k: i32) -> f64 {
+        (self.p.get(i - 1, k) + self.p.get(i + 1, k) + self.p.get(i, k - 1) + self.p.get(i, k + 1)
+            - self.get_divergence(i, k))
+            / 4.0
     }
 
     fn advect_u(&mut self, i: i32, k: i32) {
@@ -331,5 +342,31 @@ impl FluidSimulation for Fluid {
         (x, y)
     }
 
-    fn divergence_free(&mut self) {}
+    fn divergence_free(&mut self) {
+        for _ in 0..self.n_iterations {
+            for i in 0..self.p.width() {
+                for k in 0..self.p.height() {
+                    let i = i as i32;
+                    let k = k as i32;
+
+                    let curl_free = self.get_curl_free(i, k);
+
+                    self.p.set(i, k, curl_free);
+                }
+            }
+        }
+
+        for i in 0..self.p.width() + 1 {
+            for k in 0..self.p.height() + 1 {
+                let i = i as i32;
+                let k = k as i32;
+
+                let curl_free_x = (self.p.get(i + 1, k) - self.p.get(i - 1, k)) / 2.0;
+                let curl_free_y = (self.p.get(i, k + 1) - self.p.get(i, k - 1)) / 2.0;
+
+                self.u.update(i, k, |u| u - curl_free_x);
+                self.v.update(i, k, |v| v - curl_free_y);
+            }
+        }
+    }
 }
