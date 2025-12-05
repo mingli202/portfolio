@@ -9,6 +9,7 @@ pub enum Field {
 pub trait FluidSimulation {
     fn projection(&mut self);
     fn advection(&mut self);
+    fn divergence_free(&mut self);
     fn interpolate(&self, x: f64, y: f64, field: Field) -> f64;
     fn get_grid_indices_from_xy(&self, x: f64, y: f64, field: Option<&Field>) -> (i32, i32);
     fn get_xy_from_grid_indices(&self, x: i32, y: i32, field: Option<&Field>) -> (f64, f64);
@@ -53,7 +54,7 @@ impl Fluid {
         let grid_width = (canvas.width() as f64 / square_size).ceil() as usize;
         let grid_height = (canvas.height() as f64 / square_size).ceil() as usize;
 
-        let n_iterations = n_iterations.unwrap_or(40);
+        let n_iterations = n_iterations.unwrap_or(30);
         let delta_t = delta_t.unwrap_or(1_f64 / 60_f64);
         let overrelaxation_coefficient = overrelaxation_coefficient.unwrap_or(1.9);
 
@@ -329,4 +330,6 @@ impl FluidSimulation for Fluid {
 
         (x, y)
     }
+
+    fn divergence_free(&mut self) {}
 }

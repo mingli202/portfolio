@@ -25,6 +25,7 @@ pub struct Scene {
     enable_mouse_move: bool,
     enable_projection: bool,
     enable_advection: bool,
+    enable_divergence_free: bool,
 
     show_smoke: bool,
     show_velocity_colors: bool,
@@ -70,6 +71,7 @@ impl Scene {
             enable_mouse_move: true,
             enable_projection: true,
             enable_advection: true,
+            enable_divergence_free: true,
 
             show_gridlines: false,
             show_center_velocities: false,
@@ -96,8 +98,13 @@ impl Scene {
         if self.enable_projection {
             self.fluid.projection();
         }
+
         if self.enable_advection {
             self.fluid.advection();
+        }
+
+        if self.enable_divergence_free {
+            self.fluid.divergence_free();
         }
 
         let ctx = self.get_ctx();
@@ -127,16 +134,6 @@ impl Scene {
 
         let then = web_sys::window().unwrap().performance().unwrap().now();
         let elapsed = then - now;
-        // if elapsed > self.fluid.delta_t * 1000.0 {
-        //     web_sys::console::log_1(
-        //         &format!(
-        //             "frame took {}ms (should be lower than {})",
-        //             elapsed,
-        //             self.fluid.delta_t * 1000.0
-        //         )
-        //         .into(),
-        //     );
-        // }
 
         self.time_to_next_frame_ring.push(elapsed);
 
