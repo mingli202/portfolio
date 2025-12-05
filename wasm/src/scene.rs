@@ -71,7 +71,7 @@ impl Scene {
             enable_mouse_move: true,
             enable_projection: true,
             enable_advection: true,
-            enable_divergence_free: true,
+            enable_divergence_free: false,
 
             show_gridlines: false,
             show_center_velocities: false,
