@@ -46,35 +46,35 @@ export const projects: ProjectItem[] = [
     videoUrl: "https://www.youtube.com/embed/qrN3RTZXTqg?si=UNkx6PChP8d7_TIp",
   },
 
-  {
-    title: "Mito Sushi Weekly Planner",
-    subtitle: "Schedule planner based on store locations.",
-    description:
-      "Webapp for planning Mito Sushi schedules based on store locations because my mom needed one.",
-    startDate: "March 2025",
-    skills: [
-      "Python",
-      "FastApi",
-      "Pandas",
-      "Htmx",
-      "JavaScript",
-      "CSS",
-      "GCP",
-      "Maps",
-      "Docker",
-    ],
-    links: [
-      {
-        type: Icon.WebsiteLink,
-        url: "https://mito-weekly-planner-ypdwumdcaa-uc.a.run.app",
-      },
-      {
-        type: Icon.Github,
-        url: "https://github.com/mingli202/mito-weekly-planner",
-      },
-    ],
-    videoUrl: "https://www.youtube.com/embed/ooK7YwW7N4s?si=oWzTOi_xMouWbfSh",
-  },
+  // {
+  //   title: "Mito Sushi Weekly Planner",
+  //   subtitle: "Schedule planner based on store locations.",
+  //   description:
+  //     "Webapp for planning Mito Sushi schedules based on store locations because my mom needed one.",
+  //   startDate: "March 2025",
+  //   skills: [
+  //     "Python",
+  //     "FastApi",
+  //     "Pandas",
+  //     "Htmx",
+  //     "JavaScript",
+  //     "CSS",
+  //     "GCP",
+  //     "Maps",
+  //     "Docker",
+  //   ],
+  //   links: [
+  //     {
+  //       type: Icon.WebsiteLink,
+  //       url: "https://mito-weekly-planner-ypdwumdcaa-uc.a.run.app",
+  //     },
+  //     {
+  //       type: Icon.Github,
+  //       url: "https://github.com/mingli202/mito-weekly-planner",
+  //     },
+  //   ],
+  //   videoUrl: "https://www.youtube.com/embed/ooK7YwW7N4s?si=oWzTOi_xMouWbfSh",
+  // },
 
   {
     title: "Typing Rust",
