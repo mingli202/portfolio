@@ -8,7 +8,10 @@ type Props = {
 
 export default function ExperienceList({ items, className, ...props }: Props) {
   return (
-    <div className={cn("flex flex-col gap-2 p-2 md:p-4", className)} {...props}>
+    <div
+      className={cn("flex flex-col gap-3 p-2 md:gap-4 md:p-4", className)}
+      {...props}
+    >
       {items.map((item) => (
         <ListItem key={item.title} {...item} />
       ))}
