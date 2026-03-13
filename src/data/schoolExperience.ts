@@ -9,7 +9,7 @@ export const schoolExperience: ExperienceListItem[] = [
     location: "Montreal, Canada",
     skills: ["Java", "Python", "Bash"],
     additionalInfo: [
-      "3.94/4.00 GPA",
+      "3.91/4.00 GPA",
       "Member of the McGill Robotics Club Drone Team in the software division.",
     ],
     imageUrl: "mcgill_logo.jpg",
