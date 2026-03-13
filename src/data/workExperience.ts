@@ -4,6 +4,20 @@ export const workExperience: ExperienceListItem[] = [
   {
     title: "C#/Web Developer Intern",
     subtitle: "Genetec Inc.",
+    startDate: "Jan 2026",
+    endDate: "Avril 2025",
+    location: "Montreal, Canada",
+    skills: ["Angular", "C#", ".NET", "Azure", "PowerShell"],
+    additionalInfo: [
+      "Revamped feedback experience",
+      "Integrated App Insight analtyics in the backend",
+      "Took a class on data programming designs",
+    ],
+    imageUrl: "genetec_logo.jpg",
+  },
+  {
+    title: "C#/Web Developer Intern",
+    subtitle: "Genetec Inc.",
     startDate: "May 2025",
     endDate: "Aug 2025",
     location: "Montreal, Canada",
