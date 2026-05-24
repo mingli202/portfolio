@@ -2,6 +2,19 @@ import type { ExperienceListItem } from "../types";
 
 export const workExperience: ExperienceListItem[] = [
   {
+    title: "ECS Software Developer Intern",
+    subtitle: "Eaton",
+    startDate: "May 2026",
+    endDate: "Aug 2025",
+    location: "Brossard, Canada",
+    skills: ["Go"],
+    additionalInfo: [
+      "Added the OpenADR 2.0b protocol to EdgeX",
+      "Ensured compliance to the OpenADR 2.0b specifications",
+    ],
+    imageUrl: "eaton_logo.jpg",
+  },
+  {
     title: "C#/Web Developer Intern",
     subtitle: "Genetec Inc.",
     startDate: "Jan 2026",
