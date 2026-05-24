@@ -12,8 +12,8 @@ export default function ExperienceList({ items, className, ...props }: Props) {
       className={cn("flex flex-col gap-3 p-2 md:gap-4 md:p-4", className)}
       {...props}
     >
-      {items.map((item) => (
-        <ListItem key={item.title} {...item} />
+      {items.map((item, i) => (
+        <ListItem key={item.title + `${i}`} {...item} />
       ))}
     </div>
   );
