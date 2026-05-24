@@ -3,6 +3,22 @@ import type { ProjectItem } from "../types";
 
 export const projects: ProjectItem[] = [
   {
+    title: "Typing test tui",
+    subtitle: "A multiplayer typing test in your terminal",
+    description:
+      "Always in the terminal but also wanting to go on typeracer, so here it is in the terminal",
+    startDate: "May 2026",
+    skills: ["Rust", "Go"],
+    links: [
+      {
+        type: Icon.Github,
+        url: "https://github.com/mingli202/typing-test-tui",
+      },
+    ],
+    videoUrl: "https://www.youtube.com/embed/Thjo68Ljbko?si=ia7GMkSZqPULdRfb",
+  },
+
+  {
     title: "Smart Courrier Robot",
     subtitle: "Design Principles and Methods final project.",
     description:
