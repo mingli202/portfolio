@@ -1,13 +1,13 @@
 import { motion } from "motion/react";
-import { hoverFillColorVariantBuilder, Svg, type SvgProps } from ".";
+import { hoverVariantBuilder, Svg, type SvgProps } from ".";
 
 export function Go(props: SvgProps) {
   return (
     <Svg viewBox="0 0 128 128" title="Go" {...props}>
       <motion.g
-        variants={hoverFillColorVariantBuilder(
-          "var(--primary-color)",
-          "#00acd7",
+        variants={hoverVariantBuilder(
+          { fill: props.foregroundFill ?? "var(--text-color-secondary)" },
+          { fill: "#00acd7" },
         )}
         fill-rule="evenodd"
       >
