@@ -39,6 +39,7 @@ import { Bash } from "./Bash";
 import { Java } from "./Java";
 import { Up } from "./Up";
 import { Raspberrypi } from "./Raspberrypi";
+import { Go } from "./Go";
 
 export type SvgProps = SVGProps<SVGSVGElement> & {
   title?: string;
@@ -153,6 +154,7 @@ export const Icon = {
   Java,
   Up,
   Raspberrypi,
+  Go,
 } as const;
 
 export type Icon = RecordValues<typeof Icon>;
