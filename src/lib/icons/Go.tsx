@@ -6,7 +6,7 @@ export function Go(props: SvgProps) {
     <Svg viewBox="0 0 128 128" title="Go" {...props}>
       <motion.g
         variants={hoverFillColorVariantBuilder(
-          "var(--text-color-primary)",
+          "var(--primary-color)",
           "#00acd7",
         )}
         fill-rule="evenodd"
