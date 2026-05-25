@@ -7,7 +7,8 @@ export const projects: ProjectItem[] = [
     subtitle: "A multiplayer typing test in your terminal",
     description:
       "Always in the terminal but also wanting to go on typeracer, so here it is in the terminal",
-    startDate: "May 2026",
+    startDate: "March 2026",
+    endDate: "May 2026",
     skills: ["Rust", "Go"],
     links: [
       {
