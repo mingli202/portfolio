@@ -12,7 +12,7 @@ export const workExperience: ExperienceListItem[] = [
       "Added the OpenADR 2.0b protocol to EdgeX",
       "Ensured compliance to the OpenADR 2.0b specifications",
     ],
-    imageUrl: "eaton_logo.jpg",
+    imageUrl: "eaton_logo.jpeg",
   },
   {
     title: "C#/Web Developer Intern",
