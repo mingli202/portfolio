@@ -5,7 +5,7 @@ export const workExperience: ExperienceListItem[] = [
     title: "ECS Software Developer Intern",
     subtitle: "Eaton",
     startDate: "May 2026",
-    endDate: "Aug 2025",
+    endDate: "Aug 2026",
     location: "Brossard, Canada",
     skills: ["Go"],
     additionalInfo: [
