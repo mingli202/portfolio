@@ -7,11 +7,10 @@ export default function Me() {
     Linkedin,
     Location,
     NextJs,
-    TailwindCss,
     TypeScript,
     React,
-    Python,
     Rust,
+    Go,
   } = Icon;
 
   return (
@@ -48,12 +47,11 @@ export default function Me() {
       <div className="flex flex-col items-center gap-2 md:gap-4">
         <p>U2 McGill Software Engineering Student</p>
         <div className="flex flex-wrap justify-center gap-2 md:gap-4">
+          <Go className="fill-text-secondary" />
+          <Rust className="fill-text-secondary" />
           <TypeScript className="fill-text-secondary" />
-          <TailwindCss className="fill-text-secondary" />
           <NextJs className="fill-text-secondary" />
           <React className="fill-text-secondary" />
-          <Rust className="fill-text-secondary" />
-          <Python className="fill-text-secondary" />
         </div>
       </div>
     </section>
