@@ -9,7 +9,7 @@ export const workExperience: ExperienceListItem[] = [
     location: "Brossard, Canada",
     skills: ["Go"],
     additionalInfo: [
-      "Added the OpenADR 2.0b protocol to EdgeX",
+      "Wrote a VEN client for the OpenADR 2.0b protocol",
       "Ensured compliance to the OpenADR 2.0b specifications",
     ],
     imageUrl: "eaton_logo.jpeg",
@@ -23,7 +23,7 @@ export const workExperience: ExperienceListItem[] = [
     skills: ["Angular", "C#", ".NET", "Azure", "PowerShell"],
     additionalInfo: [
       "Revamped feedback experience",
-      "Integrated App Insight analtyics in the backend",
+      "Fixed cache invalidation bugs",
       "Took a class on data programming designs",
     ],
     imageUrl: "genetec_logo.jpg",
