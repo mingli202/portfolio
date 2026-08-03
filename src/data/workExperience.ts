@@ -7,9 +7,10 @@ export const workExperience: ExperienceListItem[] = [
     startDate: "May 2026",
     endDate: "Aug 2026",
     location: "Brossard, Canada",
-    skills: ["Go", "React"],
+    skills: ["Go", "React", "Tanstack"],
     additionalInfo: [
       "Wrote a OpenADR 2.0b compliant VEN client microservice",
+      "Forked xgen to accurately parse the OpenADR schema",
       "Coded a webapp for configuring and displaying VEN client data",
       "Made an internal tool in go for managing stacked PRs (before the official github stacked PRs was out)",
       "Introduced modern agentic workflows to my team to boost productivity",
