@@ -133,7 +133,7 @@ function Stats() {
 
   return (
     <div
-      className="bg-background/80 fixed right-0 bottom-0 flex flex-col gap-2 rounded-tl-md p-2 opacity-50 backdrop-blur-md hover:opacity-100"
+      className="bg-background/80 fixed right-0 bottom-0 flex w-45 flex-col gap-2 rounded-tl-md p-2 opacity-50 backdrop-blur-md hover:opacity-100"
       style={{ opacity: show ? 1 : undefined }}
     >
       <div
@@ -163,22 +163,19 @@ function Stats() {
               }}
             />
           </label>
-          <label className="flex flex-col gap-1" htmlFor="subdivisions">
-            <p>Subdivisions: {subdivisions}</p>
-            <input
-              type="range"
-              min={1}
-              max={10}
-              value={subdivisions}
-              className="w-full"
-              id="subdivisions"
-              name="subdivisions"
-              onChange={(e) => {
-                setSubdivisions(Number(e.target.value));
-                updateStats(resolution, Number(e.target.value));
-              }}
-            />
-          </label>
+          <div className="text-text-secondary flex items-center gap-1">
+            <span>made in rust (btw)</span>
+            <a
+              href="https://github.com/mingli202/portfolio"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Icon.Github
+                className="h-3 w-3"
+                foregroundFill="var(--text-secondary)"
+              />
+            </a>
+          </div>
           <button
             className="w-full text-center hover:underline"
             onClick={() => {
