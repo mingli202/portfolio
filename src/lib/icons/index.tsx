@@ -40,6 +40,8 @@ import { Java } from "./Java";
 import { Up } from "./Up";
 import { Raspberrypi } from "./Raspberrypi";
 import { Go } from "./Go";
+import { Zustand } from "./Zustand";
+import { Tanstack } from "./Tanstack";
 
 export type SvgProps = SVGProps<SVGSVGElement> & {
   title?: string;
@@ -155,6 +157,8 @@ export const Icon = {
   Up,
   Raspberrypi,
   Go,
+  Zustand,
+  Tanstack,
 } as const;
 
 export type Icon = RecordValues<typeof Icon>;
