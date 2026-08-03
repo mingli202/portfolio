@@ -5,10 +5,11 @@ import HelperMenu from "./HelperMenu";
 import { main, play, stop, get_stats, set_stats } from "../../../wasm/pkg";
 import { Icon } from "../../lib/icons";
 
-export function FluidSimulation() {
-  const useWasm = true;
+const useWasm = true;
 
+export function FluidSimulation() {
   const canvas = useRef<HTMLCanvasElement>(null!);
+  const sceneRef = useRef<Scene | undefined>(undefined);
   const [scene, setScene] = useState<Scene>();
   const [show, setShow] = useState(false);
 
@@ -33,6 +34,7 @@ export function FluidSimulation() {
 
       scene.drawNextFrame();
 
+      sceneRef.current = scene;
       setScene(scene);
     } else {
       main();
@@ -40,7 +42,7 @@ export function FluidSimulation() {
     }
 
     return () => {
-      if (scene) scene.destroy();
+      sceneRef.current?.destroy();
       stop();
     };
   }, []);
@@ -177,6 +179,7 @@ function Stats() {
             </a>
           </div>
           <button
+            type="button"
             className="w-full text-center hover:underline"
             onClick={() => {
               if (!initialStats.current) return;

@@ -8,8 +8,8 @@ import cn from "../lib/cn";
 export default function Projects() {
   return (
     <div className="flex flex-col gap-3 p-2 md:gap-4 md:p-4">
-      {projects.map((item, index) => (
-        <Project {...item} key={index} />
+      {projects.map((item) => (
+        <Project key={item.title} {...item} />
       ))}
     </div>
   );
@@ -52,6 +52,7 @@ function Project(project: ProjectItem) {
               title="YouTube video player"
               className="h-full w-full border-none"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              sandbox="allow-scripts allow-popups allow-presentation"
               referrerPolicy="strict-origin-when-cross-origin"
               allowFullScreen
             ></iframe>

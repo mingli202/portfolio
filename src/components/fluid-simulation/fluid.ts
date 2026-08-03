@@ -218,7 +218,7 @@ export class Fluid {
       return;
     }
 
-    let [x, y] = this.getCanvasPointFromGridPoint([i, k], Field.U);
+    const [x, y] = this.getCanvasPointFromGridPoint([i, k], Field.U);
 
     const u = this.u.get(i, k);
     const vAvg = this.interpolate(x, y, Field.V);
@@ -235,7 +235,7 @@ export class Fluid {
       return;
     }
 
-    let [x, y] = this.getCanvasPointFromGridPoint([i, k], Field.V);
+    const [x, y] = this.getCanvasPointFromGridPoint([i, k], Field.V);
 
     const v = this.v.get(i, k);
     const uAvg = this.interpolate(x, y, Field.U);
@@ -247,7 +247,7 @@ export class Fluid {
   }
 
   private advectS(i: number, k: number) {
-    let [x, y] = this.getCanvasPointFromGridPoint([i, k], Field.S);
+    const [x, y] = this.getCanvasPointFromGridPoint([i, k], Field.S);
     const u = this.interpolate(x, y, Field.U);
     const v = this.interpolate(x, y, Field.V);
 

@@ -210,6 +210,7 @@ function Button({
 }: { children: React.ReactNode } & HTMLAttributes<HTMLButtonElement>) {
   return (
     <button
+      type="button"
       className={cn(
         "rounded-md bg-white px-2 py-1 text-black hover:bg-gray-300 active:bg-gray-500",
         className,

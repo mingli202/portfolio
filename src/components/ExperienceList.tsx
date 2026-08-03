@@ -58,8 +58,8 @@ function ListItem(item: ExperienceListItem) {
 
           <p className="text-text-secondary">{location}</p>
           <ul className="text-text-secondary list-outside list-disc pl-6 text-sm md:text-base">
-            {additionalInfo.map((info, index) => (
-              <li key={index}>{info}</li>
+            {additionalInfo.map((info) => (
+              <li key={info}>{info}</li>
             ))}
           </ul>
 

@@ -4,9 +4,13 @@ export function useIsVisibleCallback<T extends HTMLElement>(
   callback: () => void,
 ): RefObject<T | null> {
   const ref = useRef<T>(null);
+  const callbackRef = useRef(callback);
   const hasBeenVisible = useRef(false);
 
+  callbackRef.current = callback;
+
   useEffect(() => {
+    const element = ref.current;
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -15,7 +19,7 @@ export function useIsVisibleCallback<T extends HTMLElement>(
           }
 
           if (entry.isIntersecting) {
-            callback();
+            callbackRef.current();
             hasBeenVisible.current = true;
 
             observer.unobserve(entry.target);
@@ -25,13 +29,13 @@ export function useIsVisibleCallback<T extends HTMLElement>(
       { threshold: 0 },
     );
 
-    if (ref.current) {
-      observer.observe(ref.current);
+    if (element) {
+      observer.observe(element);
     }
 
     return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current);
+      if (element) {
+        observer.unobserve(element);
       }
     };
   }, []);

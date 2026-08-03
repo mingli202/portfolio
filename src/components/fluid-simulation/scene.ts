@@ -67,7 +67,7 @@ export class Scene {
 
     const delta = now - this.start;
 
-    let t = Math.max(this.fluid.deltaT * 1000 - delta, 0);
+    const t = Math.max(this.fluid.deltaT * 1000 - delta, 0);
 
     setTimeout(() => {
       this.start = now;
@@ -279,7 +279,7 @@ export class Scene {
         );
       }
 
-      for (var [otherX, otherY] of points) {
+      for (const [otherX, otherY] of points) {
         const v = this.fluid.interpolate(otherX, otherY, Field.V) / 20;
         const u = this.fluid.interpolate(otherX, otherY, Field.U) / 20;
 
@@ -395,7 +395,7 @@ export class Scene {
     this.fluid.obstacles.forEach((_, x, y) => {
       for (let i = 0; i < this.subdivisions; i++) {
         for (let k = 0; k < this.subdivisions; k++) {
-          let [xx, yy] = this.fluid.getCanvasPointFromGridPoint([x, y]);
+          const [xx, yy] = this.fluid.getCanvasPointFromGridPoint([x, y]);
 
           const v = this.fluid.interpolate(
             xx + (i + 1 / 2) * scale,

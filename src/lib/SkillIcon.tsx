@@ -55,8 +55,8 @@ export function SkillIconList({
       className={cn("mt-2 flex w-full flex-wrap gap-1 md:gap-2", className)}
       {...props}
     >
-      {skills.map((iconName, index) => (
-        <SkillIcon key={iconName + index} iconName={iconName} />
+      {skills.map((iconName) => (
+        <SkillIcon key={iconName} iconName={iconName} />
       ))}
     </div>
   );
