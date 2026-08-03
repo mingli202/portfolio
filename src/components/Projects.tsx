@@ -1,3 +1,4 @@
+/* eslint-disable react-dom/no-missing-iframe-sandbox -- YouTube embeds require their normal origin to load. */
 import { useState } from "react";
 import { projects } from "../data/projects";
 import { SkillIconList } from "../lib/SkillIcon";
@@ -52,7 +53,6 @@ function Project(project: ProjectItem) {
               title="YouTube video player"
               className="h-full w-full border-none"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              sandbox="allow-scripts allow-popups allow-presentation"
               referrerPolicy="strict-origin-when-cross-origin"
               allowFullScreen
             ></iframe>
