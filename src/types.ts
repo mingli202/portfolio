@@ -1,7 +1,7 @@
-import { Icon, type IconName } from "./lib/icons";
+import type { Icon } from "./lib/icons";
 
-export type RecordValues<T extends Record<string | number | symbol, unknown>> =
-  T[keyof T];
+export type IconName = keyof typeof Icon;
+type IconComponent = (typeof Icon)[IconName];
 
 export type ProjectItem = {
   title: string;
@@ -27,10 +27,10 @@ export type ExperienceListItem = {
 
 export type Skill = {
   name: string;
-  icon: Icon;
+  icon: IconComponent;
 };
 
 export type Link = {
-  type: Icon;
+  type: IconComponent;
   url: string;
 };

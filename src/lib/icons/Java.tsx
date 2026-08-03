@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { hoverFillColorVariantBuilder, Svg, type SvgProps } from ".";
+import { hoverFillColorVariantBuilder, Svg, type SvgProps } from "./shared";
 
 export function Java(props: SvgProps) {
   return (

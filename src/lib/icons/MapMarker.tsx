@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { type SvgProps, type HoverVariants, hoverVariantBuilder, Svg } from ".";
+import { type SvgProps, type HoverVariants, hoverVariantBuilder, Svg } from "./shared";
 
 export function MapMarker(props: SvgProps) {
   const pathVariants: HoverVariants = hoverVariantBuilder(

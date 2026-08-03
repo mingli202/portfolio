@@ -1,4 +1,4 @@
-import { Svg, type SvgProps } from ".";
+import { Svg, type SvgProps } from "./shared";
 
 export function Up(props: SvgProps) {
   return (

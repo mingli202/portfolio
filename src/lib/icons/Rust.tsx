@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { hoverVariantBuilder, Svg, type SvgProps } from ".";
+import { hoverVariantBuilder, Svg, type SvgProps } from "./shared";
 import { motion } from "motion/react";
 
 export function Rust(props: SvgProps) {

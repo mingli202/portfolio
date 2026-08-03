@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { type SvgProps, Svg, hoverFillColorVariantBuilder } from ".";
+import { type SvgProps, Svg, hoverFillColorVariantBuilder } from "./shared";
 
 export function Docker(props: SvgProps) {
   return (

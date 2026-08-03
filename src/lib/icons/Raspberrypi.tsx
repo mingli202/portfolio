@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { hoverVariantBuilder, Svg, type SvgProps } from ".";
+import { hoverVariantBuilder, Svg, type SvgProps } from "./shared";
 
 export function Raspberrypi(props: SvgProps) {
   return (

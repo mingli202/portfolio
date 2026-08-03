@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { type SvgProps, hoverVariantBuilder, Svg } from ".";
+import { type SvgProps, hoverVariantBuilder, Svg } from "./shared";
 import { motion } from "motion/react";
 
 export function Python(props: SvgProps) {

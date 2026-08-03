@@ -1,5 +1,5 @@
 import { type Variants, motion } from "motion/react";
-import { type SvgProps, hoverVariantBuilder, Svg } from ".";
+import { type SvgProps, hoverVariantBuilder, Svg } from "./shared";
 
 export function ArrowAngularTopRight(props: SvgProps) {
   const pathVariants1: Variants = hoverVariantBuilder(

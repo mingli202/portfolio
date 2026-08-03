@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { useRef } from "react";
-import { type SvgProps, Svg, hoverVariantBuilder } from ".";
+import { type SvgProps, Svg, hoverVariantBuilder } from "./shared";
 
 export function NextJs(props: SvgProps) {
   const random = useRef(Math.random());

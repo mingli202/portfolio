@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { Svg, type SvgProps } from ".";
+import { Svg, type SvgProps } from "./shared";
 import { useRef } from "react";
 
 export function DotNet(props: SvgProps) {

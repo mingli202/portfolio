@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { type SvgProps, Svg, hoverVariantBuilder } from ".";
+import { type SvgProps, Svg, hoverVariantBuilder } from "./shared";
 import { useRef } from "react";
 
 export function Azure(props: SvgProps) {

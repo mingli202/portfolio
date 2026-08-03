@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { type SvgProps, hoverFillColorVariantBuilder, Svg } from ".";
+import { type SvgProps, hoverFillColorVariantBuilder, Svg } from "./shared";
 
 export function Pandas(props: SvgProps) {
   return (

@@ -1,5 +1,6 @@
 import type { HTMLProps } from "react";
-import { Icon, type IconName } from "./icons";
+import { Icon } from "./icons";
+import type { IconName } from "../types";
 import cn from "./cn";
 import { motion } from "motion/react";
 
