@@ -12,17 +12,16 @@ export const projects: ProjectItem[] = [
     skills: ["Rust", "Go"],
     links: [
       {
-        type: Icon.Github,
-        url: "https://github.com/mingli202/typing-test-tui",
-      },
-      {
         type: Icon.Cargo,
         url: "https://crates.io/crates/typing-test-tui",
+      },
+      {
+        type: Icon.Github,
+        url: "https://github.com/mingli202/typing-test-tui",
       },
     ],
     videoUrl: "https://www.youtube.com/embed/Thjo68Ljbko?si=ia7GMkSZqPULdRfb",
   },
-
   {
     title: "Smart Courrier Robot",
     subtitle: "Design Principles and Methods final project.",
