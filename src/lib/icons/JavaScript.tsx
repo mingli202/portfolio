@@ -3,7 +3,7 @@ import { hoverFillColorVariantBuilder, Svg, type SvgProps } from "./shared";
 
 export function JavaScript(props: SvgProps) {
   return (
-    <Svg viewBox="0 0 128 128" title="JypeScript" {...props}>
+    <Svg viewBox="0 0 128 128" title="JavaScript" {...props}>
       <motion.path
         variants={hoverFillColorVariantBuilder(
           "var(--primary-color)",

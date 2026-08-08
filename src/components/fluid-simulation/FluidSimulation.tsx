@@ -174,7 +174,7 @@ function Stats() {
             >
               <Icon.Github
                 className="h-3 w-3"
-                foregroundFill="var(--text-secondary)"
+                foregroundFill="var(--text-color-secondary)"
               />
             </a>
           </div>

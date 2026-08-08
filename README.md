@@ -2,4 +2,4 @@
 
 Made with vite + React.
 
-Background fluid simulation made in Rust compiled to Wasm. WebGl version for further optimization coming soon.
+Background fluid simulation made in Rust compiled to Wasm. WebGL version for further optimization coming soon.

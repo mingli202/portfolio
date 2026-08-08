@@ -3,7 +3,7 @@ import { hoverFillColorVariantBuilder, Svg, type SvgProps } from "./shared";
 
 export function Numpy(props: SvgProps) {
   return (
-    <Svg viewBox="0 0 128 128" title="Numpy" {...props}>
+    <Svg viewBox="0 0 128 128" title="NumPy" {...props}>
       <motion.path
         d="m55.012 26.006-21.38-10.789L10.154 26.93l21.969 11.027Zm9.808 4.951L87.241 42.28 63.982 53.955l-22-11.043Zm29.948-15.581 23.037 11.552L97.2 37.272 74.735 25.938ZM84.853 10.4 64.113 0 43.598 10.24 64.97 21.014ZM68.64 99.702V128l25.122-12.537-.023-28.31ZM93.727 77.27l-.028-28.012-25.06 12.458V89.74Zm30.158-5.246v28.41l-21.43 10.69-.017-28.279zm0-9.935V34.25l-21.47 10.673.016 28.068z"
         variants={hoverFillColorVariantBuilder(

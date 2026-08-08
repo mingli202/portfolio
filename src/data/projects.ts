@@ -3,10 +3,10 @@ import type { ProjectItem } from "../types";
 
 export const projects: ProjectItem[] = [
   {
-    title: "Typing test tui",
+    title: "Typing test TUI",
     subtitle: "A multiplayer typing test in your terminal",
     description:
-      "Always in the terminal but also wanting to go on typeracer, so here it is in the terminal",
+      "Always in the terminal but also wanting to go on Typeracer, so here it is in the terminal",
     startDate: "March 2026",
     endDate: "May 2026",
     skills: ["Rust", "Go"],
@@ -23,7 +23,7 @@ export const projects: ProjectItem[] = [
     videoUrl: "https://www.youtube.com/embed/Thjo68Ljbko?si=ia7GMkSZqPULdRfb",
   },
   {
-    title: "Smart Courrier Robot",
+    title: "Smart Courier Robot",
     subtitle: "Design Principles and Methods final project.",
     description:
       "Autonomous robot that can deliver packages to delivery locations using a line tracking algorithm. Built in a team of 6 for my ECSE 211 final project.",
@@ -118,7 +118,7 @@ export const projects: ProjectItem[] = [
   },
 
   {
-    title: "Mnist Ai",
+    title: "MNIST Ai",
     subtitle:
       "Handwritten digit classification using MNIST dataset from scratch.",
     description:

@@ -3,7 +3,7 @@ import { type SvgProps, Svg, hoverVariantBuilder } from "./shared";
 
 export function Github(props: SvgProps) {
   return (
-    <Svg title="Github" {...props} viewBox="0 0 128 128">
+    <Svg title="GitHub" {...props} viewBox="0 0 128 128">
       <motion.g className="-translate-y-[3px]">
         <motion.path
           fillRule="evenodd"

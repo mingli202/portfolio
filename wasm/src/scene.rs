@@ -2,7 +2,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::fluid::{Field, Fluid, FluidSimulation};
-use crate::util::{gaussian, map, RingBuffer};
+use crate::util::{RingBuffer, gaussian, map};
 use wasm_bindgen::prelude::*;
 
 type AnimationFrameCb = Rc<RefCell<Option<Closure<dyn FnMut(f64)>>>>;
@@ -582,7 +582,7 @@ impl Scene {
                 let id = web_sys::window()
                     .unwrap()
                     .request_animation_frame(f.borrow().as_ref().unwrap().as_ref().unchecked_ref())
-                    .expect("recusrive request_animation_frame error");
+                    .expect("recursive request_animation_frame error");
                 s.animation_id.replace(id);
             }
         }) as Box<dyn FnMut(f64)>));
