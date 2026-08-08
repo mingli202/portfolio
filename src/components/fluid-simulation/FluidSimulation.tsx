@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { Scene } from "./scene";
 import { main, play, stop, get_stats, set_stats } from "../../../wasm/pkg";
 import { Icon } from "../../lib/icons";
 
@@ -7,7 +6,6 @@ const useWasm = true;
 
 export function FluidSimulation() {
   const canvas = useRef<HTMLCanvasElement>(null!);
-  const sceneRef = useRef<Scene | undefined>(undefined);
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -26,7 +24,6 @@ export function FluidSimulation() {
     play();
 
     return () => {
-      sceneRef.current?.destroy();
       stop();
     };
   }, []);
