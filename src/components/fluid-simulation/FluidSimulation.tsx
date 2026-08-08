@@ -1,7 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Fluid } from "./fluid";
 import { Scene } from "./scene";
-import HelperMenu from "./HelperMenu";
 import { main, play, stop, get_stats, set_stats } from "../../../wasm/pkg";
 import { Icon } from "../../lib/icons";
 
@@ -10,7 +8,6 @@ const useWasm = true;
 export function FluidSimulation() {
   const canvas = useRef<HTMLCanvasElement>(null!);
   const sceneRef = useRef<Scene | undefined>(undefined);
-  const [scene, setScene] = useState<Scene>();
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -25,21 +22,8 @@ export function FluidSimulation() {
     }
     setShow(true);
 
-    if (!useWasm) {
-      canvas.current.width = window.innerWidth;
-      canvas.current.height = window.innerHeight;
-
-      const fluid = new Fluid(canvas.current, 40);
-      const scene = new Scene(canvas.current, fluid, 2);
-
-      scene.drawNextFrame();
-
-      sceneRef.current = scene;
-      setScene(scene);
-    } else {
-      main();
-      play();
-    }
+    main();
+    play();
 
     return () => {
       sceneRef.current?.destroy();
@@ -53,8 +37,6 @@ export function FluidSimulation() {
         className="bg-background fixed top-0 left-0 -z-10 h-screen w-screen"
         ref={canvas}
       />
-      {/* <div className="fixed top-0 left-0 -z-9 h-screen w-screen bg-black/0 backdrop-blur-md" /> */}
-      {!useWasm && scene && <HelperMenu scene={scene} />}
       {show && useWasm && <Stats />}
     </>
   );
