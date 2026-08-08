@@ -34,6 +34,8 @@ import { Go } from "./Go";
 import { Zustand } from "./Zustand";
 import { Tanstack } from "./Tanstack";
 import { Nginx } from "./Nginx";
+import { Figma } from "./Figma";
+import { Nats } from "./Nats";
 
 export const Icon = {
   Email: Envelope,
@@ -72,4 +74,6 @@ export const Icon = {
   Zustand,
   Tanstack,
   Nginx,
+  Figma,
+  Nats,
 } as const;
