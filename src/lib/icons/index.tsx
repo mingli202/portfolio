@@ -33,6 +33,7 @@ import { Raspberrypi } from "./Raspberrypi";
 import { Go } from "./Go";
 import { Zustand } from "./Zustand";
 import { Tanstack } from "./Tanstack";
+import { Nginx } from "./Nginx";
 
 export const Icon = {
   Email: Envelope,
@@ -70,4 +71,5 @@ export const Icon = {
   Go,
   Zustand,
   Tanstack,
+  Nginx,
 } as const;

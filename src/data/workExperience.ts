@@ -2,17 +2,19 @@ import type { ExperienceListItem } from "../types";
 
 export const workExperience: ExperienceListItem[] = [
   {
-    title: "ECS Software Developer Intern",
+    title: "Embedded Software Developer Intern",
     subtitle: "Eaton",
     startDate: "May 2026",
     endDate: "Aug 2026",
     location: "Brossard, Canada",
-    skills: ["Go", "React", "Tanstack"],
+    skills: ["Go", "React", "Tanstack", "Docker", "Nginx"],
     additionalInfo: [
-      "Wrote a OpenADR 2.0b compliant VEN client microservice",
-      "Forked xgen to accurately parse the OpenADR schema",
-      "Coded a webapp for configuring and displaying VEN client data",
-      "Made an internal tool in go for managing stacked PRs (before the official github stacked PRs was out)",
+      "Wrote a OpenADR 2.0b compliant VEN client microservice in go",
+      "Forked xgen to accurately parse the OpenADR xml schema",
+      "Coded a webapp for configuring and managing VEN client data",
+      "Deployed the microservice with Docker + nginx",
+      "Integrated with the other EdgeX apps via NATS message bus",
+      "Made an internal tool in go for managing stacked PRs",
       "Introduced modern agentic workflows to my team to boost productivity",
     ],
     imageUrl: "eaton_logo.jpeg",
@@ -21,7 +23,7 @@ export const workExperience: ExperienceListItem[] = [
     title: "C#/Web Developer Intern",
     subtitle: "Genetec Inc.",
     startDate: "Jan 2026",
-    endDate: "Avril 2025",
+    endDate: "April 2025",
     location: "Montreal, Canada",
     skills: ["Angular", "C#", ".NET", "Azure", "PowerShell"],
     additionalInfo: [
